@@ -1,0 +1,51 @@
+field,id,type_name,type
+Pay_of_Officer_0101(+),1,Pay of Officer,s
+Grade_Pay_of_Officer_0101(+),2,Grade Pay of Officer ,s
+Pay_of_Establishment_0102(+),3,Pay of Establishment,s
+Grade_Pay_of_Establishment_0102(+),4,Grade Pay of Establishment ,s
+NPA_0128(+),5,NPA,s
+Leave_Salary_Encash_0109(+),6,Leave Salary Encash ,s
+Dearness_Allowance_0103(+),7,Dearness Allowance ,s
+Compansatory_Local_Allowance_0111(+),8,Compansatory Local Allowance ,s
+House_Rent_Allowance_0110(+),9,House Rent Allowance ,s
+Medical_Allowance_0107(+),10,Medical Allowance ,s
+BA_0104(+),11,Book Allowance ,s
+Transport_Allowance_0113(+),12,Transport Allowance ,s
+Interim_Relief_0112(+),13,Interim Relief ,s
+Washing_Allowance_0132(+),14,Washing Allowance ,s
+Uniform_Allowance_0131(+),15,Uniform Allowance ,s
+Nursing_Allownace_0129(+),16,Nursing Allownace ,s
+Special_Post_Allow_0104(+),17,Special Post Allowance,s
+Family_Welfare_Allow_0104(+),18,Family Welfare Allowance ,s
+Ceiling_Extra_0104(+),19,Ceiling Extra ,s
+Income_Tax_9510(-),20,Income Tax,s
+Rent_of_Building_9560(-),21,Rent of Building ,s
+Professional_Tax_9570(-),22,Professional Tax ,s
+SIS_I_9581(-),23,SIS I/F,s
+SIS_S_9582(-),24,SIS S/F,s
+GPF_non_IV_9670(-),25,GPF non IV ,s
+GPF_IV_9531(-),26,GPF IV,s
+CPF_9690(-),27,CPF,s
+Pay_of_Officer_0101(-),28,Recovery of Pay of Officer,s
+Pay_of_Establishment_0102(-),29,Recovery of Pay of Establishment,s
+Festival_A_5701(-),30,Festival Advance Recovery,s
+Food_Grains_A_5801(-),31,Food Grains Advance Recovery,s
+Car_A_9741(-),32,Car Advance Recovery,s
+HBA_9591(-),33,HBA Recovery,s
+,34,Festival Advance,s
+,35,Food Grains Advance,s
+,36,Car Advance,s
+,37,HBA,s
+,38,GPF  Advance non IV ,s
+,39,GPF  Advance Recovery non IV ,s
+bill_number,1,bill_number,ns
+department,2,department,ns
+post,3,post,ns
+bank,4,bank,ns
+bank_acc_number,5,bank account number,ns
+gpf_acc,6,GPF account number,ns
+cpf_acc,7,CPF account number,ns
+pan,8,PAN,ns
+quarter,9,Quarter,ns
+pay_scale,10,Pay Scale,ns
+old_pay_scale,11,Old Pay Scale,ns

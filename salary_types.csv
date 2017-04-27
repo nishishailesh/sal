@@ -1,0 +1,29 @@
+2,Grade Pay of Officer ,0101,0,+
+4,Grade Pay of Establishment ,0102,0,+
+6,Leave Salary Encash ,0109,0,+
+7,Dearness Allowance ,0103,0,+
+8,Compansatory Local Allowance ,0111,0,+
+9,House Rent Allowance ,0110,0,+
+10,Medical Allowance ,0107,0,+
+11,BA ,0104,0,+
+12,Transport Allowance ,0113,0,+
+13,Interim Relief ,0112,0,+
+14,Washing Allowance ,0132,0,+
+15,Uniform Allowance ,0131,0,+
+16,Nursing Allownace ,0129,0,+
+17,Special Post Allow ,0104,0,+
+18,Family Welfare Allow ,0104,0,+
+19,Ceiling Extra ,0104,0,+
+21,Rent of Building ,9560,0,-
+22,Professional Tax ,9570,0,-
+23,SIS I ,9581,0,-
+24,SIS S ,9582,0,-
+25,GPF non IV ,9670,0,-
+26,GPF IV ,9531,0,-
+27,CPF ,9690,0,-
+28,Pay of Officer ,0101,0,-
+29,Pay of Establishment ,0102,0,-
+30,Festival A ,5701,0,-
+31,Food Grains A ,5801,0,-
+32,Car A ,9741,0,-
+33,HBA ,9591,0,-
