@@ -1,4 +1,5 @@
 <?php
+exit(0);
 session_start();
 $nojunk='defined';
 require_once 'common.php';
