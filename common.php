@@ -1741,7 +1741,7 @@ function copy_bill_nonsalary($link,$b,$tb)
 	}
 }
 
-function get_sfval($link,$bg,$bn,$staff_id,$salary_type_id)
+function get_sfval($link,$bg,$staff_id,$salary_type_id)
 {
 	$sql='select * from salary where 
 				bill_group=\''.$bg.'\' and 
@@ -1753,7 +1753,7 @@ function get_sfval($link,$bg,$bn,$staff_id,$salary_type_id)
 	return $data;	
 }
 
-function get_nsfval($link,$bg,$bn,$staff_id,$nonsalary_type_id)
+function get_nsfval($link,$bg,$staff_id,$nonsalary_type_id)
 {
 	$sql='select * from nonsalary where 
 				bill_group=\''.$bg.'\' and 

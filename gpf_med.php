@@ -35,7 +35,7 @@ $GLOBALS['post_id']=3;
 $GLOBALS['gpf_id']=25;			//non-IV
 $GLOBALS['gpf4_id']=26;			//IV
 $GLOBALS['gpf_adv_rec_id']=39;	//non-IV
-$GLOBALS['gpf4_adv_rec_id']=46;	//IV
+$GLOBALS['gpf4_adv_rec_id']=46;	//non-IV
 			
 $GLOBALS['basic_e_id']=3;		//est
 $GLOBALS['gp_e_id']=4;			//est
@@ -73,7 +73,7 @@ function gpf_page_header($link,$bg,$bn,$pg)
 {
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
 	echo '<h4 align="center" style="border: 1px solid #000000;">Schedule of General Providend Fund Deduction</h4>';
-	echo '<h4 align="center" >Class-IV Page:'.$pg.'</h4>';
+	echo '<h4 align="center" >other than Class-IV Page:'.$pg.'</h4>';
 			
 	echo '<h4 align="center">'.$GLOBALS['college'].'</h3>';
 	echo '<h4 align="center">Under Head: 8009 State Provident Fund</h4>';
@@ -81,6 +81,7 @@ function gpf_page_header($link,$bg,$bn,$pg)
 	echo '<h4 align="center">Name of office maintaining accounts: Accountant Genral Rajkot</h4>';	
 	
 }
+
 function print_gpf($link,$bg,$bn)
 {
 
@@ -96,6 +97,11 @@ function print_gpf($link,$bg,$bn)
 					<th width="9%"><b>Inst No</b></th>
 					<th width="9%"><b>Total</b></th>
 				</tr>';
+				
+	//M/DAT/
+	//MED
+	//PH/
+	//PW/
 	$s=get_staff_of_a_bill_number($link,$bg,$bn);
 
 	$sum_gpf=0;
@@ -106,7 +112,7 @@ function print_gpf($link,$bg,$bn)
 	echo $gpf_head;
 	foreach($s as $sr=>$staff_id)
 	{
-		$gpf=get_sfval($link,$bg,$staff_id,$GLOBALS['gpf4_id']);
+		$gpf=get_sfval($link,$bg,$staff_id,$GLOBALS['gpf_id']);
 		
 		$basic=get_sfval($link,$bg,$staff_id,$GLOBALS['basic_id']);
 		$gp=get_sfval($link,$bg,$staff_id,$GLOBALS['gp_id']);
@@ -121,10 +127,10 @@ function print_gpf($link,$bg,$bn)
 				
 		$acc=get_nsfval($link,$bg,$staff_id,$GLOBALS['gpf_acc_id']);
 		$post=get_nsfval($link,$bg,$staff_id,$GLOBALS['post_id']);
-		$gpf_ar=get_sfval($link,$bg,$staff_id,$GLOBALS['gpf4_adv_rec_id']);
+		$gpf_ar=get_sfval($link,$bg,$staff_id,$GLOBALS['gpf_adv_rec_id']);
 		$staff=get_staff($link,$staff_id);
 		
-		if($gpf['amount']>0 || $gpf_ar['amount']>0)
+		if(($gpf['amount']>0 || $gpf_ar['amount']>0) && substr($acc['data'],0,3)=='MED')
 		{
 			echo '<tr>
 					<td width="5%">'.$count.'</td>				
@@ -164,7 +170,6 @@ function print_gpf($link,$bg,$bn)
 			<td>'.$sum_gpf_ar.'</td><td></td><td>'.($sum_gpf+$sum_gpf_ar).'</td></tr>';	
 		echo '<tr><td align="right" colspan="9">Total in Words: '.
 				Numbers_Words::toWords(($sum_gpf+$sum_gpf_ar),"en_US").' Only</td></tr>';
-				
 	echo '</table>';
 }
 

@@ -3,7 +3,7 @@ session_start();
 $nojunk='defined';
 require_once 'common.php';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 $link=connect();
 
 
@@ -27,12 +27,20 @@ $GLOBALS['ministry']='Health';
 $GLOBALS['tan']='SRTG01499B';
 
 //various id numbers as per database
-$GLOBALS['gpf_id']=25;
+//nonsaLARY
 $GLOBALS['gpf_acc_id']=6;
-$GLOBALS['gpf_adv_rec_id']=39;	//non-IV
 $GLOBALS['post_id']=3;
-$GLOBALS['basic_id']=1;
-$GLOBALS['gp_id']=2;
+
+//SALARY
+$GLOBALS['gpf_id']=25;			//non-IV
+$GLOBALS['gpf4_id']=26;			//IV
+$GLOBALS['gpf_adv_rec_id']=39;	//non-IV
+$GLOBALS['gpf4_adv_rec_id']=46;	//non-IV
+			
+$GLOBALS['basic_e_id']=3;		//est
+$GLOBALS['gp_e_id']=4;			//est
+$GLOBALS['basic_id']=1;			//12
+$GLOBALS['gp_id']=2;			//12
 $GLOBALS['npa_id']=5;
 
 ob_start();
@@ -73,21 +81,27 @@ function gpf_page_header($link,$bg,$bn,$pg)
 	echo '<h4 align="center">Name of office maintaining accounts: Accountant Genral Rajkot</h4>';	
 	
 }
+
 function print_gpf($link,$bg,$bn)
 {
 
 	
 	$gpf_head='<tr>				
 					<th width="5%"><b>Sr</b></th>
-					<th width="12%"><b>GPF A/C No</b></th>
+					<th width="14%"><b>GPF A/C No</b></th>
 					<th width="18%"><b>Name of Emp</b></th>
 					<th width="15%"><b>Desig. Emp.</b></th>
 					<th width="10%"><b>Pay</b></th>
 					<th width="10%"><b>Monthly sub.</b></th>
 					<th width="10%"><b>Adv. Rec.</b></th>
-					<th width="10%"><b>Inst No</b></th>
-					<th width="10%"><b>Total</b></th>
+					<th width="9%"><b>Inst No</b></th>
+					<th width="9%"><b>Total</b></th>
 				</tr>';
+				
+	//M/DAT/
+	//MED
+	//PH/
+	//PW/
 	$s=get_staff_of_a_bill_number($link,$bg,$bn);
 
 	$sum_gpf=0;
@@ -98,28 +112,36 @@ function print_gpf($link,$bg,$bn)
 	echo $gpf_head;
 	foreach($s as $sr=>$staff_id)
 	{
-		$gpf=get_sfval($link,$bg,$bn,$staff_id,$GLOBALS['gpf_id']);
-		$basic=get_sfval($link,$bg,$bn,$staff_id,$GLOBALS['basic_id']);
-		$gp=get_sfval($link,$bg,$bn,$staff_id,$GLOBALS['gp_id']);
-		$npa=get_sfval($link,$bg,$bn,$staff_id,$GLOBALS['npa_id']);
-		$pay=$basic['amount']+$gp['amount']+$npa['amount'];
-		$acc=get_nsfval($link,$bg,$bn,$staff_id,$GLOBALS['gpf_acc_id']);
-		$post=get_nsfval($link,$bg,$bn,$staff_id,$GLOBALS['post_id']);
-		$gpf_ar=get_sfval($link,$bg,$bn,$staff_id,$GLOBALS['gpf_adv_rec_id']);
+		$gpf=get_sfval($link,$bg,$staff_id,$GLOBALS['gpf_id']);
+		
+		$basic=get_sfval($link,$bg,$staff_id,$GLOBALS['basic_id']);
+		$gp=get_sfval($link,$bg,$staff_id,$GLOBALS['gp_id']);
+
+		$basic_e=get_sfval($link,$bg,$staff_id,$GLOBALS['basic_e_id']);
+		$gp_e=get_sfval($link,$bg,$staff_id,$GLOBALS['gp_e_id']);
+
+		$npa=get_sfval($link,$bg,$staff_id,$GLOBALS['npa_id']);
+		
+		$pay=$basic['amount']+$gp['amount']+$npa['amount']+
+				$basic_e['amount']+$gp_e['amount'];
+				
+		$acc=get_nsfval($link,$bg,$staff_id,$GLOBALS['gpf_acc_id']);
+		$post=get_nsfval($link,$bg,$staff_id,$GLOBALS['post_id']);
+		$gpf_ar=get_sfval($link,$bg,$staff_id,$GLOBALS['gpf_adv_rec_id']);
 		$staff=get_staff($link,$staff_id);
 		
 		if($gpf['amount']>0 || $gpf_ar['amount']>0)
 		{
 			echo '<tr>
 					<td width="5%">'.$count.'</td>				
-					<td width="12%">'.$acc['data'].'</td>
+					<td width="14%">'.$acc['data'].'</td>
 					<td align="left" width="18%">'.$staff['fullname'].'</td>
 					<td width="15%">'.$post['data'].'</td>
 					<td width="10%">'.$pay.'</td>				
 					<td width="10%">'.$gpf['amount'].'</td>
 					<td width="10%">'.$gpf_ar['amount'].'</td>
-					<td width="10%">'.$gpf_ar['remark'].'</td>
-					<td width="10%">'.($gpf['amount']+$gpf_ar['amount']).'</td>				
+					<td width="9%">'.$gpf_ar['remark'].'</td>
+					<td width="9%">'.($gpf['amount']+$gpf_ar['amount']).'</td>				
 				</tr>';
 			$sum_gpf=$sum_gpf+$gpf['amount'];
 			$sum_gpf_ar=$sum_gpf_ar+$gpf_ar['amount'];
@@ -135,10 +157,10 @@ function print_gpf($link,$bg,$bn)
 				gpf_page_header($link,$bg,$bn,round(($count/$GLOBALS['rpp']),0)+1);				
 				echo '<table cellpadding="1" cellspacing="0" border="0.3" style="text-align:center;">';
 				echo $gpf_head;
-				echo '<tr><td  width="5%"></td> <td  width="12%"></td> <td width="18%"></td>
-				<td width="15%"></td><td width="10%">B/F</td> <td width="10%">'.$sum_gpf.'</td>
+				echo '<tr><td></td> <td></td> <td></td>
+				<td ></td><td>B/F</td> <td >'.$sum_gpf.'</td>
 				
-				<td width="10%">'.$sum_gpf_ar.'</td><td width="10%"></td><td width="10%">'.($sum_gpf+$sum_gpf_ar).'</td></tr>';
+				<td>'.$sum_gpf_ar.'</td><td></td><td>'.($sum_gpf+$sum_gpf_ar).'</td></tr>';
 			}
 			$count++;
 		}
