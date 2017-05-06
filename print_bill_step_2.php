@@ -20,7 +20,7 @@ echo '<tr><td>Bill Group Selected:</td><td><input type=text readonly name=bill_g
 echo '<tr><td>Bill Number Selected:</td><td><input type=text readonly name=bill_number value=\''.$_POST['bill_number'].'\'></td></tr>';
 echo '<tr><th colspan=2>Following reports are available for print</th></tr>';
 
-echo '<tr><td>Outer</td><td><button type=submit formtarget=_blank name=action value=print_outer formaction=outer_1.php>Print Outer</button></td></tr>';
+echo '<tr><td>Outer</td><td><button type=submit formtarget=_blank name=action value=print_outer formaction=outer.php>Print Outer</button></td></tr>';
 echo '<tr><td>Outer(Special)</td><td><button type=submit formtarget=_blank name=action value=print_outer_special formaction=outer_1_special.php>Print Outer(Special)</button></td></tr>';
 
 echo '<tr><td>Income Tax</td><td><button type=submit formtarget=_blank name=action value=itax formaction=itax.php>Print ITax</button></td></tr>';

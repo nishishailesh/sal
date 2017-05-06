@@ -2,7 +2,6 @@
 session_start();
 $nojunk='defined';
 require_once 'common.php';
-//require_once 'common.js';
 require_once('tcpdf/tcpdf.php');
 require_once('Numbers/Words.php');
 $link=connect();
@@ -13,7 +12,7 @@ $link=connect();
 //rpp is raw per page
 //echo '<pre>';
 
-$rpp=20;
+$GLOBALS['rpp']=20;
 $GLOBALS['total_pages']='';
 $GLOBALS['college']='Government Medical College, Majura Gate, Surat';
 $GLOBALS['allowances']='Report on Pay and Allowances Bill';
@@ -26,15 +25,28 @@ $GLOBALS['phone']='091-261-2244175';
 $GLOBALS['mobile']='091 98244 19535';
 $GLOBALS['ministry']='Health';
 $GLOBALS['tan']='SRTG01499B';
+//various id numbers as per database
+//nonsaLARY
+$GLOBALS['gpf_acc_id']=6;
+$GLOBALS['post_id']=3;
+$GLOBALS['qtr']=9;
 
-$array_1=prepare_array_1($link,$_POST['bill_group'],$_POST['bill_number'],$rpp);
-$array_2=prepare_array_2($array_1,$rpp);
-$GLOBALS['total_pages']=count($array_2);
-$array_3=prepare_array_3($array_2);
-$array_4=prepare_array_4($array_3);
+//SALARY
+$GLOBALS['gpf_id']=25;			//non-IV
+$GLOBALS['gpf4_id']=26;			//IV
+$GLOBALS['gpf_adv_rec_id']=39;	//non-IV
+$GLOBALS['gpf4_adv_rec_id']=46;	//IV
+			
+$GLOBALS['basic_e_id']=3;		//est
+$GLOBALS['gp_e_id']=4;			//est
+$GLOBALS['basic_id']=1;			//12
+$GLOBALS['gp_id']=2;			//12
+$GLOBALS['npa_id']=5;
+$GLOBALS['rob']=21;
+$GLOBALS['ptax_id']=22;
 
 ob_start();
-print_outer($array_2);
+print_table($link,$_POST['bill_group'],$_POST['bill_number']);
 $myStr = ob_get_contents();
 ob_end_clean();
 //echo $myStr;
@@ -53,164 +65,26 @@ class ACCOUNT extends TCPDF {
 
 $pdf = new ACCOUNT('L', 'mm', 'A4', true, 'UTF-8', false);
 $pdf->SetFont('dejavusans', '', 9);
-//$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-//The A3 size print measures 29.7 x 42.0cm
-//29 cm
-//06 cm left right margin
-//23 cm remain
-//16 columns
-//1.44 cm per column
-//6.25% for each column
 $pdf->SetMargins(30, 20, 30);
 $pdf->AddPage();
 $pdf->writeHTML($myStr, true, false, true, false, '');
-$pdf->Output('example_006.pdf', 'I');
+$pdf->Output($_POST['bill_group'].'_'.$_POST['bill_number'].'_gpf.pdf', 'I');
 
 
-function mk_sql($bill_group,$bill_number)
+function page_header($link,$bg,$bn,$pg)
 {
-$sql='
- SELECT *, 
- `Pay_of_Officer_0101(+)`
-+ `Grade_Pay_of_Officer_0101(+)`
-+ `Pay_of_Establishment_0102(+)`
-+ `Grade_Pay_of_Establishment_0102(+)`
-+`NPA_0128(+)` 
-+`Leave_Salary_Encash_0109(+)`
-+`Dearness_Allowance_0103(+)`
-+`Compansatory_Local_Allowance_0111(+)`
-+`House_Rent_Allowance_0110(+)`
-+`Medical_Allowance_0107(+)`+
-`BA_0104(+)`+
-`Transport_Allowance_0113(+)`+
-`Interim_Relief_0112(+)`+
-`Washing_Allowance_0132(+)`+
-`Uniform_Allowance_0131(+)`+
-`Nursing_Allownace_0129(+)`+
-`Special_Post_Allow_0104(+)`+
-`Family_Welfare_Allow_0104(+)`+
-`Ceiling_Extra_0104(+)`
+	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
 
-as gross,
-
-`Income_Tax_9510(-)`
-+`Rent_of_Building_9560(-)`
-+`Professional_Tax_9570(-)`
-+`SIS_I_9581(-)`
-+`SIS_S_9582(-)`
-+`GPF_non_IV_9670(-)`
-+`GPF_IV_9531(-)`
-+`CPF_9690(-)`
-+`Pay_of_Officer_0101(-)`
-+`Pay_of_Establishment_0102(-)`
-+`Festival_A_5701(-)`
-+`Food_Grains_A_5801(-)`
-+`Car_A_9741(-)`
-+`HBA_9591(-)`
-
-as deduction,
-
-(select gross)- (select deduction) as net
-
-from salary
-
-where 		bill_group=\''.$bill_group.'\' 
-		and bill_number=\''.$bill_number.'\'
-	
-';
-return $sql;
-
-}
-
-function prepare_array_1($link,$bill_group,$bill_number,$rpp)
-{
-	$sql=mk_sql($bill_group,$bill_number);
-	//echo $sql;
-	if(!$result=mysqli_query($link,$sql)){return FALSE;}
-	$tot=mysqli_num_rows($result);
-	//echo $tot;
-	while($result_array=mysqli_fetch_assoc($result))
-		{	
-			$array_1[]=$result_array;
-		}
-	return $array_1;
-}
-
-function prepare_array_2($array_1,$page_size)
-{
-		return array_chunk($array_1,$page_size, true);
-}
-
-
-function prepare_array_3($array_2)
-{
-	$query_fields=array_keys($array_2[0][0]);
-		foreach($array_2 as $page_number=>$page_array)
-		{
-			foreach($page_array as $salary_number=>$salary_array)
-			{
-				foreach($query_fields as $field=>$value)
-				{
-					$array_3[$page_number][$value]=array_sum(array_column($page_array,$value));
-				}
-			}
-		}
-		return $array_3;
-}
-
-//for carry forward
-function prepare_array_4($array_3)
-{
-	$pn=count($array_3);
-
-	for($i=0;$i<$pn;$i++)
-	{
-			$chunk=array_chunk($array_3,$i+1);
-			$query_fields=array_keys($chunk[0][0]);
-			foreach($query_fields as $field=>$value)
-			{
-				$array_4[$i][$value]=array_sum(array_column($chunk[0],$value));
-			}
-	}
-	return $array_4;
-}
-
-
-function print_outer($a)
-{
-		$aa=prepare_array_3($a);
-		$aaa=prepare_array_4($aa);
-		
-		foreach($a as $page_number=>$page_detail)
-		{	
-			if($page_number!=0)
-			{
-				print_minus_page($page_number,$page_detail,$aaa[$page_number],$aaa[$page_number-1],current($a[0])['remark']);
-			}
-			else
-			{
-				print_minus_page($page_number,$page_detail,$aaa[$page_number],array(),current($a[0])['remark']);
-			}
-		}
-		//apt-get install php-numbers-words
-
-}
-
-
-
-////////////////minus
-
-function print_minus_page($n,$a2,$a3,$prev_a3,$remark)
-{
-	echo '<h4 align="center" style="border: 2px solid #000000;">Schedule of Professional Tax Deduction (Page:'.($n+1).')</h4>';
+	echo '<h4 align="center" style="border: 2px solid #000000;">Schedule of Professional Tax Deduction (Page:'.$pg.')</h4>';
 	echo '<h4 align="center">'.$GLOBALS['college'].'</h3>';
 	echo '<h4 align="center">Under Head: 0028 Professional Tax</h4>';
-	echo '<h4 align="center">For the month of '.$remark.'</h4>';
+	echo '<h4 align="center">For the month of '.$bill_details['remark'].'</h4>';
 	echo '<h4 align="center"> Bill: '.$_POST['bill_group'].'-'.$_POST['bill_number'].'</h4>';
-	
-	echo '<table cellpadding="1" cellspacing="0" border="0.3" style="text-align:center;">';
+}
+function print_table($link,$bg,$bn)
+{
 
-		$ded_head='<tr>				
+		$head='<tr>				
 					<th width="10%"><b>Sr</b></th>
 					<th width="25%"><b>Name of Emp</b></th>
 					<th width="25%"><b>Designation</b></th>
@@ -220,69 +94,77 @@ function print_minus_page($n,$a2,$a3,$prev_a3,$remark)
 					<th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
 				</tr>';
 				
-		echo $ded_head;				
-
-	if($prev_a3)
-	{
-		echo_a3_minus($n,$prev_a3,'B/F');	
-	}
-	foreach($a2 as $salary_number=>$salary_details)
-	{
-		echo_a1_minus($salary_number,$salary_details);
-	}
+				
+	$s=get_staff_of_a_bill_number($link,$bg,$bn);
 	
-	if($n<($GLOBALS['total_pages']-1))
+	$sum_ptax=0;
+	$count=1;
+	page_header($link,$bg,$bn,round(($count/$GLOBALS['rpp']),0)+1);
+	echo '<table cellpadding="1" cellspacing="0" border="0.3" style="text-align:center;">';
+	echo $head;
+	foreach($s as $sr=>$staff_id)
 	{
-		echo_a3_minus($n,$a3,'C/F');
+		$derived=find_sums($link,$staff_id,$bg);
+		
+		$staff=get_staff($link,$staff_id);
+		$emp_name=$staff['fullname'];	
+
+		$post=get_nsfval($link,$bg,$staff_id,$GLOBALS['post_id']);
+		
+		$gross=$derived[0];
+	
+		$ptax=get_sfval($link,$bg,$staff_id,$GLOBALS['ptax_id']);
+		
+		if($ptax['amount']>0)
+		{
+			echo '<tr>
+					<td>'.$count.'</td>
+					<td align="left">'.$emp_name.'</td>
+					<td>'.$post['data'].'</td>
+					<td>'.$gross.'</td>
+					<td>'.$ptax['amount'].'</td>
+				</tr>';
+			$sum_ptax=$sum_ptax+$ptax['amount'];
+			
+			if($count%$GLOBALS['rpp']==0 && ($count/$GLOBALS['rpp'])>0)
+			{
+			echo '<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>C/F</td>
+					<td>'.$sum_ptax.'</td>
+				</tr>';
+				
+				echo '</table>';
+				echo '<h2 style="page-break-after: always;"></h2>';
+
+				page_header($link,$bg,$bn,round(($count/$GLOBALS['rpp']),0)+1);				
+				echo '<table cellpadding="1" cellspacing="0" border="0.3" style="text-align:center;">';
+				echo $head;
+			echo '<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>B/F</td>
+					<td>'.$sum_ptax.'</td>
+				</tr>';
+			}
+			$count++;
+		}
 	}
-	else
-	{
-		echo_a3_minus($n,$a3,'');
-	}
+			echo '<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>Total</td>
+					<td>'.$sum_ptax.'</td>
+				</tr>';
+		echo '<tr><td align="right" colspan="9">Total in Words: '.
+				Numbers_Words::toWords($sum_ptax,"en_US").' Only</td></tr>';
+				
 	echo '</table>';
-	
-	//apt-get install php-numbers-words
-	///error may be:  undefined this in --> usr/share/php/Numbers/Words.php on line 97
-	//Remove $this as follwos in like 97
-	//$truth_table  = ($classname == get_class()) ? 'T' : 'F';
-
-	if($n==($GLOBALS['total_pages']-1))
-	{
-		echo '<table><tr><td align="right">Total in Words: '.Numbers_Words::toWords($a3['Professional_Tax_9570(-)'],"en_US").' Only</td></tr>
-				</table>';
-	}
-	
-	if($n<($GLOBALS['total_pages']-1))
-	{
-		echo '<h2 style="page-break-after: always;"></h2>';
-	}
 }
-
-function echo_a1_minus($n,$d)
-{
-	
-			echo '<tr>';
-		echo '<td>'.($n+1).'</td>';
-		echo '<td align="left">'.$d['fullname'].'</td>';
-		echo '<td>'.$d['post'].'</td>';
-		echo '<td>'.$d['gross'].'</td>';
-		echo '<td>'.$d['Professional_Tax_9570(-)'].'</td>';
-			echo '</tr>';
-}
-
-function echo_a3_minus($n,$d,$f)
-{
-
-			echo '<tr>';
-		echo '<td></td>';
-		echo '<td></td>';
-		echo '<td></td>';
-		echo '<td>Total '.$f.'</td>';
-		echo '<td>'.$d['Professional_Tax_9570(-)'].'</td>';
-			echo '</tr>';
-
-}
-
 
 ?>
 

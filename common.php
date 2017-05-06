@@ -1641,7 +1641,31 @@ function find_sums($link,$staff_id,$bill_group)
 	return array($p,$m,$n);				
 }
 
-
+function find_sums_govt($link,$staff_id,$bill_group)
+{
+	$sql='select * from salary where 
+								staff_id=\''.$staff_id.'\' and 
+								bill_group=\''.$bill_group.'\'';
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	$p=0;
+	$m=0;
+	while($ar=mysqli_fetch_assoc($result))
+	{	
+		$dt=get_raw($link,'select * from salary_type where salary_type_id=\''.$ar['salary_type_id'].'\'');
+		if($dt['salary_type_id']==42 || $dt['salary_type_id']==43)
+		{}
+		elseif($dt['type']=='+')
+		{
+			$p=$p+$ar['amount'];
+		}
+		elseif($dt['type']=='-')
+		{
+			$m=$m+$ar['amount'];
+		}
+	}	
+	$n=$p-$m;	
+	return array($p,$m,$n);				
+}
 
 function add_bill_group($link,$post)
 {
