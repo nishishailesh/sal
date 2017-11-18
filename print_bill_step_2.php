@@ -21,7 +21,10 @@ echo '<tr><td>Bill Number Selected:</td><td><input type=text readonly name=bill_
 echo '<tr><th colspan=2>Following reports are available for print</th></tr>';
 
 echo '<tr><td>Outer</td><td><button type=submit formtarget=_blank name=action value=print_outer formaction=outer.php>Print Outer</button></td></tr>';
-echo '<tr><td>Outer(Special)</td><td><button type=submit formtarget=_blank name=action value=print_outer_special formaction=outer_1_special.php>Print Outer(Special)</button></td></tr>';
+echo '<tr><td>Outer(ROME)</td><td><button type=submit formtarget=_blank name=action value=print_outer formaction=outer_rome.php>Print Outer(ROME)</button></td></tr>';
+echo '<tr><td>Outer(BLIND)</td><td><button type=submit formtarget=_blank name=action value=print_outer formaction=outer_blind.php>Print Outer(BLIND)</button></td></tr>';
+echo '<tr><td>Outer(Special)</td><td><button type=submit formtarget=_blank name=action value=print_outer_special formaction=outer_special_1.php>Print Outer(Special)</button></td></tr>';
+echo '<tr><td>Outer(LTC)</td><td><button type=submit formtarget=_blank name=action value=print_outer_special formaction=outer_special_ltc.php>Print Outer(LTC)</button></td></tr>';
 
 echo '<tr><td>Income Tax</td><td><button type=submit formtarget=_blank name=action value=itax formaction=itax.php>Print ITax</button></td></tr>';
 echo '<tr><td>HR</td><td><button type=submit formtarget=_blank name=action value=house_rent formaction=house_rent.php>Print HRent</button></td></tr>';
@@ -38,6 +41,28 @@ echo '<tr><td>SIS</td><td><button type=submit formtarget=_blank name=action valu
 echo '<tr><td>SIS-C</td><td><button type=submit formtarget=_blank name=action value=sis_c formaction=sis_c.php>Print SIS Annexure -C</button></td></tr>';
 echo '<tr><td>Misc. Recovery</td><td><button type=submit formtarget=_blank name=action value=recovery formaction=recovery.php>Print Recovery</button></td></tr>';
 echo '<tr><td>Bank and Net</td><td><button type=submit formtarget=_blank name=action value=bank_net formaction=bank_net.php>Print Bank Net</button></td></tr>';
+echo '<tr><td>Festival Advance</td><td><button type=submit formtarget=_blank name=action value=festival_advance formaction=festival_advance.php>Print Festival advance</button></td></tr>';
+echo '<tr><td>HBA Interest Recovery</td>
+			<td><button type=submit formtarget=_blank name=action value=HBA_int_recv formaction=hba_int_recv.php>
+					Print HBA interest recovery</button></td></tr>';
+echo '<tr><td>HBA Principle Recovery</td>
+			<td><button type=submit formtarget=_blank name=action value=HBA_pri_recv formaction=hba_pri_recv.php>
+					Print HBA Principle recovery</button></td></tr>';
+echo '<tr><td>Non Govt Deduction</td>
+			<td><button type=submit formtarget=_blank name=action value=non_govt_ded formaction=non_govt.php>
+					Print Non Government Deduction</button></td></tr>';
+echo '<tr><td>Non Govt Deduction-LIC</td>
+			<td><button type=submit formtarget=_blank name=action value=non_govt_ded_lic formaction=non_govt_lic.php>
+					Print Non Government Deduction(LIC)</button></td></tr>';
+echo '<tr><td>Non Govt Deduction-SOCIETY</td>
+			<td><button type=submit formtarget=_blank name=action value=non_govt_ded_soc formaction=non_govt_soc.php>
+					Print Non Government Deduction(Society)</button></td></tr>';
+echo '<tr><td>Check Summary</td>
+			<td><button type=submit formtarget=_blank name=action value=check_summary formaction=check_summary.php>
+					Print Check Summary</button></td></tr>';
+echo '<tr><td>Staff Summary</td>
+			<td><button type=submit formtarget=_blank name=action value=staff_summary formaction=staff_position_report.php>
+					Print Staff summary</button></td></tr>';
 echo '</form>';
 echo '</td></tr></table>';
 

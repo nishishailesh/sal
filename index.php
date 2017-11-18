@@ -61,5 +61,5 @@ echo '
 </form> ';
 
 echo '</body></html>';
-
+echo $_SERVER['REMOTE_ADDR'];
 ?>

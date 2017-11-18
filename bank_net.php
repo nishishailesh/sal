@@ -2,7 +2,6 @@
 session_start();
 $nojunk='defined';
 require_once 'common.php';
-//require_once 'common.js';
 require_once('tcpdf/tcpdf.php');
 require_once('Numbers/Words.php');
 $link=connect();
@@ -13,7 +12,7 @@ $link=connect();
 //rpp is raw per page
 //echo '<pre>';
 
-$rpp=30;
+$GLOBALS['rpp']=15;
 $GLOBALS['total_pages']='';
 $GLOBALS['college']='Government Medical College, Majura Gate, Surat';
 $GLOBALS['allowances']='Report on Pay and Allowances Bill';
@@ -27,15 +26,31 @@ $GLOBALS['mobile']='091 98244 19535';
 $GLOBALS['ministry']='Health';
 $GLOBALS['tan']='SRTG01499B';
 
-$array_1=prepare_array_1($link,$_POST['bill_group'],$_POST['bill_number'],$rpp);
-if(count($array_1)<=0){echo '<h2>No Records. Nothing to print</h2>';exit(0);}
-$array_2=prepare_array_2($array_1,$rpp);
-$GLOBALS['total_pages']=count($array_2);
-$array_3=prepare_array_3($array_2);
-$array_4=prepare_array_4($array_3);
+//various id numbers as per database
+//nonsaLARY
+$GLOBALS['gpf_acc_id']=6;
+$GLOBALS['post_id']=3;
+$GLOBALS['pan_id']=8;
+$GLOBALS['bank_id']=4;
+$GLOBALS['bank_acc_id']=5;
 
+//SALARY
+$GLOBALS['gpf_id']=25;			//non-IV
+$GLOBALS['gpf4_id']=26;			//IV
+$GLOBALS['gpf_adv_rec_id']=39;	//non-IV
+$GLOBALS['gpf4_adv_rec_id']=46;	//IV
+
+			
+$GLOBALS['basic_e_id']=3;		//est
+$GLOBALS['gp_e_id']=4;			//est
+$GLOBALS['basic_id']=1;			//12
+$GLOBALS['gp_id']=2;			//12
+$GLOBALS['npa_id']=5;
+$GLOBALS['itax_id']=20;
+$GLOBALS['recv_off_id']=28;
+$GLOBALS['recv_est_id']=29;
 ob_start();
-print_outer($array_2);
+print_bank($link,$_POST['bill_group'],$_POST['bill_number']);
 $myStr = ob_get_contents();
 ob_end_clean();
 //echo $myStr;
@@ -49,161 +64,34 @@ class ACCOUNT extends TCPDF {
 	
 	public function Footer() 
 	{
+		$this->SetY(-10);
+		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+
 	}	
 }
 
-$pdf = new ACCOUNT('P', 'mm', 'A4', true, 'UTF-8', false);
+$pdf = new ACCOUNT('L', 'mm', 'A4', true, 'UTF-8', false);
 $pdf->SetFont('dejavusans', '', 9);
 $pdf->SetMargins(30, 20, 30);
 $pdf->AddPage();
 $pdf->writeHTML($myStr, true, false, true, false, '');
-$pdf->Output('bank_net.pdf', 'I');
+$pdf->Output($_POST['bill_group'].'_'.$_POST['bill_number'].'_gpf.pdf', 'I');
 
 
-function mk_sql($bill_group,$bill_number)
+function bank_page_header($link,$bg,$bn,$pg)
 {
-$sql='
- SELECT *, 
- `Pay_of_Officer_0101(+)`
-+ `Grade_Pay_of_Officer_0101(+)`
-+ `Pay_of_Establishment_0102(+)`
-+ `Grade_Pay_of_Establishment_0102(+)`
-+`NPA_0128(+)` 
-+`Leave_Salary_Encash_0109(+)`
-+`Dearness_Allowance_0103(+)`
-+`Compansatory_Local_Allowance_0111(+)`
-+`House_Rent_Allowance_0110(+)`
-+`Medical_Allowance_0107(+)`+
-`BA_0104(+)`+
-`Transport_Allowance_0113(+)`+
-`Interim_Relief_0112(+)`+
-`Washing_Allowance_0132(+)`+
-`Uniform_Allowance_0131(+)`+
-`Nursing_Allownace_0129(+)`+
-`Special_Post_Allow_0104(+)`+
-`Family_Welfare_Allow_0104(+)`+
-`Ceiling_Extra_0104(+)`
+	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
 
-as gross,
-
-`Income_Tax_9510(-)`
-+`Rent_of_Building_9560(-)`
-+`Professional_Tax_9570(-)`
-+`SIS_I_9581(-)`
-+`SIS_S_9582(-)`
-+`GPF_non_IV_9670(-)`
-+`GPF_IV_9531(-)`
-+`CPF_9690(-)`
-+`Pay_of_Officer_0101(-)`
-+`Pay_of_Establishment_0102(-)`
-+`Festival_A_5701(-)`
-+`Food_Grains_A_5801(-)`
-+`Car_A_9741(-)`
-+`HBA_9591(-)`
-
-as deduction,
-
-(select gross)- (select deduction) as net
-
-from salary
-
-where 		bill_group=\''.$bill_group.'\' 
-		and bill_number=\''.$bill_number.'\'
-		order by fullname
-';
-return $sql;
-
-}
-
-function prepare_array_1($link,$bill_group,$bill_number,$rpp)
-{
-	$sql=mk_sql($bill_group,$bill_number);
-	//echo $sql;
-	if(!$result=mysqli_query($link,$sql)){return FALSE;}
-	$tot=mysqli_num_rows($result);
-	//echo $tot;
-	$array_1=array();
-	while($result_array=mysqli_fetch_assoc($result))
-		{	
-			$array_1[]=$result_array;
-		}
-	return $array_1;
-}
-
-function prepare_array_2($array_1,$page_size)
-{
-		return array_chunk($array_1,$page_size, true);
-}
-
-
-function prepare_array_3($array_2)
-{
-	$query_fields=array_keys($array_2[0][0]);
-		foreach($array_2 as $page_number=>$page_array)
-		{
-			foreach($page_array as $salary_number=>$salary_array)
-			{
-				foreach($query_fields as $field=>$value)
-				{
-					$array_3[$page_number][$value]=array_sum(array_column($page_array,$value));
-				}
-			}
-		}
-		return $array_3;
-}
-
-//for carry forward
-function prepare_array_4($array_3)
-{
-	$pn=count($array_3);
-
-	for($i=0;$i<$pn;$i++)
-	{
-			$chunk=array_chunk($array_3,$i+1);
-			$query_fields=array_keys($chunk[0][0]);
-			foreach($query_fields as $field=>$value)
-			{
-				$array_4[$i][$value]=array_sum(array_column($chunk[0],$value));
-			}
-	}
-	return $array_4;
-}
-
-
-function print_outer($a)
-{
-		$aa=prepare_array_3($a);
-		$aaa=prepare_array_4($aa);
-		
-		foreach($a as $page_number=>$page_detail)
-		{	
-			if($page_number!=0)
-			{
-				print_minus_page($page_number,$page_detail,$aaa[$page_number],$aaa[$page_number-1],current($a[0])['remark']);
-			}
-			else
-			{
-				print_minus_page($page_number,$page_detail,$aaa[$page_number],array(),current($a[0])['remark']);
-			}
-		}
-		//apt-get install php-numbers-words
-
-}
-
-
-
-////////////////minus
-
-function print_minus_page($n,$a2,$a3,$prev_a3,$remark)
-{
-	echo '<h4 align="center" style="border: 2px solid #000000;">Bank Account and Net Pay (Page:'.($n+1).')</h4>';
+	echo '<h4 align="center" style="border: 2px solid #000000;">Bank Account and Net Pay (Page:'.$pg.')</h4>';
 	echo '<h4 align="center">'.$GLOBALS['college'].'</h3>';
 	echo '<h4 align="center">Under Head: 0210 Medical and Public Health</h4>';
-	echo '<h4 align="center">For the month of '.$remark.', Bill: '.$_POST['bill_group'].'-'.$_POST['bill_number'].'</h4>';
-	
-	echo '<table cellpadding="1" cellspacing="0" border="0.3" style="text-align:center;">';
+	echo '<h4 align="center">For the month of '.$bill_details['remark'].', Bill: '.$bg.'-'.$bn.'</h4>';
+		
+}
 
-		$ded_head='<tr>				
+function print_bank($link,$bg,$bn)
+{
+		$head='<tr>				
 					<th width="10%"><b>Sr</b></th>
 					<th width="30%" align="left"><b>Name of Emp</b></th>
 					<th width="25%"><b>Bank Name</b></th>
@@ -212,69 +100,69 @@ function print_minus_page($n,$a2,$a3,$prev_a3,$remark)
 				</tr><tr>
 					<th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
 				</tr>';
+					
+	$s=get_staff_of_a_bill_number_namewise($link,$bg,$bn);
+
+	$count=1;
+	bank_page_header($link,$bg,$bn,round(($count/$GLOBALS['rpp']),0)+1);
+	echo '<table cellpadding="1" cellspacing="0" border="0.3" style="text-align:center;">';
+	echo $head;
+	$sum_bank=0;
+	
+	foreach($s as $sr=>$staff_id)
+	{
+		$staff=get_staff($link,$staff_id);
+		$bank=get_nsfval($link,$bg,$staff_id,$GLOBALS['bank_id']);
+		$bank_acc=get_nsfval($link,$bg,$staff_id,$GLOBALS['bank_acc_id']);
+			
+		$pay_sums=find_sums($link,$staff_id,$bg);	//removes nongovt deduction from net
+
+			echo '<tr>
+					<td>'.$count.'</td>				
+					<td align="left" >'.$staff['fullname'].'</td>
+					<td>'.$bank['data'].'</td>
+					<td>'.$bank_acc['data'].'</td>
+					<td>'.$pay_sums[2].'</td>				
+				</tr>';
 				
-		echo $ded_head;				
+				$sum_bank=$sum_bank+$pay_sums[2];
 
-	if($prev_a3)
-	{
-		echo_a3_minus($n,$prev_a3,'B/F');	
-	}
-	foreach($a2 as $salary_number=>$salary_details)
-	{
-		echo_a1_minus($salary_number,$salary_details);
-	}
 	
-	if($n<($GLOBALS['total_pages']-1))
-	{
-		echo_a3_minus($n,$a3,'C/F');
+			if($count%$GLOBALS['rpp']==0 && ($count/$GLOBALS['rpp'])>0)
+			{
+			echo '<tr>
+					<td></td>				
+					<td align="left" ></td>
+					<td></td>			
+					<td>C/F</td>
+					<td>'.$sum_bank.'</td>
+				</tr>';
+				
+				echo '</table>';
+				echo '<h2 style="page-break-after: always;"></h2>';
+
+				bank_page_header($link,$bg,$bn,round(($count/$GLOBALS['rpp']),0)+1);				
+				echo '<table cellpadding="1" cellspacing="0" border="0.3" style="text-align:center;">';
+				echo $head;
+					echo '<tr>
+					<td></td>				
+					<td align="left" ></td>
+					<td></td>								
+					<td>B/F</td>
+					<td>'.$sum_bank.'</td>	
+				</tr>';
+			}
+			$count++;
 	}
-	else
-	{
-		echo_a3_minus($n,$a3,'');
-	}
-	echo '</table>';
-	
-	//apt-get install php-numbers-words
-	///error may be:  undefined this in --> usr/share/php/Numbers/Words.php on line 97
-	//Remove $this as follwos in like 97
-	//$truth_table  = ($classname == get_class()) ? 'T' : 'F';
-
-	//echo '<table><tr><td align="right">Total in Words: '.Numbers_Words::toWords($a3['Rent_of_Building_9560(-)'],"en_US").' Only</td></tr>
-	//</table>';
-	
-	if($n<($GLOBALS['total_pages']-1))
-	{
-		echo '<h2 style="page-break-after: always;"></h2>';
-	}
+				echo '<tr>
+				<td></td>				
+				<td align="left" ></td>
+				<td></td>				
+				<td>Total</td>
+				<td>'.$sum_bank.'</td>
+				</tr>';
+				echo '</table>';
 }
-
-function echo_a1_minus($n,$d)
-{
-		$ind=mysql_to_india_date($d['from_date']);
-		$ddd=substr($ind,-7);
-		
-			echo '<tr>';
-		echo '<td>'.($n+1).'</td>';
-		echo '<td align="left">'.$d['fullname'].'</td>';
-		echo '<td>'.$d['bank'].'</td>';
-		echo '<td>'.$d['bank_acc_number'].'</td>';
-		echo '<td align="right">'.$d['net'].'</td>';
-			echo '</tr>';
-}
-
-function echo_a3_minus($n,$d,$f)
-{
-
-			echo '<tr>';
-		echo '<td></td>';
-		echo '<td></td>';
-		echo '<td></td>';
-		echo '<td>Total '.$f.'</td>';
-		echo '<td align="right">'.$d['net'].'</td>';
-			echo '</tr>';
-
-}
-
 
 ?>
 

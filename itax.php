@@ -61,6 +61,8 @@ class ACCOUNT extends TCPDF {
 	
 	public function Footer() 
 	{
+				$this->SetY(-10);
+		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
 	}	
 }
 
@@ -104,9 +106,9 @@ function print_itax($link,$bg,$bn)
 {
 		$itax_head='<tr>				
 					<th width="5%"><b>Sr</b></th>
-					<th width="20%"><b>Name of Emp</b></th>
-					<th width="10%"><b>PAN</b></th>
-					<th width="15%"><b>Desig</b></th>
+					<th width="25%"><b>Name of Emp</b></th>
+					<th width="12%"><b>PAN</b></th>
+					<th width="8%"><b>Desig</b></th>
 					<th width="10%"><b>Gross Amt.</b></th>
 					<th width="10%"><b>ITax Ded.</b></th>
 					<th width="5%"><b>Surcharge</b></th>
@@ -117,11 +119,12 @@ function print_itax($link,$bg,$bn)
 					<th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
 				</tr>';
 				
-	$s=get_staff_of_a_bill_number($link,$bg,$bn);
+	$s=get_staff_of_a_bill_number_namewise($link,$bg,$bn);
 
 	$sum_itax=0;
 	$sum_cess=0;
 	$sum_it_no_cess=0;
+	$sum_pay=0;
 	$count=1;
 	itax_page_header($link,$bg,$bn,round(($count/$GLOBALS['rpp']),0)+1);
 	echo '<table cellpadding="1" cellspacing="0" border="0.3" style="text-align:center;">';
@@ -129,17 +132,27 @@ function print_itax($link,$bg,$bn)
 	foreach($s as $sr=>$staff_id)
 	{
 		$staff=get_staff($link,$staff_id);
+		
+		//$post=get_nsfval($link,$bg,$staff_id,$GLOBALS['post_id']);
+		$post_full=get_nsfval($link,$bg,$staff_id,$GLOBALS['post_id']);
+		$post['data']=get_short_post($link,$post_full['data']);
+		
 		$pan=get_nsfval($link,$bg,$staff_id,$GLOBALS['pan_id']);
-		$post=get_nsfval($link,$bg,$staff_id,$GLOBALS['post_id']);
+		
 		
 		$basic=get_sfval($link,$bg,$staff_id,$GLOBALS['basic_id']);
 		$gp=get_sfval($link,$bg,$staff_id,$GLOBALS['gp_id']);
 		$basic_e=get_sfval($link,$bg,$staff_id,$GLOBALS['basic_e_id']);
 		$gp_e=get_sfval($link,$bg,$staff_id,$GLOBALS['gp_e_id']);
 		$npa=get_sfval($link,$bg,$staff_id,$GLOBALS['npa_id']);
-		$pay=$basic['amount']+$gp['amount']+$npa['amount']+
-				$basic_e['amount']+$gp_e['amount'];
-
+		
+		//
+		//$pay=$basic['amount']+$gp['amount']+$npa['amount']+
+		//		$basic_e['amount']+$gp_e['amount'];
+		//For Itax full salary neds to be displayed
+		$all_sums=find_sums_govt($link,$staff_id,$bg);
+		$pay=$all_sums[0];
+		
 		$itax=get_sfval($link,$bg,$staff_id,$GLOBALS['itax_id']);
 		$cess=$itax['amount']*0.03;
 		$it_no_cess=$itax['amount']-$cess;
@@ -162,11 +175,11 @@ function print_itax($link,$bg,$bn)
 				$sum_itax=$sum_itax+$itax['amount'];
 				$sum_cess=$sum_cess+$cess;
 				$sum_it_no_cess=$sum_it_no_cess+$it_no_cess;
-	
+				$sum_pay=$sum_pay+$pay;
 			if($count%$GLOBALS['rpp']==0 && ($count/$GLOBALS['rpp'])>0)
 			{
-				echo '<tr>	<td></td> <td></td> <td></td> <td></td>
-				<td>C/F</td>
+				echo '<tr>	<td></td> <td></td> <td></td> <td>C/F</td>
+				<td>'.$sum_pay.'</td>
 				<td>'.$sum_it_no_cess.'</td>
 				<td></td>
 				<td>'.$sum_cess.'</td>
@@ -178,8 +191,8 @@ function print_itax($link,$bg,$bn)
 				itax_page_header($link,$bg,$bn,round(($count/$GLOBALS['rpp']),0)+1);				
 				echo '<table cellpadding="1" cellspacing="0" border="0.3" style="text-align:center;">';
 				echo $itax_head;
-				echo '<tr>	<td></td> <td></td> <td></td> <td></td>
-				<td>B/F</td>
+				echo '<tr>	<td></td> <td></td> <td></td> <td>B/F</td>
+				<td>'.$sum_pay.'</td>
 				<td>'.$sum_it_no_cess.'</td>
 				<td></td>
 				<td>'.$sum_cess.'</td>
@@ -189,12 +202,16 @@ function print_itax($link,$bg,$bn)
 		}
 		
 	}
-				echo '<tr>	<td></td> <td></td> <td></td> <td></td>
-				<td>Total</td>
+				echo '<tr>	<td></td> <td></td> <td></td> <td>Total</td>
+				<td>'.$sum_pay.'</td>
 				<td>'.$sum_it_no_cess.'</td>
 				<td></td>
 				<td>'.$sum_cess.'</td>
 				<td>'.$sum_itax.'</td></tr>';
+
+				$xxx=new Numbers_Words();
+				echo '<tr><td align="right" colspan="10">Total in Words: '.
+				$xxx->toWords($sum_itax,"en_US").' Only</td></tr>';				
 				echo '</table>';
 }
 

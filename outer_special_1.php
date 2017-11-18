@@ -181,7 +181,10 @@ function outer_back($pdf,$link,$net,$bg)
 	 */
 	 
 	//$img_file = 'outer_back.jpg';
-	$img_file = 'outer_back_new.jpg';
+	//$img_file = 'outer_back_new.jpg';
+	//$img_file = 'special_cut.jpg';
+	$img_file = 'special_cut_new.jpg';
+	//$img_file = 'special_cut_ltc.jpg';
 	$pdf->Image($img_file, 30, 20, 0, 0, '', '', '', false, 300, '', false, false, 0);
 
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
@@ -190,18 +193,18 @@ function outer_back($pdf,$link,$net,$bg)
 	my_number_to_words($GLOBALS['net_for_back'],'yes');
 	$mynet='Received Contents Rs. '.$GLOBALS['net_for_back']. '(in Words) '.$GLOBALS['n2s'].' only';
 	
-	write_text_fill_left($pdf,$mynet,117,52,120,10);
+	write_text_fill_left($pdf,$mynet,70,42,100,10);
 	
 	//write_text_fill_left($pdf,'',78,200,28,10);
 	//write_text_fill_left($pdf,'',98,185,24,10);
 
-	$date_str=date('m-y',strtotime($bill_details['from_date']));
-	write_text_fill_left($pdf,$date_str,288,130,14,5);
-	write_text_fill_left($pdf,$date_str,288,142,14,5);
+	//$date_str=date('m-y',strtotime($bill_details['from_date']));
+	//write_text_fill_left($pdf,$date_str,288,130,14,5);
+	//write_text_fill_left($pdf,$date_str,288,142,14,5);
 	
-	$newdate=strtotime('-1 month',strtotime($bill_details['from_date']));
-	$newdate_str=date('m-y',$newdate);
-	write_text_fill_left($pdf,$newdate_str,315,103,14,5);
+	//$newdate=strtotime('-1 month',strtotime($bill_details['from_date']));
+	//$newdate_str=date('m-y',$newdate);
+	//write_text_fill_left($pdf,$newdate_str,315,103,14,5);
 }
 
 
@@ -604,8 +607,10 @@ function print_table($pdf,$link,$bg,$bn)
 			$count++;
 	}
 
-if($count>$GLOBALS['rpp'])
-{
+
+	if($count>$GLOBALS['rpp'])
+	{
+	
 	//plus summary
 	$sm_str='';
 	$sm_str=$sm_str.plus_page_header($link,$bg,$bn,'Summary');
@@ -720,8 +725,9 @@ if($count>$GLOBALS['rpp'])
 	$smm_str=$smm_str.'<h2 style="page-break-after: always;"></h2>';
 		
 	$pdf->writeHTML($smm_str, true, false, true, false, '');
-}
-
+	
+	}
+	
 	///////////manage front page///////////////
 	$pdf->setPage(1);		//go back to page 1
 	

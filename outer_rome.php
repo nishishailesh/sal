@@ -137,7 +137,8 @@ $pdf->MultiCell($w, $h, $text , $border=0, $align='R',
 function outer_front($pdf)
 {
 	//$img_file = 'outer_front.jpg';
-	$img_file = 'outer_front_new.jpg';
+	//$img_file = 'outer_front_new.jpg';
+	$img_file = 'outer_front_new_ROME.jpg';
 	$pdf->Image($img_file, 30, 20, 0, 0, '', '', '', false, 300, '', false, false, 0);
 
 

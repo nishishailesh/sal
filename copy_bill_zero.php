@@ -58,8 +58,7 @@ function read_bill_group_to_copy($link)
 }
 
 /////////////Main script start from here//////////////
-$GLOBALS['hba_p_id']=33;
-$GLOBALS['hba_i_id']=40;
+
 $link=connect();
 
 menu();
@@ -74,11 +73,8 @@ elseif($_POST['action']=='copy_bill_1')
 {
 	if(add_bill_group($link,$_POST))
 	{
-		copy_bill_salary($link,$_POST['from_bill_group'],$_POST['bill_group']);
+		//copy_bill_salary($link,$_POST['from_bill_group'],$_POST['bill_group']);
 		copy_bill_nonsalary($link,$_POST['from_bill_group'],$_POST['bill_group']);
-		copy_bill_salary_with_remark($link,$_POST['from_bill_group'],$_POST['bill_group'],$GLOBALS['hba_p_id']);
-		copy_bill_salary_with_remark($link,$_POST['from_bill_group'],$_POST['bill_group'],$GLOBALS['hba_i_id']);
-
 	}
 }
 	

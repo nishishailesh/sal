@@ -253,7 +253,7 @@ function update_field_by_id($link,$table,$id_field,$id_value,$field,$value)
 	//echo $sql;
 	
 	
-	if(!$result=mysqli_query($link,$sql)){mysql_error();return FALSE;}
+	if(!$result=mysqli_query($link,$sql)){mysqli_error($link);return FALSE;}
 	else
 	{
 		return mysqli_affected_rows($link);
@@ -266,7 +266,7 @@ function delete_raw_by_id($link,$table,$id_field,$id_value)
 	//echo $sql;
 	
 	
-	if(!$result=mysqli_query($link,$sql)){mysql_error();return FALSE;}
+	if(!$result=mysqli_query($link,$sql)){mysqli_error($link);return FALSE;}
 	else
 	{
 		return mysqli_affected_rows($link);
@@ -283,7 +283,7 @@ function delete_raw_by_id_dpc($link,$table,$id_field,$id_value,$id_fieldd,$id_va
 	//echo $sql;
 	
 	
-	if(!$result=mysqli_query($link,$sql)){mysql_error();return FALSE;}
+	if(!$result=mysqli_query($link,$sql)){mysqli_error($link);return FALSE;}
 	else
 	{
 		return mysqli_affected_rows($link);
@@ -955,7 +955,7 @@ function list_all_salary($link,$staff_id)
 			display_staff($link,$_POST['staff_id']);
 			echo '</td></tr></table>';
 			
-	$sql='select distinct bill_group from salary where staff_id=\''.$staff_id.'\'';
+	$sql='select distinct bill_group from salary where staff_id=\''.$staff_id.'\' order by bill_group desc';
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link); return FALSE;}	
 	$header='yes';
 	echo '<table align=center class=border style="background-color:#ADD8E6">';
@@ -1009,10 +1009,17 @@ function list_bill($link,$bill_group)
 	echo '<table align=center><tr><td><h2>All Salary Slips of</h2></td><td>';
 		display_bill($link,$_POST['bill_group']);
 	echo '</td></tr></table>';
-	$sql='select distinct salary.staff_id,fullname from salary,staff where 
+	/*$sql='select distinct salary.staff_id,fullname from salary,staff where 
 					bill_group=\''.$bill_group.'\' 
 					and 
 					salary.staff_id=staff.staff_id';
+	*/
+	$sql='select distinct nonsalary.staff_id,fullname from nonsalary,staff where 
+					bill_group=\''.$bill_group.'\' 
+					and 
+					nonsalary.staff_id=staff.staff_id
+					order by fullname';
+										
 	if(!$result=mysqli_query($link,$sql)){return FALSE;}
 	echo '<table align=center class=border style="background-color:#ADD8E6">';
 	while($ar=mysqli_fetch_assoc($result))
@@ -1377,16 +1384,49 @@ function display_bill($link,$bill_group,$header='yes')
 	}
 	while($ar=mysqli_fetch_assoc($result))
 	{
+		echo '<td>'.$ar['bill_group'].'</td>
+		<td>'.$ar['date_of_preparation'].'</td>
+		<td>'.$ar['from_date'].'</td>
+		<td>'.$ar['to_date'].'</td>
+		<td>'.$ar['head'].'</td>
+		<td>'.$ar['bill_type'].'</td>
+		<td>'.$ar['remark'].'</td>
+		<td>
+			<form target=_blank style="margin-bottom:0;" method=post action=change_bill_detail.php>
+				<input type=submit name=action value=edit>
+				<input type=hidden name=bill_group value=\''.$ar['bill_group'].'\'>
+			</form></td>';
+	}
+	echo '</tr></table>';
+}
+
+
+
+function display_edit_bill_($link,$bill_group,$header='yes')
+{
+	$sql='select * from bill_group where bill_group=\''.$bill_group.'\'';
+
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	echo '<table align=center class=border style="background-color:#ADD8E6">';
+	if($header=='yes')
+	{
+		echo '<tr><th>Bill Group</th><th>Prepared on</th> <th>From</th> <th>To</th> <th>Head</th> 
+		<th>Type</th><th>Remark</th></tr>
+		<tr>';
+	}
+	while($ar=mysqli_fetch_assoc($result))
+	{
 		echo '<td>'.$ar['bill_group'].'</td>'.
 		'<td>'.$ar['date_of_preparation'].'</td>'.
 		'<td>'.$ar['from_date'].'</td>'.
 		'<td>'.$ar['to_date'].'</td>'.
-		'<td>'.$ar['head'].'</td>';
+		'<td>'.$ar['head'].'</td>'.
 		'<td>'.$ar['bill_type'].'</td>'.
 		'<td>'.$ar['remark'].'</td>';
 	}
 	echo '</tr></table>';
 }
+
 
 function display_staff($link,$staff_id)
 {
@@ -1587,16 +1627,15 @@ function edit_nonsalary($link,$staff_id,$bill_group,$format_table='')
 							$staff_id,
 							$bill_group,
 							$dt['data'],'',
-							120))
+							220))
 		{
-			$ptbl=$ptbl.$t.'<td title=\''.$title.'\' >'.$ar['name'].'</td>
-										<td>'.$select_str.'</td>'.$tt;
+			$ptbl=$ptbl.$t.'<td colspan=2 title=\''.$title.'\' >'.$ar['name'].''.$select_str.'</td>'.$tt;
 		}
 		else
 		{
 		$ptbl=$ptbl.$t.'<td title=\''.$title.'\' >'.$ar['name'].'</td>
 										<td>
-										<input size=10 
+										<input size=13
 													onchange="do_work(\''.$staff_id.'\',
 																	\''.$bill_group.'\',
 																	this)"
@@ -1727,11 +1766,32 @@ function copy_bill_salary($link,$b,$tb)
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	while($ar=mysqli_fetch_assoc($result))
 	{
-		$sqls='insert into salary (staff_id,bill_group,salary_type_id,amount) 
+		if($ar['amount']>0)
+		{
+			$sqls='insert into salary (staff_id,bill_group,salary_type_id,amount) 
 						values(\''.$ar['staff_id'].'\',\''.$tb.'\',\''.$ar['salary_type_id'].'\',\''.$ar['amount'].'\') 
 						ON DUPLICATE KEY UPDATE    
 						amount=\''.$ar['amount'].'\'';						
-		if(!$rs=mysqli_query($link,$sqls)){echo mysqli_error($link);return FALSE;}
+			if(!$rs=mysqli_query($link,$sqls)){echo mysqli_error($link);return FALSE;}
+		}
+	}
+}
+
+function copy_bill_salary_with_remark($link,$b,$tb,$salary_type_id)
+{
+	$sql='select * from salary where bill_group=\''.$b.'\' and salary_type_id=\''.$salary_type_id.'\'';
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	while($ar=mysqli_fetch_assoc($result))
+	{
+		if($ar['amount']>0)
+		{		
+			$sqls='insert into salary (staff_id,bill_group,salary_type_id,amount,remark) 
+						values(\''.$ar['staff_id'].'\',\''.$tb.'\',\''.$ar['salary_type_id'].'\',\''.$ar['amount'].'\',\''.$ar['remark'].'\') 
+						ON DUPLICATE KEY UPDATE    
+						amount=\''.$ar['amount'].'\',
+						remark=\''.$ar['remark'].'\'';						
+			if(!$rs=mysqli_query($link,$sqls)){echo mysqli_error($link);return FALSE;}
+		}
 	}
 }
 
@@ -1789,12 +1849,16 @@ function get_nsfval($link,$bg,$staff_id,$nonsalary_type_id)
 	return $data;	
 }
 
+
+//Two functions below are same
 function get_staff_of_a_bill_number($link,$bg,$bn)
 {
-	$sql='select * from nonsalary where 
+	$sql='select * from staff,nonsalary where 
 				bill_group=\''.$bg.'\' and 
 				nonsalary_type_id=1 and
-				data=\''.$bn.'\'';
+				data=\''.$bn.'\' and
+				staff.staff_id=nonsalary.staff_id
+				order by fullname';
 	//echo $sql;		
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	while($ar=mysqli_fetch_assoc($result))
@@ -1804,6 +1868,25 @@ function get_staff_of_a_bill_number($link,$bg,$bn)
 	return $ret;
 }
 
+
+function get_staff_of_a_bill_number_namewise($link,$bg,$bn)
+{
+	$sql='select * from staff,nonsalary where 
+				bill_group=\''.$bg.'\' and 
+				nonsalary_type_id=1 and
+				data=\''.$bn.'\' and
+				staff.staff_id=nonsalary.staff_id
+				order by fullname';
+	//echo $sql;		
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	while($ar=mysqli_fetch_assoc($result))
+	{
+		$ret[]=$ar['staff_id'];
+	}	
+	return $ret;
+}
+
+
 function get_staff($link,$staff_id)
 {
 	$sql='select * from staff where 
@@ -1811,6 +1894,245 @@ function get_staff($link,$staff_id)
 	//echo $sql;		
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	return mysqli_fetch_assoc($result);
+}
+
+function get_short_post($link,$post)
+{
+	$sql='select * from post where 
+				post=\''.$post.'\'';
+				
+	//echo $sql;		
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	$ar=mysqli_fetch_assoc($result);	
+	return $ar['shortform'];
+}
+
+function get_hba_total($link,$staff_id,$type,$acc,$bg)
+{
+	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
+
+	$sql='';
+		if($type=='interest')
+	{
+		$sti=$GLOBALS['hba_i_id'];
+	}
+	elseif($type=='principle')
+	{
+		$sti=$GLOBALS['hba_p_id'];
+	}
+	$sql='select sum(amount)  tot_amount, count(amount) tot_inst from salary,bill_group 
+		where 
+				staff_id=\''.$staff_id.'\'  and 
+				salary_type_id=\''.$sti.'\'	and
+				salary.remark=\''.$acc.'\' and
+				bill_group.bill_group=salary.bill_group and
+				bill_group.from_date<=\''.$bill_details['from_date'].'\'';
+			
+	//echo htmlspecialchars($sql);		
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link); return FALSE;}
+	return mysqli_fetch_assoc($result);
+	
+}
+
+function get_hba_total_all_bill($link,$staff_id,$type,$acc)
+{
+	//$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
+
+	$sql='';
+		if($type=='interest')
+	{
+		$sti=$GLOBALS['hba_i_id'];
+	}
+	elseif($type=='principle')
+	{
+		$sti=$GLOBALS['hba_p_id'];
+	}
+	$sql='select sum(amount)  tot_amount, count(amount) tot_inst from salary
+		where 
+				staff_id=\''.$staff_id.'\'  and 
+				salary_type_id=\''.$sti.'\'	and
+				salary.remark=\''.$acc.'\' ';
+			
+	//echo htmlspecialchars($sql);		
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link); return FALSE;}
+	return mysqli_fetch_assoc($result);
+	
+}
+
+$GLOBALS['n2s']='';
+function my_number_to_words($number,$reset='no')
+{
+	$w=array(
+0=>'zero',
+1=>'one',
+2=>'two',
+3=>'three',
+4=>'four',
+5=>'five',
+6=>'six',
+7=>'seven',
+8=>'eight',
+9=>'nine',
+10=>'ten',
+11=>'eleven',
+12=>'twelve',
+13=>'thirteen',
+14=>'fourteen',
+15=>'fifteen',
+16=>'sixteen',
+17=>'seventeen',
+18=>'eighteen',
+19=>'nineteen',
+20=>'twenty',
+21=>'twenty-one',
+22=>'twenty-two',
+23=>'twenty-three',
+24=>'twenty-four',
+25=>'twenty-five',
+26=>'twenty-six',
+27=>'twenty-seven',
+28=>'twenty-eight',
+29=>'twenty-nine',
+30=>'thirty',
+31=>'thirty-one',
+32=>'thirty-two',
+33=>'thirty-three',
+34=>'thirty-four',
+35=>'thirty-five',
+36=>'thirty-six',
+37=>'thirty-seven',
+38=>'thirty-eight',
+39=>'thirty-nine',
+40=>'forty',
+41=>'forty-one',
+42=>'forty-two',
+43=>'forty-three',
+44=>'forty-four',
+45=>'forty-five',
+46=>'forty-six',
+47=>'forty-seven',
+48=>'forty-eight',
+49=>'forty-nine',
+50=>'fifty',
+51=>'fifty-one',
+52=>'fifty-two',
+53=>'fifty-three',
+54=>'fifty-four',
+55=>'fifty-five',
+56=>'fifty-six',
+57=>'fifty-seven',
+58=>'fifty-eight',
+59=>'fifty-nine',
+60=>'sixty',
+61=>'sixty-one',
+62=>'sixty-two',
+63=>'sixty-three',
+64=>'sixty-four',
+65=>'sixty-five',
+66=>'sixty-six',
+67=>'sixty-seven',
+68=>'sixty-eight',
+69=>'sixty-nine',
+70=>'seventy',
+71=>'seventy-one',
+72=>'seventy-two',
+73=>'seventy-three',
+74=>'seventy-four',
+75=>'seventy-five',
+76=>'seventy-six',
+77=>'seventy-seven',
+78=>'seventy-eight',
+79=>'seventy-nine',
+80=>'eighty',
+81=>'eighty-one',
+82=>'eighty-two',
+83=>'eighty-three',
+84=>'eighty-four',
+85=>'eighty-five',
+86=>'eighty-six',
+87=>'eighty-seven',
+88=>'eighty-eight',
+89=>'eighty-nine',
+90=>'ninety',
+91=>'ninety-one',
+92=>'ninety-two',
+93=>'ninety-three',
+94=>'ninety-four',
+95=>'ninety-five',
+96=>'ninety-six',
+97=>'ninety-seven',
+98=>'ninety-eight',
+99=>'ninety-nine');
+
+
+	//12345678	10000000	1.2345678	1	one	crore
+	//2345678	100000		23.45678	23	twenty three	lac
+	//45678		1000		45.678		45	fortyfive	thousand
+	//678		100			6.78		6	six	hundred
+	//78									seventy eight	
+	if($reset=='yes')
+	{
+		$GLOBALS['n2s']='';
+	}
+	
+	//////Crore
+	$crore=$number/10000000;
+	//$mod_crore=$number%10000000;	//donot work beyond 2147483647
+	$mod_crore=fmod($number,10000000);
+	if($crore<1){}
+	elseif($crore>99)
+	{
+		my_number_to_words($crore);
+		$GLOBALS['n2s']=$GLOBALS['n2s'].' crore ';
+	}
+	else
+	{
+		$GLOBALS['n2s']=$GLOBALS['n2s'].$w[$crore].' crore ';
+	}
+	
+	/////Lac
+	$lac=$mod_crore/100000;
+	$mod_lac=$mod_crore%100000;
+	if($lac<1){}
+	else
+	{
+		$GLOBALS['n2s']=$GLOBALS['n2s'].$w[$lac].' lac ';
+	}
+	//thousand
+	$thousand=$mod_lac/1000;
+	$mod_thousand=$mod_lac%1000;
+	if($thousand<1){}
+	else
+	{
+		$GLOBALS['n2s']=$GLOBALS['n2s'].$w[$thousand].' thousand ';
+	}
+	//Hundred
+	$hundred=$mod_thousand/100;
+	$mod_hundred=$mod_thousand%100;
+	if($hundred<1){}
+	else
+	{
+		$GLOBALS['n2s']=$GLOBALS['n2s'].$w[$hundred].' hundred ';
+	}	
+	//1-99
+	if($mod_hundred<1){}
+	else
+	{
+		$GLOBALS['n2s']=$GLOBALS['n2s'].$w[$mod_hundred];
+	}		
+}
+
+
+function email($email,$subject,$message)
+{
+        $headers = 'MIME-Version: 1.0' . "\ r\n";
+        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\ r\n";
+        $headers .= 'From: email@gmcsurat.edu.in'."\r\n".
+                            'Reply-To: email@gmcsurat.edu.in'."\r\n" .
+                            'X-Mailer: PHP/' . phpversion();
+        $result = mail($email, $subject, $message, $headers); 
+     if ($result) echo 'Mail accepted for delivery HTML';
+     if (!$result) echo 'Test unsuccessful... ';
 }
 
 ?>

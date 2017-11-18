@@ -180,8 +180,7 @@ function outer_back($pdf,$link,$net,$bg)
 	 * @since 1.1
 	 */
 	 
-	//$img_file = 'outer_back.jpg';
-	$img_file = 'outer_back_new.jpg';
+	$img_file = 'outer_back.jpg';
 	$pdf->Image($img_file, 30, 20, 0, 0, '', '', '', false, 300, '', false, false, 0);
 
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
@@ -190,18 +189,18 @@ function outer_back($pdf,$link,$net,$bg)
 	my_number_to_words($GLOBALS['net_for_back'],'yes');
 	$mynet='Received Contents Rs. '.$GLOBALS['net_for_back']. '(in Words) '.$GLOBALS['n2s'].' only';
 	
-	write_text_fill_left($pdf,$mynet,117,52,120,10);
+	write_text_fill_left($pdf,$mynet,45,40,140,10);
 	
 	//write_text_fill_left($pdf,'',78,200,28,10);
 	//write_text_fill_left($pdf,'',98,185,24,10);
 
 	$date_str=date('m-y',strtotime($bill_details['from_date']));
-	write_text_fill_left($pdf,$date_str,288,130,14,5);
-	write_text_fill_left($pdf,$date_str,288,142,14,5);
+	write_text_fill_left($pdf,$date_str,208,125,14,5);
+	write_text_fill_left($pdf,$date_str,208,137,14,5);
 	
 	$newdate=strtotime('-1 month',strtotime($bill_details['from_date']));
 	$newdate_str=date('m-y',$newdate);
-	write_text_fill_left($pdf,$newdate_str,315,103,14,5);
+	write_text_fill_left($pdf,$newdate_str,208,100,14,5);
 }
 
 
@@ -604,8 +603,6 @@ function print_table($pdf,$link,$bg,$bn)
 			$count++;
 	}
 
-if($count>$GLOBALS['rpp'])
-{
 	//plus summary
 	$sm_str='';
 	$sm_str=$sm_str.plus_page_header($link,$bg,$bn,'Summary');
@@ -720,7 +717,6 @@ if($count>$GLOBALS['rpp'])
 	$smm_str=$smm_str.'<h2 style="page-break-after: always;"></h2>';
 		
 	$pdf->writeHTML($smm_str, true, false, true, false, '');
-}
 
 	///////////manage front page///////////////
 	$pdf->setPage(1);		//go back to page 1
@@ -738,18 +734,18 @@ if($count>$GLOBALS['rpp'])
 	else{$poe=$poe+$other_in_basic;}			
 		
 	//display pay of officer
-	write_text($pdf,$poo,157,120,20,5);
+	write_text($pdf,$poo,164,118,20,5);
 	//display pay of establishment
-	write_text($pdf,$poe,157,123,20,5);
+	write_text($pdf,$poe,164,121.5,20,5);
 
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'ls')),157,126,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'ls')),164,125,20,5);
 
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'da')),157,130,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'hra')),157,134,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'cla')),157,139,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'da')),164,129,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'hra')),164,134,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'cla')),164,139,20,5);
 	//Interim releaf not implimented in inner and outer
 	//write_text($pdf,$array_4['Interim_Relief_0112(+)'],164,145,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'ta')),157,149,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'ta')),164,150,20,5);
 	
 	//Other allowances, original
 	//$EDP0104_P=	array_sum(array_column($GLOBALS['sm'],'sppa'))
@@ -762,33 +758,33 @@ if($count>$GLOBALS['rpp'])
 	$EDP0104_P=	array_sum(array_column($GLOBALS['sm'],'ceil'))
 				+array_sum(array_column($GLOBALS['sm'],'ba'));	
 									
-	write_text($pdf,$EDP0104_P,157,153,20,5);
+	write_text($pdf,$EDP0104_P,164,154,20,5);
 	
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'ma')),157,157,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'wa')),157,162,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'ua')),157,167,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'na')),157,171,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'ma')),164,158,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'wa')),164,163,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'ua')),164,168,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'na')),164,173,20,5);
 
 	//write_text_fill_left($pdf,'0128 NPPA         0128(+)',112,184.5,55,4);
 	//edited at jpg
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'npa')),157,178,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'gross')),157,193,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'npa')),164,178,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'gross')),164,196,20,5);
 
-	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'fes')),157,198,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'fes')),164,201,20,5);
 	$food_car=array_sum(array_column($GLOBALS['smm'],'food'))+array_sum(array_column($GLOBALS['smm'],'car'));
-	write_text($pdf,$food_car,157,201,20,5);
+	write_text($pdf,$food_car,164,205,20,5);
 	
 	$EDP0101_M=array_sum(array_column($GLOBALS['smm'],'recv_off'))+
 				array_sum(array_column($GLOBALS['smm'],'recv_est'));
 										
-	write_text($pdf,$EDP0101_M,157,205,20,5);
+	write_text($pdf,$EDP0101_M,164,209,20,5);
 
 	$gross_minus_recovery=array_sum(array_column($GLOBALS['sm'],'gross'))
 							-array_sum(array_column($GLOBALS['smm'],'fes'))
 							-$food_car
 							-$EDP0101_M;
 							
-	write_text($pdf,$gross_minus_recovery,157,215,20,5);
+	write_text($pdf,$gross_minus_recovery,164,219,20,5);
 	
 	//SMP ???
 	//$tot_net_without_nongovt=array_sum(array_column($GLOBALS['smm'],'tot_net'))+
@@ -797,26 +793,26 @@ if($count>$GLOBALS['rpp'])
 	//write_text($pdf,$tot_net_without_nongovt,164,249,20,5);
 
 	//total deduction calculation start here
-	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'itax')),236,42,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'itax')),239,47,20,5);
 	
 	$all_gpf4=array_sum(array_column($GLOBALS['smm'],'gpf4'))+
 						array_sum(array_column($GLOBALS['smm'],'gpf4_adv_recv'));
-	write_text($pdf,$all_gpf4,236,61,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'cpf')),236,67,20,5);
+	write_text($pdf,$all_gpf4,239,59,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'cpf')),239,65,20,5);
 
 	////write_text_fill_left($pdf,'GPF non Cl-IV   9670(-)',188,76,55,4);
 	$all_gpf=array_sum(array_column($GLOBALS['smm'],'gpf'))+
 						array_sum(array_column($GLOBALS['smm'],'gpf_adv_recv'));	
-	write_text($pdf,$all_gpf,304,53,20,5);
+	write_text($pdf,$all_gpf,307,53,20,5);
 	
-	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'rob')),236,92,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'pt')),236,97,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'sis_if')),236,108,20,5);
-	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'sis_sf')),236,118,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'rob')),239,89,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'pt')),239,95,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'sis_if')),239,108,20,5);
+	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'sis_sf')),239,118,20,5);
 	
 	$total_hba=	array_sum(array_column($GLOBALS['smm'],'hba_p'))+
 				array_sum(array_column($GLOBALS['smm'],'hba_i'));	
-	write_text($pdf,$total_hba,236,178,20,5);
+	write_text($pdf,$total_hba,239,178,20,5);
 
 	$total_a_deduction=array_sum(array_column($GLOBALS['smm'],'itax'))+
 							$all_gpf4+
@@ -828,13 +824,13 @@ if($count>$GLOBALS['rpp'])
 							$total_hba;
 							
 	$total_deduction=$total_a_deduction+$all_gpf;
-	write_text($pdf,$total_a_deduction,236,198,20,5);
-	write_text($pdf,$total_deduction,306,137,20,5);
+	write_text($pdf,$total_a_deduction,239,201,20,5);
+	write_text($pdf,$total_deduction,307,137,20,5);
 	
 	$net_total=$gross_minus_recovery-$total_deduction;
 			
 	$GLOBALS['net_for_back']=$net_total;		//for outer back
-	write_text($pdf,$net_total,158,248,20,5);		//left
+	write_text($pdf,$net_total,164,249,20,5);		//left
 
 	write_text($pdf,$net_total,307,141.5,20,5);					//right
 	
@@ -850,12 +846,12 @@ if($count>$GLOBALS['rpp'])
 	}
 	elseif(round(($_POST['bill_group']/1000000),0)==34)
 	{
-		write_text_big_fill($pdf,'Non - Gazetted',150,35,30,12);
+		write_text_big_fill($pdf,'Non - Gazetted',156,39,30,12);
 	}
 		
-	write_text($pdf,$_POST['bill_group'].'-'.$_POST['bill_number'],148,56,25,12);
+	write_text($pdf,$_POST['bill_group'].'-'.$_POST['bill_number'],162,51,25,12);
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
-	write_text_big_fill($pdf,$bill_details['remark'],70,73,35,10);
+	write_text_big_fill($pdf,$bill_details['remark'],79,67,35,10);
 	
 
 }

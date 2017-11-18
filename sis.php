@@ -62,6 +62,9 @@ class ACCOUNT extends TCPDF {
 	
 	public function Footer() 
 	{
+				$this->SetY(-10);
+		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+
 	}	
 }
 
@@ -180,8 +183,9 @@ function print_table($link,$bg,$bn)
 					<td>'.$sum_sis_sf.'</td>
 					<td>'.($sum_sis_if+$sum_sis_sf).'</td>
 				</tr>';
+		$xxx=new Numbers_Words();				
 		echo '<tr><td align="right" colspan="9">Total in Words: '.
-				Numbers_Words::toWords(($sum_sis_if+$sum_sis_sf),"en_US").' Only</td></tr>';
+				$xxx->toWords(($sum_sis_if+$sum_sis_sf),"en_US").' Only</td></tr>';
 				
 	echo '</table>';
 }

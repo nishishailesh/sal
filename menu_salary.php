@@ -63,9 +63,18 @@ echo '
 				<button formaction=edit_bill.php type=submit onclick="hidemenu()" name=action value=edit_bill>Edit</button>
 			</td></tr>
 			<tr><td>
+				<button formaction=edit_bill_calculate.php type=submit onclick="hidemenu()" name=action value=edit_bill>Edit(Calculate)</button>
+			</td></tr>			
+			<tr><td>
 				<button formaction=print_bill.php type=submit onclick="hidemenu()" 
 				name=action value=print_bill>Print</button>
 			</td></tr>
+			<tr><td>
+				<button formaction=copy_bill_zero.php type=submit onclick="hidemenu()" name=action value=copy_bill>Copy(0)</button>
+			</td></tr>
+			<tr><td>
+				<button formaction=salary_slip.php formtarget=_blank type=submit onclick="hidemenu()" name=action value=print_salary>Salary Slip</button>
+			</td></tr>			
 		</table>
 </td><td>
 		<button type=button onclick="showhidemenu(\'button6\')">Salary</button>
@@ -76,7 +85,27 @@ echo '
 			<tr><td>
 				<button formaction=get_id_for_edit_salary.php type=submit onclick="hidemenu()" name=edit>Edit</button>
 			</td></tr>
+			<tr><td>
+				<button formaction=get_id_for_annual_salary.php type=submit onclick="hidemenu()" name=annual>Annual salary</button>
+			</td></tr>
 		</table>
+</td><td>
+                <button type=button onclick="showhidemenu(\'button8\')">Staff</button>
+                <table  id="button8" class="menu" style="position:absolute; display:none;">
+                        <tr><td>
+                                <button formaction=staff_management.php type=submit onclick="hidemenu()" name=action value=staff_management>Add/Edit/Remove</button>
+                        </td></tr>
+                        <tr><td>
+                                <button formaction=staff_position_management.php type=submit onclick="hidemenu()" name=action value=staff_management>Senctioned Post</button>
+                        </td></tr>
+                </table>
+</td><td>
+                <button type=button onclick="showhidemenu(\'button7\')">Advance</button>
+                <table  id="button7" class="menu" style="position:absolute; display:none;">
+                        <tr><td>
+                                <button formaction=edit_hba.php type=submit onclick="hidemenu()" name=action value=edit_hba>HBA</button>
+                        </td></tr>
+                </table>
 
 </td><td>
 		<button  type=button onclick="showhidemenu(\'button3\')">Manage My Account('.$_SESSION['login'].')</button>

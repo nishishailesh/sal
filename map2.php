@@ -1,6 +1,6 @@
 <?php
 //uncomment to disable execution
-//exit(0);
+exit(0);
 session_start();
 $nojunk='defined';
 require_once 'common.php';

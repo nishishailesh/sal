@@ -3,8 +3,8 @@ exit(0);
 session_start();
 $nojunk='defined';
 require_once 'common.php';
-require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+#require_once('tcpdf/tcpdf.php');
+#require_once('Numbers/Words.php');
 $link=connect();
 
 

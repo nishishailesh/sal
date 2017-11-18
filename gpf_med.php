@@ -58,6 +58,9 @@ class ACCOUNT extends TCPDF {
 	
 	public function Footer() 
 	{
+		$this->SetY(-10);
+		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+
 	}	
 }
 
@@ -89,8 +92,8 @@ function print_gpf($link,$bg,$bn)
 	$gpf_head='<tr>				
 					<th width="5%"><b>Sr</b></th>
 					<th width="14%"><b>GPF A/C No</b></th>
-					<th width="18%"><b>Name of Emp</b></th>
-					<th width="15%"><b>Desig. Emp.</b></th>
+					<th width="23%"><b>Name of Emp</b></th>
+					<th width="10%"><b>Desig. Emp.</b></th>
 					<th width="10%"><b>Pay</b></th>
 					<th width="10%"><b>Monthly sub.</b></th>
 					<th width="10%"><b>Adv. Rec.</b></th>
@@ -122,26 +125,34 @@ function print_gpf($link,$bg,$bn)
 
 		$npa=get_sfval($link,$bg,$staff_id,$GLOBALS['npa_id']);
 		
-		$pay=$basic['amount']+$gp['amount']+$npa['amount']+
-				$basic_e['amount']+$gp_e['amount'];
+		//This is for CPF
+		//$pay=$basic['amount']+$gp['amount']+$npa['amount']+
+		//		$basic_e['amount']+$gp_e['amount'];
+		//For GPF full salary is to be displayed
+		$all_sums=find_sums_govt($link,$staff_id,$bg);
+		$pay=$all_sums[0];
 				
 		$acc=get_nsfval($link,$bg,$staff_id,$GLOBALS['gpf_acc_id']);
-		$post=get_nsfval($link,$bg,$staff_id,$GLOBALS['post_id']);
+		
+		//$post=get_nsfval($link,$bg,$staff_id,$GLOBALS['post_id']);
+		$post_full=get_nsfval($link,$bg,$staff_id,$GLOBALS['post_id']);
+		$post['data']=get_short_post($link,$post_full['data']);
+		
 		$gpf_ar=get_sfval($link,$bg,$staff_id,$GLOBALS['gpf_adv_rec_id']);
 		$staff=get_staff($link,$staff_id);
 		
 		if(($gpf['amount']>0 || $gpf_ar['amount']>0) && substr($acc['data'],0,3)=='MED')
 		{
 			echo '<tr>
-					<td width="5%">'.$count.'</td>				
-					<td width="14%">'.$acc['data'].'</td>
-					<td align="left" width="18%">'.$staff['fullname'].'</td>
-					<td width="15%">'.$post['data'].'</td>
-					<td width="10%">'.$pay.'</td>				
-					<td width="10%">'.$gpf['amount'].'</td>
-					<td width="10%">'.$gpf_ar['amount'].'</td>
-					<td width="9%">'.$gpf_ar['remark'].'</td>
-					<td width="9%">'.($gpf['amount']+$gpf_ar['amount']).'</td>				
+					<td>'.$count.'</td>				
+					<td>'.$acc['data'].'</td>
+					<td align="left">'.$staff['fullname'].'</td>
+					<td>'.$post['data'].'</td>
+					<td>'.$pay.'</td>				
+					<td>'.$gpf['amount'].'</td>
+					<td>'.$gpf_ar['amount'].'</td>
+					<td>'.$gpf_ar['remark'].'</td>
+					<td>'.($gpf['amount']+$gpf_ar['amount']).'</td>				
 				</tr>';
 			$sum_gpf=$sum_gpf+$gpf['amount'];
 			$sum_gpf_ar=$sum_gpf_ar+$gpf_ar['amount'];
@@ -168,8 +179,9 @@ function print_gpf($link,$bg,$bn)
 			echo '<tr><td></td> <td></td> <td></td>
 			<td></td><td>Total</td> <td>'.$sum_gpf.'</td>
 			<td>'.$sum_gpf_ar.'</td><td></td><td>'.($sum_gpf+$sum_gpf_ar).'</td></tr>';	
+		$xxx=new Numbers_Words();
 		echo '<tr><td align="right" colspan="9">Total in Words: '.
-				Numbers_Words::toWords(($sum_gpf+$sum_gpf_ar),"en_US").' Only</td></tr>';
+				$xxx->toWords(($sum_gpf+$sum_gpf_ar),"en_US").' Only</td></tr>';
 	echo '</table>';
 }
 
