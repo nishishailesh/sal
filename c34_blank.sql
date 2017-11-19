@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 5.5.44, for debian-linux-gnu (i686)
+-- MySQL dump 10.16  Distrib 10.1.23-MariaDB, for debian-linux-gnu (i686)
 --
 -- Host: localhost    Database: c34
 -- ------------------------------------------------------
--- Server version	5.5.44-0+deb7u1
+-- Server version	10.1.23-MariaDB-9+deb9u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -51,6 +51,7 @@ CREATE TABLE `bill_group` (
   `head` varchar(100) NOT NULL,
   `bill_type` varchar(100) NOT NULL,
   `remark` varchar(100) NOT NULL,
+  `locked` int(11) NOT NULL,
   PRIMARY KEY (`bill_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -244,4 +245,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-18 15:57:22
+-- Dump completed on 2017-11-19 22:19:04
