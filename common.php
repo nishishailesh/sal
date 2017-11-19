@@ -834,7 +834,7 @@ echo '<option value=\''.$ar['staff_id'].'\'>'.$ar['fullname'].'-'.$ar['staff_id'
 echo '</select>';
 }
 
-
+/*
 function manage_single_salary($link,$staff_id,$bill_group)
 {
 	$slr=get_raw($link,'select * from salary
@@ -880,7 +880,8 @@ function manage_single_salary($link,$staff_id,$bill_group)
 	edit_salary($link,$slr);
 }			
 
-
+*/
+/*
 function new_salary($link,$staff_id,$bill_group)
 {
 	if($staff_id==0 || $bill_group==0){echo '<h5>Bill number can not be zero</h5>';return false;}
@@ -899,7 +900,7 @@ function new_salary($link,$staff_id,$bill_group)
 			update_or_insert_field_by_id_tpc($link,'salary',
 												'staff_id',$staff_id,'bill_group',$bill_group,
 												'fullname',$staff_detail['fullname']);
-			/*update_or_insert_field_by_id_tpc($link,'salary',
+			update_or_insert_field_by_id_tpc($link,'salary',
 												'staff_id',$staff_id,'bill_group',$bill_group,
 												'department',$staff_detail['department']);
 			update_or_insert_field_by_id_tpc($link,'salary',
@@ -922,7 +923,7 @@ function new_salary($link,$staff_id,$bill_group)
 												'pan',$staff_detail['pan']);
 			update_or_insert_field_by_id_tpc($link,'salary',
 												'staff_id',$staff_id,'bill_group',$bill_group,
-												'quarter',$staff_detail['quarter']);*/
+												'quarter',$staff_detail['quarter']);
 
 																																																																											
 																																				
@@ -947,6 +948,7 @@ function new_salary($link,$staff_id,$bill_group)
 	
 
 }			
+*/
 
 function list_all_salary($link,$staff_id)
 {
@@ -955,7 +957,7 @@ function list_all_salary($link,$staff_id)
 			display_staff($link,$_POST['staff_id']);
 			echo '</td></tr></table>';
 			
-	$sql='select distinct bill_group from salary where staff_id=\''.$staff_id.'\' order by bill_group desc';
+	$sql='select distinct bill_group from nonsalary where staff_id=\''.$staff_id.'\' order by bill_group desc';
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link); return FALSE;}	
 	$header='yes';
 	echo '<table align=center class=border style="background-color:#ADD8E6">';
@@ -965,7 +967,7 @@ function list_all_salary($link,$staff_id)
 		if($header=='yes')
 		{
 			echo '<tr><th>Action</th><th>Bill Group</th><th>Prepared on</th> <th>From</th> <th>To</th> <th>Head</th> 
-			<th>Type</th><th>Remark</th></tr>
+			<th>Type</th><th>Remark</th><th>Locked</th></tr>
 			<tr>';
 			$header='no';
 		}
@@ -981,15 +983,17 @@ function list_all_salary($link,$staff_id)
 			'<td>'.$ar['date_of_preparation'].'</td>'.
 			'<td>'.$ar['from_date'].'</td>'.
 			'<td>'.$ar['to_date'].'</td>'.
-			'<td>'.$ar['head'].'</td>';
+			'<td>'.$ar['head'].'</td>'.
 			'<td>'.$ar['bill_type'].'</td>'.
-			'<td>'.$ar['remark'].'</td></tr>';
+			'<td>'.$ar['remark'].'</td>'.
+			'<td>'.$ar['locked'].'</td></tr>';
 			
 	}
 	echo '</table>';
 
 }
 
+/*
 function display_salary_header($link)
 {
 	$sh=get_salary_head($link);
@@ -1003,6 +1007,7 @@ function display_salary_header($link)
 	}
 	echo '</tr>';
 }
+*/
 
 function list_bill($link,$bill_group)
 {
@@ -1037,6 +1042,7 @@ function list_bill($link,$bill_group)
 	echo '</table>';	
 }
 
+/*
 function old_edit_salary($link,$staff_id,$bill_group)
 {
 	$slr=get_raw($link,'select * from salary
@@ -1046,6 +1052,7 @@ function old_edit_salary($link,$staff_id,$bill_group)
 								');				
 	display_salary($link,$slr);
 }
+*/
 
 function get_salary_head($link)
 {
@@ -1059,7 +1066,7 @@ function get_salary_head($link)
 	return $ret;
 }
 
-
+/*
 function display_salary($link,$slr)
 {
 	$sh=get_salary_head($link);
@@ -1273,6 +1280,8 @@ function display_salary($link,$slr)
 	
 }
 
+
+*/
 function select_bill_group($link)
 {
 	$sql='select distinct bill_group from salary order by bill_group desc';
@@ -1283,7 +1292,7 @@ function select_bill_group($link)
 	echo '</form></td></tr></table>';
 }
 
-
+/*
 function copy_salary_old($link,$from_staff,$to_staff,$from_bn,$to_bn,$ar)
 {
 	//print_r($ar);
@@ -1339,6 +1348,7 @@ function copy_salary_old($link,$from_staff,$to_staff,$from_bn,$to_bn,$ar)
 	}
 
 }
+*/
 
 
 function get_bill_group($link)
@@ -1379,7 +1389,7 @@ function display_bill($link,$bill_group,$header='yes')
 	if($header=='yes')
 	{
 		echo '<tr><th>Bill Group</th><th>Prepared on</th> <th>From</th> <th>To</th> <th>Head</th> 
-		<th>Type</th><th>Remark</th></tr>
+		<th>Type</th><th>Remark</th><th>Locked<br>1=locked<br>0=unlocked</th></tr>
 		<tr>';
 	}
 	while($ar=mysqli_fetch_assoc($result))
@@ -1391,6 +1401,7 @@ function display_bill($link,$bill_group,$header='yes')
 		<td>'.$ar['head'].'</td>
 		<td>'.$ar['bill_type'].'</td>
 		<td>'.$ar['remark'].'</td>
+		<td>'.$ar['locked'].'</td>
 		<td>
 			<form target=_blank style="margin-bottom:0;" method=post action=change_bill_detail.php>
 				<input type=submit name=action value=edit>
@@ -1401,7 +1412,7 @@ function display_bill($link,$bill_group,$header='yes')
 }
 
 
-
+/*
 function display_edit_bill_($link,$bill_group,$header='yes')
 {
 	$sql='select * from bill_group where bill_group=\''.$bill_group.'\'';
@@ -1426,7 +1437,7 @@ function display_edit_bill_($link,$bill_group,$header='yes')
 	}
 	echo '</tr></table>';
 }
-
+*/
 
 function display_staff($link,$staff_id)
 {
@@ -1603,6 +1614,7 @@ function mk_select_from_sql_nonsalary_ajax($link,$sql,$form_name,$pk1,$pk2,$defa
 
 function edit_nonsalary($link,$staff_id,$bill_group,$format_table='')
 {
+
 	if(strlen($format_table)==0){$format_table='nonsalary_type';}
 	$sql='select * from `'.$format_table.'`';
 
@@ -1727,7 +1739,7 @@ function add_bill_group($link,$post)
 			to_date,
 			head,
 			bill_type,
-			remark
+			remark,locked
 		)
 		
 		values
@@ -1738,7 +1750,9 @@ function add_bill_group($link,$post)
 			\''.india_to_mysql_date($post['to_date']).'\',
 			\''.$post['head'].'\',
 			\''.$post['bill_type'].'\',
-			\''.$post['remark'].'\'		
+			\''.$post['remark'].'\',
+			\''.$post['locked'].'\'		
+			
 		)
 			';
 	//echo $sql;
@@ -1748,6 +1762,9 @@ function add_bill_group($link,$post)
 
 function copy_salary($link,$s,$b,$tb)
 {
+	$locked=is_bill_group_locked($link,$tb);
+if($locked!=0){echo $tb.'Bill Group locked'; return;  }
+
 	$sql='select * from salary where staff_id=\''.$s.'\' and bill_group=\''.$b.'\'';
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	while($ar=mysqli_fetch_assoc($result))
@@ -1762,6 +1779,9 @@ function copy_salary($link,$s,$b,$tb)
 
 function copy_bill_salary($link,$b,$tb)
 {
+$locked=is_bill_group_locked($link,$tb);
+if($locked!=0){echo $tb.'Bill Group locked'; return;  }
+
 	$sql='select * from salary where bill_group=\''.$b.'\'';
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	while($ar=mysqli_fetch_assoc($result))
@@ -1779,6 +1799,9 @@ function copy_bill_salary($link,$b,$tb)
 
 function copy_bill_salary_with_remark($link,$b,$tb,$salary_type_id)
 {
+$locked=is_bill_group_locked($link,$tb);
+if($locked!=0){echo $tb.'Bill Group locked'; return;  }
+
 	$sql='select * from salary where bill_group=\''.$b.'\' and salary_type_id=\''.$salary_type_id.'\'';
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	while($ar=mysqli_fetch_assoc($result))
@@ -1797,6 +1820,9 @@ function copy_bill_salary_with_remark($link,$b,$tb,$salary_type_id)
 
 function copy_nonsalary($link,$s,$b,$tb)
 {
+$locked=is_bill_group_locked($link,$tb);
+if($locked!=0){echo $tb.'Bill Group locked'; return;  }
+	
 	$sql='select * from nonsalary where staff_id=\''.$s.'\' and bill_group=\''.$b.'\'';
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	while($ar=mysqli_fetch_assoc($result))
@@ -1812,6 +1838,10 @@ function copy_nonsalary($link,$s,$b,$tb)
 
 function copy_bill_nonsalary($link,$b,$tb)
 {
+	
+$locked=is_bill_group_locked($link,$tb);
+if($locked!=0){echo $tb.'Bill Group locked'; return;  }
+
 	$sql='select * from nonsalary where bill_group=\''.$b.'\'';
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	while($ar=mysqli_fetch_assoc($result))
@@ -2133,6 +2163,15 @@ function email($email,$subject,$message)
         $result = mail($email, $subject, $message, $headers); 
      if ($result) echo 'Mail accepted for delivery HTML';
      if (!$result) echo 'Test unsuccessful... ';
+}
+
+function is_bill_group_locked($link, $bg)
+{
+	$sql_bg_chk='select * from bill_group where bill_group=\''.$bg.'\'';
+	if(!$result=mysqli_query($link,$sql_bg_chk)){echo mysqli_error($link);return FALSE;}
+	$ar=mysqli_fetch_assoc($result);
+	//print_r($ar);
+	return $ar['locked'];	
 }
 
 ?>

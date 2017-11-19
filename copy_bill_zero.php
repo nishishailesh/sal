@@ -45,7 +45,9 @@ function read_bill_group_to_copy($link)
 	echo '</td><tr><th>Remark:</th><td>';
 	echo '<input type=text name=remark >';
 	
-
+	echo '</td></tr><tr><th>Locked</th><td>';
+	mk_select_from_array(array(0,1),'locked','','');
+	echo '</td></tr>';
 
 	echo '</tr>';
 
@@ -75,6 +77,8 @@ elseif($_POST['action']=='copy_bill_1')
 	{
 		//copy_bill_salary($link,$_POST['from_bill_group'],$_POST['bill_group']);
 		copy_bill_nonsalary($link,$_POST['from_bill_group'],$_POST['bill_group']);
+		//So salary is not copied
+		//So bill listing must be nonsalary based
 	}
 }
 	

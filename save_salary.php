@@ -15,6 +15,17 @@ $link=connect();
 //date india vs mysql. Corusponding change in edit_dc.php
 
 
+$locked=is_bill_group_locked($link,$_POST['bill_group']);
+
+if($locked!=0)
+{
+	echo '<table class=border align="center" style="display:block;background:lightpink;"><tr>';
+	echo '<td><h3 style="color:blue;">This Bill is locked. No data changed. Refresh browser to bring back old data</h3></td>';
+	echo '</tr></table>';
+	exit(0);
+}
+
+
 if($_POST['field']=='from_date' ||$_POST['field']=='to_date' )
 {
 	$_POST['value']=india_to_mysql_date($_POST['value']);

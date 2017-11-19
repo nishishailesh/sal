@@ -44,8 +44,8 @@ function read_bill_to_edit($link,$bg)
 	echo '</td><tr><th>Remark:</th><td>';
 	echo '<input type=text value=\''.$ar['remark'].'\'  name=remark >';
 	
-
-
+	echo '</td><tr><th>Locked <br>1=Locked<br>0=unlocked</th><td>';
+	mk_select_from_array(array(0,1),'locked','',$ar['locked']);	
 	echo '</tr>';
 
 	
@@ -63,7 +63,8 @@ function update($link)
 							to_date=\''.india_to_mysql_date($_POST['to_date']).'\',
 							head=\''.$_POST['head'].'\',
 							bill_type=\''.$_POST['bill_type'].'\',
-							remark=\''.$_POST['remark'].'\'
+							remark=\''.$_POST['remark'].'\' ,
+							locked=\''.$_POST['locked'].'\'
 
 					where 
 							bill_group=\''.$_POST['bill_group'].'\'';

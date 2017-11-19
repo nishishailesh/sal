@@ -61,6 +61,11 @@ function read_bill_group($link)
 	echo '<tr><td>Head</td><td><input type=text name=head></td></tr><tr><td>Bill Type</td><td>';
 	mk_select_from_table($link,'bill_type','','');	
 	echo '</td></tr><tr><td>Remark</td><td><input type=text name=remark></td></tr>';
+	
+	echo '</td></tr><tr><td>Locked</td><td>';
+	mk_select_from_array(array(0,1),'locked','','');
+	echo '</td></tr>';
+	
 	echo '<tr><td></td><td><button type=submit name=action value=save_bill_1>Save</button></td></tr>';
 	echo '</form></table>';	
 }

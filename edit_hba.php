@@ -134,6 +134,9 @@ function del($link)
 
 function del_inst($link)
 {
+	$locked=is_bill_group_locked($link,$_POST['bill_group']);
+	if($locked!=0){echo $_POST['bill_group'].' Bill Group locked'; return;  }
+		
 	//Array ( [staff_id] => 1002 [account_number] => 121212 [type] => interest [bill_group] => 34170501 [amount] => 2000 [remark] => 121212 [action] => delete_inst ) 
 	$sql='';
 		if($_POST['type']=='interest')
@@ -153,8 +156,6 @@ function del_inst($link)
 	//echo $sql;
 	if(!$result=mysqli_query($link,$sql)){echo mysql_error(); return FALSE;}
 }
-
-
 
 
 function view($link)
@@ -260,6 +261,9 @@ function view($link)
 
 function save_inst($link)
 {
+	$locked=is_bill_group_locked($link,$_POST['bill_group']);
+	if($locked!=0){echo $_POST['bill_group'].' Bill Group locked'; return;  }
+
 	if($_POST['type']=='interest')
 	{
 		//$GLOBALS['hba_p_id']=33;

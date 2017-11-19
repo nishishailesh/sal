@@ -26,8 +26,13 @@ if(isset($_POST['action']))
 	
 	if($_POST['action']=='D')
 	{
-		delete_raw_by_id_dpc($link,'salary','staff_id',$_POST['staff_id'],'bill_group',$_POST['bill_group']);
-		delete_raw_by_id_dpc($link,'nonsalary','staff_id',$_POST['staff_id'],'bill_group',$_POST['bill_group']);
+		$locked=is_bill_group_locked($link,$_POST['bill_group']);
+		if($locked!=0){echo $_POST['bill_group'].' Bill Group locked';}
+		else
+		{
+			delete_raw_by_id_dpc($link,'salary','staff_id',$_POST['staff_id'],'bill_group',$_POST['bill_group']);
+			delete_raw_by_id_dpc($link,'nonsalary','staff_id',$_POST['staff_id'],'bill_group',$_POST['bill_group']);
+		}
 	}
 	
 	if($_POST['action']=='C')

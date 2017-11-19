@@ -23,8 +23,13 @@ $GLOBALS['real_est_id']=14;
 
 menu();
 
+//repacement to save_salary.php AJAX
 function ui_sal($link,$s,$b,$sti,$val)
 {
+
+$locked=is_bill_group_locked($link,$b);
+if($locked!=0){echo $b.' Bill Group locked!!'; return;  }
+	
 		$sql='insert into salary (staff_id,bill_group,salary_type_id,amount)
 					values(
 							\''.$s.'\',
@@ -36,73 +41,6 @@ function ui_sal($link,$s,$b,$sti,$val)
 		if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 		return $updated=mysqli_affected_rows($link);
 }
-
-/*
-function recalculate($link,$s,$b)
-{
-	$gp_off=get_sfval($link,$b,$s,$GLOBALS['gp_o_id']);
-	$gp_est=get_sfval($link,$b,$s,$GLOBALS['gp_e_id']);
-	
-	$real_off=get_nsfval($link,$b,$s,$GLOBALS['real_off_id']);
-	$real_est=get_nsfval($link,$b,$s,$GLOBALS['real_est_id']);
-	
-	$qtr=get_nsfval($link,$b,$s,$GLOBALS['qtr_id']);
-	$gqtr=strlen($qtr['data']);
-
-	$off_for_cal=min(round(($real_off['data'] + $gp_off['amount'])),$_POST['ceil']);
-	$est_for_cal=min(round($real_est['data'] + $gp_est['amount']),$_POST['ceil']);
-		
-	$npa=round(	$off_for_cal*$_POST['npa']	);
-	
-	$ceil=	max(
-					round($real_off['data'] + $gp_off['amount'])
-					-
-					$_POST['ceil']
-				,
-					0
-				)
-				+
-			max(
-					round($real_est['data'] + $gp_est['amount'])
-					-
-					$_POST['ceil']
-				,
-					0
-				)	
-				;
-	
-	$da=round(($off_for_cal+$npa)*$_POST['da']
-			+
-				$est_for_cal*$_POST['da'])	
-			;
-			
-	
-	$hra=round(($off_for_cal+$npa)*$_POST['hra']
-			+
-				$est_for_cal*$_POST['hra']	)
-			;
-			
-	//echo '<h3>NPA:'.$npa.'</h3>';
-	//echo '<h3>HRA:'.$hra.'</h3>';
-	//echo '<h3>DA:'.$da.'</h3>';
-	//echo '<h3>CEIL:'.$ceil.'</h3>';
-	
-	ui_sal($link,$s,$b,$GLOBALS['basic_o_id'],$off_for_cal-$gp_off['amount']);
-	ui_sal($link,$s,$b,$GLOBALS['basic_e_id'],$est_for_cal-$gp_est['amount']);
-	ui_sal($link,$s,$b,$GLOBALS['npa_id'],$npa);
-	if($gqtr==0)
-	{
-		ui_sal($link,$s,$b,$GLOBALS['hra_id'],$hra);
-	}
-	else
-	{
-		ui_sal($link,$s,$b,$GLOBALS['hra_id'],0);
-	}
-	ui_sal($link,$s,$b,$GLOBALS['da_id'],$da);
-	ui_sal($link,$s,$b,$GLOBALS['ceiling_extra_id'],$ceil);
-	
-}
-*/
 
 function recalculate($link,$s,$b)
 {
@@ -120,7 +58,7 @@ function recalculate($link,$s,$b)
 	$gqtr=strlen($qtr['data']);
 
 	$max_bg_off=round(($_POST['ceil']*4/5));
-	$max_bg_est=$_POST['ceil'];
+	$max_bg_est=$_POST['ceil']; //because no NPA
 	
 	$off_for_cal=min($bg_off,$max_bg_off);
 	$est_for_cal=min($bg_est,$max_bg_est);
