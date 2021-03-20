@@ -1,8 +1,8 @@
--- MySQL dump 10.16  Distrib 10.1.23-MariaDB, for debian-linux-gnu (i686)
+-- MySQL dump 10.18  Distrib 10.3.27-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: c34
 -- ------------------------------------------------------
--- Server version	10.1.23-MariaDB-9+deb9u1
+-- Server version	10.3.27-MariaDB-0+deb10u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -48,10 +48,10 @@ CREATE TABLE `bill_group` (
   `date_of_preparation` date NOT NULL,
   `from_date` date NOT NULL,
   `to_date` date NOT NULL,
-  `head` varchar(100) NOT NULL,
-  `bill_type` varchar(100) NOT NULL,
-  `remark` varchar(100) NOT NULL,
-  `locked` int(11) NOT NULL,
+  `head` varchar(100) DEFAULT NULL,
+  `bill_type` varchar(100) DEFAULT NULL,
+  `remark` varchar(100) DEFAULT NULL,
+  `locked` int(11) DEFAULT NULL,
   PRIMARY KEY (`bill_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -90,7 +90,7 @@ DROP TABLE IF EXISTS `map`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `map` (
-  `id` int(2) NOT NULL DEFAULT '0',
+  `id` int(2) NOT NULL DEFAULT 0,
   `type` varchar(2) NOT NULL DEFAULT '',
   `type_name` varchar(32) DEFAULT NULL,
   `field` varchar(36) DEFAULT NULL,
@@ -109,8 +109,8 @@ CREATE TABLE `nonsalary` (
   `staff_id` bigint(20) NOT NULL,
   `bill_group` bigint(11) NOT NULL,
   `nonsalary_type_id` int(11) NOT NULL,
-  `data` varchar(100) NOT NULL,
-  `remark` varchar(100) NOT NULL,
+  `data` varchar(100) DEFAULT NULL,
+  `remark` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`staff_id`,`bill_group`,`nonsalary_type_id`),
   KEY `bill_group` (`bill_group`),
   KEY `salary_type_id` (`nonsalary_type_id`),
@@ -128,6 +128,21 @@ DROP TABLE IF EXISTS `nonsalary_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `nonsalary_type` (
+  `nonsalary_type_id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `shortform` varchar(6) NOT NULL,
+  PRIMARY KEY (`nonsalary_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `nonsalary_type_old`
+--
+
+DROP TABLE IF EXISTS `nonsalary_type_old`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `nonsalary_type_old` (
   `nonsalary_type_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`nonsalary_type_id`)
@@ -175,14 +190,33 @@ CREATE TABLE `salary` (
   `staff_id` bigint(20) NOT NULL,
   `bill_group` bigint(11) NOT NULL,
   `salary_type_id` int(11) NOT NULL,
-  `amount` float NOT NULL,
-  `remark` varchar(100) NOT NULL,
+  `amount` decimal(10,0) DEFAULT NULL,
+  `remark` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`staff_id`,`bill_group`,`salary_type_id`),
   KEY `bill_group` (`bill_group`),
   KEY `salary_type_id` (`salary_type_id`),
   CONSTRAINT `salary_ibfk_1` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`staff_id`) ON UPDATE CASCADE,
   CONSTRAINT `salary_ibfk_4` FOREIGN KEY (`salary_type_id`) REFERENCES `salary_type` (`salary_type_id`) ON UPDATE CASCADE,
   CONSTRAINT `salary_ibfk_6` FOREIGN KEY (`bill_group`) REFERENCES `bill_group` (`bill_group`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `salary.B4.DEL`
+--
+
+DROP TABLE IF EXISTS `salary.B4.DEL`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `salary.B4.DEL` (
+  `staff_id` bigint(20) NOT NULL,
+  `bill_group` bigint(11) NOT NULL,
+  `salary_type_id` int(11) NOT NULL,
+  `amount` decimal(10,0) NOT NULL,
+  `remark` varchar(100) NOT NULL,
+  PRIMARY KEY (`staff_id`,`bill_group`,`salary_type_id`),
+  KEY `bill_group` (`bill_group`),
+  KEY `salary_type_id` (`salary_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -199,7 +233,84 @@ CREATE TABLE `salary_type` (
   `code1` varchar(5) NOT NULL,
   `code2` varchar(5) NOT NULL,
   `type` varchar(1) NOT NULL,
+  `shortform` varchar(6) NOT NULL,
   PRIMARY KEY (`salary_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `salary_type_old`
+--
+
+DROP TABLE IF EXISTS `salary_type_old`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `salary_type_old` (
+  `salary_type_id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `code1` varchar(5) NOT NULL,
+  `code2` varchar(5) NOT NULL,
+  `type` varchar(1) NOT NULL,
+  PRIMARY KEY (`salary_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `salaryyy`
+--
+
+DROP TABLE IF EXISTS `salaryyy`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `salaryyy` (
+  `staff_id` bigint(20) NOT NULL,
+  `bill_group` int(11) NOT NULL,
+  `bill_number` int(11) NOT NULL,
+  `fullname` varchar(300) NOT NULL,
+  `department` varchar(200) NOT NULL,
+  `post` varchar(100) NOT NULL,
+  `from_date` date NOT NULL,
+  `to_date` date NOT NULL,
+  `bill_type` varchar(100) NOT NULL,
+  `remark` varchar(100) NOT NULL,
+  `Pay_of_Officer_0101(+)` float NOT NULL,
+  `Grade_Pay_of_Officer_0101(+)` float NOT NULL,
+  `Pay_of_Establishment_0102(+)` float NOT NULL,
+  `Grade_Pay_of_Establishment_0102(+)` float NOT NULL,
+  `NPA_0128(+)` float NOT NULL,
+  `Dearness_Allowance_0103(+)` float NOT NULL,
+  `Compansatory_Local_Allowance_0111(+)` float NOT NULL,
+  `House_Rent_Allowance_0110(+)` float NOT NULL,
+  `Medical_Allowance_0107(+)` float NOT NULL,
+  `BA_0104(+)` float NOT NULL,
+  `Transport_Allowance_0113(+)` float NOT NULL,
+  `Interim_Relief_0112(+)` float NOT NULL,
+  `Washing_Allowance_0132(+)` float NOT NULL,
+  `Uniform_Allowance_0131(+)` float NOT NULL,
+  `Nursing_Allownace_0129(+)` float NOT NULL,
+  `Special_Post_Allow_0104(+)` float NOT NULL,
+  `Family_Welfare_Allow_0104(+)` float NOT NULL,
+  `Ceiling_Extra_0104(+)` int(11) NOT NULL,
+  `Income_Tax_9510(-)` float NOT NULL,
+  `Rent_of_Building_9560(-)` float NOT NULL,
+  `Professional_Tax_9570(-)` float NOT NULL,
+  `SIS_I_9581(-)` float NOT NULL,
+  `SIS_S_9582(-)` float NOT NULL,
+  `GPF_non_IV_9670(-)` float NOT NULL,
+  `GPF_IV_9531(-)` float NOT NULL,
+  `CPF_9690(-)` float NOT NULL,
+  `Pay_of_Officer_0101(-)` float NOT NULL,
+  `Pay_of_Establishment_0102(-)` float NOT NULL,
+  `bank_acc_number` varchar(50) NOT NULL,
+  `bank` varchar(100) NOT NULL,
+  `gpf_acc` varchar(50) NOT NULL,
+  `cpf_acc` varchar(100) NOT NULL,
+  `pan` varchar(20) NOT NULL,
+  `quarter` varchar(20) NOT NULL,
+  `budget_head` varchar(100) NOT NULL,
+  `pay_scale` varchar(100) NOT NULL,
+  `old_pay_scale` varchar(100) NOT NULL,
+  PRIMARY KEY (`staff_id`,`bill_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -213,7 +324,8 @@ DROP TABLE IF EXISTS `staff`;
 CREATE TABLE `staff` (
   `staff_id` bigint(20) NOT NULL,
   `fullname` varchar(300) NOT NULL,
-  `uid` bigint(20) NOT NULL,
+  `mobile` varchar(15) NOT NULL,
+  `uid` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`staff_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -228,10 +340,13 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `password` varchar(300) NOT NULL,
-  `department` varchar(100) NOT NULL,
-  `unit` varchar(10) NOT NULL,
-  `right` int(11) NOT NULL DEFAULT '0',
+  `password` varchar(300) DEFAULT NULL,
+  `epassword` varchar(500) DEFAULT NULL,
+  `mobile` varchar(15) DEFAULT NULL,
+  `expirydate` date DEFAULT NULL,
+  `department` varchar(100) DEFAULT NULL,
+  `unit` varchar(10) DEFAULT NULL,
+  `right` int(11) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -245,4 +360,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-19 22:19:04
+-- Dump completed on 2021-03-21  0:10:54

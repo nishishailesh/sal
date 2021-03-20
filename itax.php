@@ -3,7 +3,7 @@ session_start();
 $nojunk='defined';
 require_once 'common.php';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 $link=connect();
 
 
@@ -14,15 +14,13 @@ $link=connect();
 
 $GLOBALS['rpp']=15;
 $GLOBALS['total_pages']='';
-$GLOBALS['college']='Government Medical College, Majura Gate, Surat';
 $GLOBALS['allowances']='Report on Pay and Allowances Bill';
 $GLOBALS['deductions']='Report on Pay Bill Deductions';
-$GLOBALS['acc_off']='Mr Maheshbhai chaudhari';
 $GLOBALS['cardex']='65';
 $GLOBALS['ddo_no']='553';
 $GLOBALS['grand']=array();
 $GLOBALS['phone']='091-261-2244175';
-$GLOBALS['mobile']='091 98244 19535';
+$GLOBALS['mobile']='9429091166';
 $GLOBALS['ministry']='Health';
 $GLOBALS['tan']='SRTG01499B';
 
@@ -61,7 +59,7 @@ class ACCOUNT extends TCPDF {
 	
 	public function Footer() 
 	{
-				$this->SetY(-10);
+	    $this->SetY(-10);
 		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
 	}	
 }
@@ -79,7 +77,7 @@ function itax_page_header($link,$bg,$bn,$pg)
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
 	
 	echo '<h4 align="center" style="border: 2px solid #000000;">Schedule of Income Tax Deduction (Page:'.$pg.')</h4>';
-	echo '<h4 align="center">'.$GLOBALS['college'].'</h3>';
+	echo '<h4 align="center">'.$GLOBALS['college'].''.$GLOBALS['address'].''.$GLOBALS['city'].'</h3>';
 	echo '<h4 align="center">Under Head: 0021 Income Tax</h4>';
 	echo '<h4 align="center">For the month of '.$bill_details['remark'].
 									' [Bill: '.$bg.
@@ -112,7 +110,7 @@ function print_itax($link,$bg,$bn)
 					<th width="10%"><b>Gross Amt.</b></th>
 					<th width="10%"><b>ITax Ded.</b></th>
 					<th width="5%"><b>Surcharge</b></th>
-					<th width="5%"><b>Edu Cess(3%)</b></th>
+					<th width="5%"><b>Edu Cess(4%)</b></th>
 					<th width="10%"><b>Tot. Ded.(6+7+8)</b></th>
 					<th width="10%"><b>Remarks</b></th>
 				</tr><tr>
@@ -154,7 +152,7 @@ function print_itax($link,$bg,$bn)
 		$pay=$all_sums[0];
 		
 		$itax=get_sfval($link,$bg,$staff_id,$GLOBALS['itax_id']);
-		$cess=$itax['amount']*0.03;
+		$cess=round($itax['amount']*0.04,0);
 		$it_no_cess=$itax['amount']-$cess;
 
 		if($itax['amount']>0)
@@ -209,9 +207,12 @@ function print_itax($link,$bg,$bn)
 				<td>'.$sum_cess.'</td>
 				<td>'.$sum_itax.'</td></tr>';
 
-				$xxx=new Numbers_Words();
-				echo '<tr><td align="right" colspan="10">Total in Words: '.
-				$xxx->toWords($sum_itax,"en_US").' Only</td></tr>';				
+				// my_number_to_words($sum_itax);
+              			echo '<tr><td align="right" colspan="10">Total in Words: ';
+				my_number_to_words($sum_itax);
+				echo ' '.$GLOBALS['n2s'].' Only</td></tr>';
+			
+				//$xxx->toWords($sum_itax,"en_US").' Only</td></tr>';				
 				echo '</table>';
 }
 

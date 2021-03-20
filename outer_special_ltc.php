@@ -3,7 +3,7 @@ session_start();
 $nojunk='defined';
 require_once 'common.php';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 $link=connect();
 
 
@@ -18,10 +18,8 @@ $link=connect();
 
 $GLOBALS['rpp']=15;
 $GLOBALS['total_pages']='';
-$GLOBALS['college']='Government Medical College, Majura Gate, Surat';
 $GLOBALS['allowances']='Report on Pay and Allowances Bill';
 $GLOBALS['deductions']='Report on Pay Bill Deductions';
-$GLOBALS['acc_off']='Mr Maheshbhai chaudhari';
 $GLOBALS['cardex']='65';
 $GLOBALS['ddo_no']='553';
 $GLOBALS['grand']=array();
@@ -212,7 +210,7 @@ function plus_page_header($link,$bg,$bn,$pg)
 {
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
 	return '<table><tr><td width="20%"><h1>Bill No:'.$bg.'('.$bn.')</h1></td>
-		  <td width="50%" align="center"><h1>'.$GLOBALS['college'].'<br>'.$GLOBALS['allowances'].'</h1></td>
+		  <td width="50%" align="center"><h1>'.$GLOBALS['college'].''.$GLOBALS['address'].''.$GLOBALS['city'].'<br>'.$GLOBALS['allowances'].'</h1></td>
 		  <td width="30%" align="right"><h1>'.$bill_details['remark'].', Page No. ('.$pg.')</h1></td></tr></table>';
 }
 
@@ -220,7 +218,7 @@ function minus_page_header($link,$bg,$bn,$pg)
 {
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
 	return '<table><tr><td width="20%"><h1>Bill No:'.$bg.'('.$bn.')</h1></td>
-		  <td width="50%"  align="center"><h1>'.$GLOBALS['college'].'<br>'.$GLOBALS['deductions'].'</h1></td>
+		  <td width="50%"  align="center"><h1>'.$GLOBALS['college'].''.$GLOBALS['address'].''.$GLOBALS['city'].'<br>'.$GLOBALS['deductions'].'</h1></td>
 		  <td width="30%" align="right"><h1>'.$bill_details['remark'].', Page No. ('.$pg.')</h1></td></tr></table>';
 }
 

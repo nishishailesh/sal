@@ -7,15 +7,18 @@ require_once 'common.php';
 /////////////Main script start from here//////////////
 
 $link=connect();
-
-menu();
+head();
+menu($link);
 
 function edit_staff($link)
 {
 	$sql='select * from post';
 	if(!$result=mysqli_query($link,$sql)){return FALSE;}
-	echo '<table class=border>';
-	echo '<tr style="background-color:lightblue;"><th  colspan="5" >Add / Modify / Delete Post</th></tr>';
+	echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+	      <table  class="table table-striped">';
+	echo '<tr><th  colspan="5"style="background-color:lightblue;text-align: center;" ><h4>Add / Modify / Delete Post</h4></th></tr>';
 	echo '<tr style="background-color:lightgray;"><th>Shortform</th><th>Post</th><th>Senctioned</th><th>Class</th><th>Action</th></tr>';
 		echo '<form method=post ><tr>';
 		echo '<td>';
@@ -31,7 +34,7 @@ function edit_staff($link)
 		echo '<input placeholder="Class" type=text size=5 name=class >';
 		echo '</td>';
 		echo '<td>';
-		echo '<button type=submit name=action value=insert>S</button>';
+		echo '<button class="btn btn-success" title="Save"type=submit name=action value=insert>S</button>';
 		echo '</td>';
 		echo '</tr></form>';
 	while($ra=mysqli_fetch_assoc($result))
@@ -50,10 +53,10 @@ function edit_staff($link)
 		echo '<input  type=text size=5 name=class  value=\''.$ra['class'].'\'>';
 		echo '</td>';
 		echo '<td>';
-		echo '<button type=submit name=action value=update>S</button>';
-		echo '<button type=submit name=action value=delete onclick="return confirm(\'Data will be deleted permanenty\')" >D</button>';
+		echo '<button class="btn btn-success " type=submit title="Save" name=action value=update>S</button>';
+		echo '<button class="btn btn-danger " type=submit title="Delete" name=action value=delete onclick="return confirm(\'Data will be deleted permanenty\')" >D</button>';
 		echo '</td>';
-		echo '</tr></form>';
+		echo '</tr></form></div></div></div>';
 
 	}
 
@@ -113,6 +116,6 @@ if(isset($_POST['action']))
 
 edit_staff($link);
 
-
+htmltail();
 ?>
 

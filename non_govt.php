@@ -3,7 +3,7 @@ session_start();
 $nojunk='defined';
 require_once 'common.php';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 $link=connect();
 
 //rpp is raw per page
@@ -11,10 +11,8 @@ $link=connect();
 
 $GLOBALS['rpp']=20;
 $GLOBALS['total_pages']='';
-$GLOBALS['college']='Government Medical College, Majura Gate, Surat';
 $GLOBALS['allowances']='Report on Pay and Allowances Bill';
 $GLOBALS['deductions']='Report on Pay Bill Deductions';
-$GLOBALS['acc_off']='Mr Maheshbhai chaudhari';
 $GLOBALS['cardex']='65';
 $GLOBALS['ddo_no']='553';
 $GLOBALS['grand']=array();
@@ -76,7 +74,7 @@ function page_header($link,$bg,$bn,$pg)
 {
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
 	echo '<h4 align="center" style="border: 1px solid #000000;">Schedule of non Governemnt Deductions</h4>';	
-	echo '<h4 align="center">'.$GLOBALS['college'].'</h3>';
+	echo '<h4 align="center">'.$GLOBALS['college'].''.$GLOBALS['address'].''.$GLOBALS['city'].'</h3>';
 	echo '<h4 align="center">Amount deducted from salary for the month of '.$bill_details['remark'].' (Bill: '.$bg.'-'.$bn.')</h4>';
 	
 }

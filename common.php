@@ -1,6 +1,20 @@
 <?php
-
-
+function head()
+{
+echo '<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">			
+	</head>
+	<body>';
+}
+function htmltail()
+{ 	
+	echo'</body>
+	     </html>';
+}
 if(!isset($nojunk))
 {
 	require_once 'common_js.php';
@@ -24,9 +38,7 @@ function select_database($link)
 {
 	return mysqli_select_db($link,'c34');
 }
-
-
-function check_user($link,$u,$p)
+/*function check_user($link,$u,$p)
 {
 	$sql='select * from user where id=\''.$u.'\'';
 	if(!$result=mysqli_query($link,$sql)){return FALSE;}
@@ -40,12 +52,20 @@ function check_user($link,$u,$p)
 		return false;
 	}
 }
-
+*
 function logout()
 {
-	session_start(); //Start the current session
+	//session_start(); //Start the current session
 	session_destroy(); //Destroy it! So we are logged out now
-	header("location:".$GLOBALS['rootpath']."/common/index.php"); //configure absolute path of this file for access from anywhere
+	header("location:index.php"); //configure absolute path of this file for access from anywhere
+}*/
+
+function logout($message='')
+{
+	//session_start(); //Start the current session
+	//$GLOBALS['rootpath']."/index.php";
+	session_destroy(); //Destroy it! So we are logged out now	
+	header("location:index.php?".$message); //configure absolute path of this file for access from anywhere
 }
 ///////////////////////////////////
 function connect()
@@ -81,11 +101,13 @@ function mk_select_from_table($link,$field,$disabled,$default)
 	if(!$result=mysqli_query($link,$sql)){return FALSE;}
 	
 		echo '<select  '.$disabled.' name='.$field.'>';
+		
 		while($result_array=mysqli_fetch_assoc($result))
 		{
 		if($result_array[$field]==$default)
 		{
 			echo '<option selected  > '.$result_array[$field].' </option>';
+			
 		}
 		else
 			{
@@ -141,12 +163,12 @@ function mk_select_from_table_ajax_dpc($id,$idd,$link,$field,$disabled,$default,
 		return TRUE;
 }
 
-
 function mk_select_from_sql($link,$sql,$field_name,$form_name,$disabled,$default)
 {
 
 	if(!$result=mysqli_query($link,$sql)){return FALSE;}
-	
+	   
+	   
 		echo '<select  '.$disabled.' name='.$form_name.' id='.$form_name.'>';
 		while($result_array=mysqli_fetch_assoc($result))
 		{
@@ -819,7 +841,40 @@ function export_to_csv($sql,$link)
 	}	
 	
 }
+function run_query($link,$db,$sql)
+{
+	$db_success=mysqli_select_db($link,$db);
+	
+	if(!$db_success)
+	{
+		echo 'error2:'.mysqli_error($link); return false;
+	}
+	else
+	{
+		$result=mysqli_query($link,$sql);
+	}
+	
+	if(!$result)
+	{
+		echo 'error3:'.mysqli_error($link); return false;
+	}
+	else
+	{
+		return $result;
+	}	
+}
 
+function expirydate($link,$d,$u)
+{
+     $sql='select * from user where id=\''.$u.'\'';
+     $result_ld=run_query($link,'c34',$sql);
+     $row_ld=get_raw($link,$sql);
+     $t_name=$row_ld['expirydate'];
+     //$t_username=$row_ld['fullname'];
+     //echo $t_name;
+     return $t_name ;
+
+ }
 function get_staff_id($link)
 {
 $sql='select staff_id,fullname,uid from staff
@@ -953,14 +1008,21 @@ function new_salary($link,$staff_id,$bill_group)
 function list_all_salary($link,$staff_id)
 {
 
-			echo '<table ><tr><td><h2>All Salary Slips of</h2></td><td>';
+			echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+			<table class="table table-striped ">
+			<tr><td style="color:blue;padding-left:60px;padding-top:60px;"><h2>All Salary Slips of</h2></td><td>';
 			display_staff($link,$_POST['staff_id']);
-			echo '</td></tr></table>';
+			echo '</td></tr></table></div></div</div>';
 			
 	$sql='select distinct bill_group from nonsalary where staff_id=\''.$staff_id.'\' order by bill_group desc';
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link); return FALSE;}	
 	$header='yes';
-	echo '<table align=center class=border style="background-color:#ADD8E6">';
+	echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+	      <table class="table table-striped">';
 	while($bg=mysqli_fetch_assoc($result))
 	{
 		$ar=get_raw($link,'select * from bill_group where bill_group=\''.$bg['bill_group'].'\'');
@@ -975,9 +1037,12 @@ function list_all_salary($link,$staff_id)
 			echo '<form  style="margin-bottom:0;" method=post>';
 			echo '<input type=hidden name=staff_id value=\''.$staff_id.'\'>';
 			echo '<input type=hidden name=bill_group value=\''.$ar['bill_group'].'\'>';
-			echo '<input type=submit name=action value=E>';
-			echo '<input type=submit name=action value=C>';
-			echo '<input type=submit name=action value=D>';
+
+		echo '<input class="btn btn-primary" type=submit formaction=salary_slip_pdf1.php title="Print"  value=P formtarget=_blank>';
+			
+			echo '<input class="btn btn-warning" type=submit name=action value=E>';
+			echo '<input class="btn  btn-info" type=submit name=action value=C>';
+			echo '<input class="btn btn-danger" type=submit name=action value=D>';
 			echo '</form></td>'.
 			'<td>'.$ar['bill_group'].'</td>'.
 			'<td>'.$ar['date_of_preparation'].'</td>'.
@@ -989,7 +1054,7 @@ function list_all_salary($link,$staff_id)
 			'<td>'.$ar['locked'].'</td></tr>';
 			
 	}
-	echo '</table>';
+	echo '</table></div></div></div>';
 
 }
 
@@ -1011,9 +1076,14 @@ function display_salary_header($link)
 
 function list_bill($link,$bill_group)
 {
-	echo '<table align=center><tr><td><h2>All Salary Slips of</h2></td><td>';
+	echo '
+		     <div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+	     <table align=center class="table table-table-striped">
+	     <tr><td style="color:blue;padding-left:70px;padding-top:60px"><h2>All Salary Slips of</h2></td><td>';
 		display_bill($link,$_POST['bill_group']);
-	echo '</td></tr></table>';
+	echo '</td></tr></table></div></div></div>';
 	/*$sql='select distinct salary.staff_id,fullname from salary,staff where 
 					bill_group=\''.$bill_group.'\' 
 					and 
@@ -1026,20 +1096,25 @@ function list_bill($link,$bill_group)
 					order by fullname';
 										
 	if(!$result=mysqli_query($link,$sql)){return FALSE;}
-	echo '<table align=center class=border style="background-color:#ADD8E6">';
+	echo ' <form method=post>
+		     <div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+	      <table class="table table-striped" >';
 	while($ar=mysqli_fetch_assoc($result))
 	{
 		echo '<tr><td>';
 		echo '<form  style="margin-bottom:0;" method=post>';
 		echo '<input type=hidden name=staff_id value=\''.$ar['staff_id'].'\'>';
 		echo '<input type=hidden name=bill_group value=\''.$bill_group.'\'>';
-		echo '<input type=submit name=action value=E>';
-		echo '<input type=submit name=action value=C>';
-		echo '<input type=submit name=action value=D onclick="return confirm(\'Salary will be deleted permanenty\')">';
+		echo '<input class="btn btn-primary" type=submit formaction=salary_slip_pdf1.php title="Print"  value=P formtarget=_blank>';
+		echo '<input class="btn btn-warning"type=submit title="Edit" name=action value=E>';
+		echo '<input class="btn btn-info" type=submit title="Copy" name=action value=C>';
+		echo '<input class="btn btn-danger" type=submit title="Delete" name=action value=D onclick="return confirm(\'Salary will be deleted permanenty\')">';
 		echo '</form>';
 		echo '</td><td>'.$ar['fullname'].'</td></tr>';
 	}
-	echo '</table>';	
+	echo '</table></div></div></div>';	
 }
 
 /*
@@ -1285,11 +1360,143 @@ function display_salary($link,$slr)
 function select_bill_group($link)
 {
 	$sql='select distinct bill_group from salary order by bill_group desc';
-	echo '<table class=border style="background-color:lightgreen;"><tr><th>Select Bill Number</th><td>';
+	echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+		     <table class="table  table-striped"><tr><th>Select Bill Number</th><td>';
 	echo '<form method=post>';
 	mk_select_from_sql($link,$sql,'bill_group','bill_group','','');
 	echo '<input type=submit name=submit value=show>';
-	echo '</form></td></tr></table>';
+	echo '</form></td></tr></table></div></div></div>';
+}
+
+function display_staff_pdf($link,$staff_id)
+{
+	$sql='select * from staff where staff_id=\''.$staff_id.'\'';
+
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	echo '
+	<tr><th><h4>ID</h4></th><th><h4>Name</h4></th></tr>
+	<tr>';
+	while($ar=mysqli_fetch_assoc($result))
+	{
+		echo '<td>'.$ar['staff_id'].'</td>'.
+		'<td>'.$ar['fullname'].'</td>';
+	}
+	echo '</tr>';
+}
+function display_bill_pdf($link,$bill_group,$header='yes')
+{
+	$sql='select * from bill_group where bill_group=\''.$bill_group.'\'';
+
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+
+	if($header=='yes')
+	{
+		echo '<tr><th>Bill Group</th><th>Prepared on</th><th>From</th> <th>To</th> <th>Head</th> 
+		<th>Type</th><th>Remark</th></tr>
+		<tr>';
+	}
+	while($ar=mysqli_fetch_assoc($result))
+	{
+		echo '<td>'.$ar['bill_group'].'</td>
+		<td>'.$ar['date_of_preparation'].'</td>
+		<td>'.$ar['from_date'].'</td>
+		<td>'.$ar['to_date'].'</td>
+		<td>'.$ar['head'].'</td>
+		<td>'.$ar['bill_type'].'</td>
+		<td>'.$ar['remark'].'</td>';
+	}
+	echo '</tr>';
+
+}
+
+
+function print_one_nonsalary_slip($link,$staff_id,$bill_group,$format_table='')
+{
+	if(strlen($format_table)==0){$format_table='nonsalary_type';}
+	$sql='select * from `'.$format_table.'`';
+
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	$ptbl='';
+	$count=0;
+	while($ar=mysqli_fetch_assoc($result))
+	{
+		$dt=get_raw($link,'select * from nonsalary where 
+								staff_id=\''.$staff_id.'\' and 
+								bill_group=\''.$bill_group.'\' and 
+								nonsalary_type_id=\''.$ar['nonsalary_type_id'].'\'');
+		$title=$ar['nonsalary_type_id'];	
+								 
+		if($count%3==0){$t='<tr>';}else{$t='';}
+		if($count%3==2){$tt='</tr>';}else{$tt='';}
+		
+		$ptbl=$ptbl.$t.'<td width="25%">'.$ar['name'].'</td>
+				
+									<td width="8.3%">'.$dt['data'].'</td>'.$tt;
+				
+
+		$count=$count+1;
+	}
+	
+	if($count%3!=0){$ptbl=$ptbl.'</tr>';}
+	$tbl='<table  align="center" border="1" width="100%">'.$ptbl.'</table>';
+			
+	echo $tbl;
+}
+
+
+function print_one_salary_slip($link,$staff_id,$bill_group,$format_table='')
+{
+	if(strlen($format_table)==0){$format_table='salary_type';}
+	$sql='select * from `'.$format_table.'`';
+
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	$ptbl='';
+	$mtbl='';
+	while($ar=mysqli_fetch_assoc($result))
+	{
+		$dt=get_raw($link,'select * from salary where 
+								staff_id=\''.$staff_id.'\' and 
+								bill_group=\''.$bill_group.'\' and 
+								salary_type_id=\''.$ar['salary_type_id'].'\'');
+								
+		if($ar['type']=='+'){$ptbl=$ptbl.'<tr>
+										<td width="55%">'.substr($ar['name'],0,20).'</td>
+										<td width="25%">'.$dt['amount'].'</td>
+										<td width="20%">'.$dt['remark'].'</td></tr>';}
+										
+		elseif($ar['type']=='-'){$mtbl=$mtbl.'<tr>
+										<td width="55%">'.substr($ar['name'],0,20).'</td>
+										<td width="25%">'.$dt['amount'].'</td>
+										<td width="20%">'.$dt['remark'].'</td></tr>';}	
+	}
+	
+	$tbl='<table  align="center" id="sal" border="1" >	
+				<tr align="center">
+					<th><h3>Payment</h3></th><th><h3>Deductions</h3></th></tr>
+					<tr><td><table border="1">'.$ptbl.'</table></td><td><table border="1">'.$mtbl.'</table></td></tr>
+				 
+		</table>';
+			
+	echo $tbl;
+	$pmn=find_sums($link,$staff_id,$bill_group);
+
+	
+    echo '<br><br><br>
+          <table width="100%">
+           <tr>
+           <td width="20%"></td>
+           <td width="60%">
+                <table  align="center" border="1"><tr>
+	            <th>Gross</th><th>Deductions</th><th>Net</th></tr><tr>
+	            <th>'.$pmn[0].'</th><th>'.$pmn[1].'</th><th>'.$pmn[2].'</th>
+	           </tr></table>
+           </td>
+           <td width="20%"></td>
+           </tr>
+          </table>';
+	
 }
 
 /*
@@ -1349,25 +1556,46 @@ function copy_salary_old($link,$from_staff,$to_staff,$from_bn,$to_bn,$ar)
 
 }
 */
-
-
 function get_bill_group($link)
 {
-	echo '<form method=post>';
-	echo '<table align=center class=border style="background-color:lightgreen;">';
-	echo '<tr><th>Select Bill group</th><td>';
-	echo '</td><tr><th>Bill group:</th><td>';
+	echo '<div class="container">
+		     <div class="row">
+		     <div class="col-*-6 mx-auto"> <form method=post>';
+	echo '<table  class="table table-striped">';
+	echo '<tr><th colspan=2 style="background-color:lightblue;text-align: center;"><h4>Select Bill group</h4></th>
+	      <tr><th>Bill group:</th><td>';
 	$sql='select bill_group from bill_group order by bill_group desc';
 	mk_select_from_sql($link,$sql,'bill_group','bill_group','','');
 	echo '</td></tr><tr><td  align=center colspan=2>';
-	echo '<input type=submit name=action value=select_bill_group>';
-	echo '</td></tr></table></form>';
+	echo '<input type=submit class="btn btn-success" name=action value=select_bill_group>';
+	echo '</td></tr></table></form></div></div></div>';
+}
+
+
+function get_bill_group1($link)
+{
+	echo '<div class="container">
+		     <div class="row">
+		     <div class="col-*-6 mx-auto"> <form method=post>';
+	echo '<table  class="table table-striped">';
+	echo '<tr><th colspan=2 style="background-color:lightblue;text-align: center;"><h4>Select Bill group</h4></th>
+	      <tr><th>Bill group:</th><td>';
+	$sql='select bill_group from bill_group order by bill_group desc';
+	mk_select_from_sql($link,$sql,'bill_group','bill_group','','');
+	echo'<tr><th>Page Par Print:</th><td>
+	     <input type=number name=pno value=2 >';
+	echo '</td></tr><tr><td  align=center colspan=2>';
+	echo '<input type=submit class="btn btn-success" name=action value=select_bill_group>';
+	echo '</td></tr></table></form></div></div></div>';
 }
 
 function get_bill_number($link,$bill_group)
 {
-	echo '<form method=post action=print_bill_step_2.php>';
-	echo '<table class=border align=center style="background-color:lightgreen;">';
+	echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+	      <form method=post action=print_bill_step_2.php>';
+	echo '<table class="table table-striped" align=center >';
 	echo '<tr><th>Bill Group</th><td><input type=text readonly name=bill_group value=\''.$bill_group.'\'</td></tr>';
 	echo '</td><tr><th>Bill_number:</th><td>';
 	$sql='select distinct data from nonsalary where bill_group=\''.$bill_group.'\' 
@@ -1376,8 +1604,8 @@ function get_bill_number($link,$bill_group)
 	//echo $sql;
 	mk_select_from_sql($link,$sql,'data','bill_number','','');
 	echo '</td></tr><tr><td  align=center colspan=2>';
-	echo '<input type=submit name=submit value=print_reports>';
-	echo '</td></tr></table></form>';
+	echo '<input class="btn btn-success" type=submit name=submit value=print_reports>';
+	echo '</td></tr></table></form></div></div></div>';
 }
 
 function display_bill($link,$bill_group,$header='yes')
@@ -1385,11 +1613,14 @@ function display_bill($link,$bill_group,$header='yes')
 	$sql='select * from bill_group where bill_group=\''.$bill_group.'\'';
 
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
-	echo '<table align=center class=border style="background-color:#ADD8E6">';
+	echo '<div class="container"">
+	<div class="row">
+		     <div class="col-*-6 mx-auto">
+	      <table class="table table-bordered table-striped">';
 	if($header=='yes')
 	{
 		echo '<tr><th>Bill Group</th><th>Prepared on</th> <th>From</th> <th>To</th> <th>Head</th> 
-		<th>Type</th><th>Remark</th><th>Locked<br>1=locked<br>0=unlocked</th></tr>
+		<th>Type</th><th>Remark</th><th>Locked<br>1=locked<br>0=unlocked</th><th colspan="2">Action</th></tr>
 		<tr>';
 	}
 	while($ar=mysqli_fetch_assoc($result))
@@ -1402,13 +1633,16 @@ function display_bill($link,$bill_group,$header='yes')
 		<td>'.$ar['bill_type'].'</td>
 		<td>'.$ar['remark'].'</td>
 		<td>'.$ar['locked'].'</td>
-		<td>
-			<form target=_blank style="margin-bottom:0;" method=post action=change_bill_detail.php>
-				<input type=submit name=action value=edit>
-				<input type=hidden name=bill_group value=\''.$ar['bill_group'].'\'>
-			</form></td>';
+		<td><form   method=post action=change_bill_detail.php>
+				<input type=submit  class="btn btn-warning" name=action value=edit><br>
+								<input type=hidden name=bill_group value=\''.$ar['bill_group'].'\'>
+			</form></td>
+			
+			<td><form   method=post action=export_annual_bill.php>
+			<input type=submit  class="btn btn-primary" name=action value=export>
+				<input type=hidden name=bill_group value=\''.$ar['bill_group'].'\'></form></td>';
 	}
-	echo '</tr></table>';
+	echo '</tr></table></div></div></div>';
 }
 
 
@@ -1444,7 +1678,10 @@ function display_staff($link,$staff_id)
 	$sql='select * from staff where staff_id=\''.$staff_id.'\'';
 
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
-	echo '<table align=center class=border style="background-color:#F5D300">
+	echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+		     <table class="table table-striped ">
 	<tr><th>ID</th><th>Name</th></tr>
 	<tr>';
 	while($ar=mysqli_fetch_assoc($result))
@@ -1452,7 +1689,7 @@ function display_staff($link,$staff_id)
 		echo '<td>'.$ar['staff_id'].'</td>'.
 		'<td>'.$ar['fullname'].'</td>';
 	}
-	echo '</tr></table>';
+	echo '</tr></table></div></div</div>';
 }
 
 
@@ -1523,22 +1760,26 @@ function edit_salary($link,$staff_id,$bill_group,$format_table='')
 										</td></tr>';}	
 	}
 	
-	$tbl='<table align=center id=sal class=border style="display=block;background-color:#A0CA94">	
+	$tbl=' <div class="container">
+		     <div class="row">
+		     <div class="col-*-6 mx-auto" >
+		     <table  id=sal class="table table-striped">	
 				<tr><th>Payment</th><th>Deductions</th></tr>
 				<tr><td valign=top><table class=border>'.$ptbl.'</table>
 				</td><td valign=top><table class=border>'.$mtbl.'</table></td></tr>
 
-		</table>';
+		</table></div></div></div>';
 			
 	echo $tbl;
 	$pmn=find_sums($link,$_POST['staff_id'],$_POST['bill_group']);
 
-	echo '<table align=center><tr><td align=center><div align=center id="response">';
-	
+	echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto" id="response">';
 	echo '<table class=border align="center" style="display:block;background:lightpink;"><tr>';
 	echo '<th>Gross</th><th>Deductions</th><th>Net</th></tr><tr>';
 	echo '<th>'.$pmn[0].'</th><th>'.$pmn[1].'</th><th>'.$pmn[2].'</th>';
-	echo '</tr></table>';
+	echo '</tr></table></div></div></div>';
 	
 	echo '</div></td></tr></table>';
 	
@@ -1691,6 +1932,8 @@ function find_sums($link,$staff_id,$bill_group)
 	$n=$p-$m;	
 	return array($p,$m,$n);				
 }
+
+
 
 function find_sums_govt($link,$staff_id,$bill_group)
 {
@@ -2174,4 +2417,292 @@ function is_bill_group_locked($link, $bg)
 	return $ar['locked'];	
 }
 
+
+
+
+function print_one_nonsalary_slip_pdf($link,$staff_id,$bill_group,$format_table='')
+{
+	if(strlen($format_table)==0){$format_table='nonsalary_type';}
+	$sql='select * from `'.$format_table.'`';
+
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	$ptbl='';
+	$count=0;
+	while($ar=mysqli_fetch_assoc($result))
+	{
+		$dt=get_raw($link,'select * from nonsalary where 
+								staff_id=\''.$staff_id.'\' and 
+								bill_group=\''.$bill_group.'\' and 
+								nonsalary_type_id=\''.$ar['nonsalary_type_id'].'\'');
+		$title=$ar['nonsalary_type_id'];	
+								 
+		if($count%2==0){$t='<tr>';}else{$t='';}
+		if($count%2==1){$tt='</tr>';}else{$tt='';}
+		
+		$ptbl=$ptbl.$t.'<td width="15%">'.substr($ar['name'],0,7).'</td>
+				
+									<td width="35%">'.$dt['data'].'</td>'.$tt;
+				
+
+		$count=$count+1;
+	}
+	
+	if($count%2!=0){$ptbl=$ptbl.'</tr>';}
+	$tbl='<table  align="center" border="1" width="100%">'.$ptbl.'</table>';
+			
+	echo $tbl;
+}
+
+
+function print_one_salary_slip_pdf($link,$staff_id,$bill_group,$format_table='')
+{
+	if(strlen($format_table)==0){$format_table='salary_type';}
+	$sql='select * from `'.$format_table.'`';
+
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	$ptbl='';
+	$mtbl='';
+	while($ar=mysqli_fetch_assoc($result))
+	{
+		$dt=get_raw($link,'select * from salary where 
+								staff_id=\''.$staff_id.'\' and 
+								bill_group=\''.$bill_group.'\' and 
+								salary_type_id=\''.$ar['salary_type_id'].'\'');
+								
+		if($ar['type']=='+'){$ptbl=$ptbl.'<tr>
+										<td width="65%">'.substr($ar['name'],0,20).'</td>
+										<td width="15%">'.$dt['amount'].'</td>
+										<td width="20%">'.$dt['remark'].'</td></tr>';}
+										
+		elseif($ar['type']=='-'){$mtbl=$mtbl.'<tr>
+										<td width="65%">'.substr($ar['name'],0,20).'</td>
+										<td width="15%">'.$dt['amount'].'</td>
+										<td width="20%">'.$dt['remark'].'</td></tr>';}	
+	}
+	
+	$tbl='<table  align="center" id="sal" border="1" >	
+				<tr align="center">
+					<th><h3>Payment</h3></th><th><h3>Deductions</h3></th></tr>
+					<tr><td><table border="1">'.$ptbl.'</table></td><td><table border="1">'.$mtbl.'</table></td></tr>
+				 
+		</table>';
+			
+	echo $tbl;
+	$pmn=find_sums($link,$staff_id,$bill_group);
+
+	
+    echo '<br><br><br>
+          <table width="100%">
+           <tr>
+           <td width="20%"></td>
+           <td width="60%">
+                <table  align="center" border="1"><tr>
+	            <th>Gross</th><th>Deductions</th><th>Net</th></tr><tr>
+	            <th>'.$pmn[0].'</th><th>'.$pmn[1].'</th><th>'.$pmn[2].'</th>
+	           </tr></table>
+           </td>
+           <td width="20%"></td>
+           </tr>
+          </table>';
+	
+}
+function print_one_complate_slip($link,$result_array,$bg)
+{
+	  echo'<h3 align="center">Salary Slip,'.$GLOBALS['college'].''.$GLOBALS['city'].'</h3>';
+		    
+		    echo'<h3 align="center">'.$result_array['fullname'].'</h3>';
+		    echo '<br>
+            <table width="100%">
+            <tr>
+            <td width="20%"></td>
+            <td width="60%">
+                  <table align="center" border="1">';
+			      display_staff_pdf($link,$result_array['staff_id']);
+		    echo '</table>
+            </td>
+            <td width="20%"></td>
+            </tr>
+            </table>';
+			echo '<br><br>';
+			echo '<table border="1" align="center">';
+			 	   display_bill_pdf($link,$bg);
+			echo '</table>';
+	        echo '<br><br>';
+			print_one_nonsalary_slip_pdf($link,$result_array['staff_id'],$bg);
+            echo '<br><br>';
+			print_one_salary_slip_pdf($link,$result_array['staff_id'],$bg);
+		    echo '<br><br><br><br>';
+		    echo'<table width="100%" align="center">
+		           <tr><td  width="60%">
+		                   <table >
+		                   <tr><td></td><td></td></tr>
+		                   </table>
+		           </td><td align="right" width="40%">
+			               <table  align="center" >
+				           <tr><td>Accounts Officer</td></tr>
+				           <tr><td>'.$GLOBALS['college'].'</td></tr>
+				           <tr><td>'.$GLOBALS['city'].'</td></tr>
+				          </table>
+				    </td></tr>
+		         </table>';
+}
+
+//when user reach here, encrypt is already functioning
+function check_old_password($link,$user,$password)
+{
+	$sql='select * from  user where id=\''.$user.'\' ';
+	//echo $sql;
+	if(!$result=mysqli_query($link,$sql))
+	{
+		//echo mysql_error();
+		return FALSE;
+	}
+	if(mysqli_num_rows($result)<=0)
+	{
+		//echo 'No such user';
+		echo '<h3>wrong username/password</h3>';
+		return false;
+	}
+	$array=mysqli_fetch_assoc($result);
+	
+	if(password_verify($password,$array['epassword']))
+   // if(MD5($password)==$array['password'])
+	{
+	  	//echo 'You have supplied correct username and password';
+		return true;
+	}
+	else
+	{
+		//echo 'You have suppled wrong password for correct user';
+                echo '<h3>wrong username/password</h3>';
+		return false;
+	}
+}
+
+function update_password($link,$user,$new_password)
+{
+
+	//$eDate = date('Y-m-d');
+    //$eDate = date('Y-m-d', strtotime("+6 months", strtotime($eDate)));
+    $eDate = date('Y-m-d', strtotime("+12 months"));
+    // echo $eDate;	
+	$sqli="update user set epassword='".password_hash($new_password,PASSWORD_BCRYPT)."',expirydate='$eDate' where id='$user'";	
+	$user_pwd=run_query($link,'c34',$sqli);
+	if($user_pwd>0)
+	{
+		return true;	
+	}
+	else
+	{
+		return false;	
+	}
+}
+
+function is_valid_password($pwd){
+// accepted password length minimum 8 its contain lowerletter,upperletter,number,special character.
+    if (preg_match("/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).{8,}$/", $pwd))
+   {
+	  // $msgpwd='<p>contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character at least 8 or more characters</p>';
+   
+        return true;
+	}
+    else{
+		
+        return false;
+	}
+}
+//New with MD5 to encrypt transition
+function check_user($link,$u,$p)
+{
+	$sql='select * from user where id=\''.$u.'\'';
+	//echo $sql;
+	if(!$result=mysqli_query($link,$sql)){return FALSE;}
+	$result_array=mysqli_fetch_assoc($result);
+	//check validation
+	
+	
+	//First verify encrypted password
+	if(password_verify($p,$result_array['epassword']))
+	{
+		//echo strtotime($result_array['expirydate']).'<'.strtotime(date("Y-m-d"));
+		
+		if(strtotime($result_array['expirydate']) < strtotime(date("Y-m-d")))
+	    {
+			head();
+		echo '
+		     <div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+               <form method=post>
+                   <table  class="table table-striped" >
+                    <tr>
+		                  <th colspan=2 style="background-color:lightblue;text-align: center;">
+		                      <h3>Password Expired</h3>
+		                  </th>   
+		            </tr>
+		            <tr>
+		                  <td></td>
+		                  <td></td>
+		            </tr>
+	                <tr>
+		                 <th>
+			                  Login Id
+		                 </th>
+		                 <td>
+			                  <input type=text readonly name=login id=id value=\''.$_SESSION['login'].'\'>
+		                 </td>
+	                </tr>
+                 
+	                 <tr>
+		                <td></td>
+		                <td>
+                            <button class="btn btn-success" name=action type=submit value="change_password_step_1" formaction="../sal/change_expired_pass.php">Change Password</button>
+	               	    </td>
+	               </tr>
+	              </table>
+	              </form>
+	              </div>
+	              </div>
+	              </div>';
+
+			exit(0);
+	    }
+	    else
+	    {
+			//do nothing
+	    }
+		return true;	
+	}
+	
+	//donot enter if password length stored is 0
+	else if(strlen($result_array['password'])>0)
+    {	
+		if(md5($p)==$result_array['password'])		//last chance for md5
+		{
+			 $sqli="update user set epassword='".password_hash($p,PASSWORD_BCRYPT)."' where id='$u'";	
+	         //echo $sqli;
+	         $user_pwd=run_query($link,'c34',$sqli);
+	        // echo $user_pwd;
+	         if($user_pwd>0)
+	         {
+		         //erase md5 password, set length 0
+		         $sqlm="update user set password='' where id='$u'";
+				 //echo $sqlm;
+				 $user_pwd=run_query($link,'c34',$sqlm);
+				return true;	
+
+			 }
+	         else
+	         {
+		        return false;	//if encrypted password is not written
+	         }
+	         
+		}
+	}
+	
+	else //if encrypt fail and md5 lenght is zero, get out
+	{
+		return false;
+	}
+}
 ?>

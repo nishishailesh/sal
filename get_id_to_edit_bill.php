@@ -40,7 +40,7 @@ table{
 
 $link=connect();
 
-menu();
+menu($link);
 
 if(	isset($_POST['bill_group']) && 
 	isset($_POST['staff_id']) &&

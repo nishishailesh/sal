@@ -15,5 +15,8 @@ if(!isset($_SESSION['password']))
 
 //////////////
 $link=connect();
-menu();
+
+head();
+menu($link);
+htmltail();
 ?>

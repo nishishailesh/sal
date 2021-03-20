@@ -1,10 +1,12 @@
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+			
 <?php
 session_start();
 //$nojunk='yes';
 set_time_limit(360);
 require_once 'common.php';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 //print_r($_POST);
 class ACCOUNT extends TCPDF {
 
@@ -75,22 +77,24 @@ function print_one_salary_slip($link,$staff_id,$bill_group,$format_table='')
 	
 	$tbl='<table width="100%" align=center id=sal class=border style="display=block;background-color:#A0CA94">	
 				<tr><th>Payment</th><th>Deductions</th></tr>
-				<tr><td valign=top><table class=border width="100%">'.$ptbl.'</table>
-				</td><td valign=top><table class=border width="100%">'.$mtbl.'</table></td></tr>
+				<tr><td valign=top><table class=table width="100%">'.$ptbl.'</table>
+				</td><td valign=top><table class=table width="100%">'.$mtbl.'</table></td></tr>
 
 		</table>';
 			
 	echo $tbl;
 	$pmn=find_sums($link,$staff_id,$bill_group);
 
-	echo '<table align=center><tr><td align=center><div align=center id="response">';
-	
-	echo '<table width="100%" class=border align="center" style="display:block;background:lightpink;"><tr>';
+	echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+	   <table class="table table-striped "><tr><td align=center>';
+	echo '<table width="100%" class="table table-striped " align="center" style="display:block;background:lightpink;"><tr>';
 	echo '<th>Gross</th><th>Deductions</th><th>Net</th></tr><tr>';
 	echo '<th>'.$pmn[0].'</th><th>'.$pmn[1].'</th><th>'.$pmn[2].'</th>';
 	echo '</tr></table>';
 	
-	echo '</div></td></tr></table>';
+	echo '</td></tr></table><div><div></div>';
 }
 
 
@@ -121,7 +125,7 @@ if(isset($_POST['action']))
 		{
 			echo '<table border="0" align="center">';
 			echo '<tr><td>';
-				echo '<h3 align="center">Salary Slip, Government Medical College Surat</h3>';
+				echo '<h3 align="center">Salary Slip,'.$GLOBALS['college'].''.$GLOBALS['city'].'</h3>';
 			echo '</td></tr>';
 			echo '<tr><td>';
 				echo '<h3 align="right">'.$result_array['fullname'].'</h3>';
@@ -143,8 +147,8 @@ if(isset($_POST['action']))
 				//echo '<br><br><br><br><br><br><br>';	
 				echo '<table border="0" align="right">';
 				echo '<tr><td align="center">Account Officer</td></tr>';
-				echo '<tr><td align="center">Government Medical College</td></tr>';
-				echo '<tr><td align="center">Surat</td></tr>';
+				echo '<tr><td align="center">'.$GLOBALS['college'].'</td></tr>';
+				echo '<tr><td align="center">'.$GLOBALS['city'].'</td></tr>';
 				echo '</table>';
 			echo '</td></tr>';
 			echo '</table>';

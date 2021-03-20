@@ -1,17 +1,18 @@
+
 <?php
 session_start();
 require_once 'common.php';
 
 //print_r($_POST);
 $link=connect();
-menu();
+head();
+menu($link);
 
-
-echo '<div align=center style="background-color:#FFD4D4;">';
-list_annual_salary($link,$_POST['staff_id'],$_POST['year']);
-echo '</div>';
-
-
+echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">';
+list_annual_salary($link,$_POST['staff_id'],$_POST['fyear'],$_POST['fmonth'],$_POST['tyear'],$_POST['tmonth']);
+echo '</div></div></div>';
 
 function print_one_h_salary($link,$staff_id,$bill_group,$format_table='')
 {
@@ -70,36 +71,61 @@ function print_one_h_salary_header($link,$format_table='')
 	echo $tbl;
 }
 
-function list_annual_salary($link,$staff_id,$year)
+function list_annual_salary($link,$staff_id,$fyear,$fmonth,$tyear,$tmonth)
 {
-			echo '<table ><tr><td><h2>Annual Salary of</h2></td><td>';
+			
+			echo'<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+			 <table class="table table-striped">
+			 <tr><td style="color:blue;padding-left:70px;padding-top:60px"><h2>Annual Salary of</h2></td><td>';
 			display_staff($link,$_POST['staff_id']);
-			echo '</td></tr></table>';
+			echo '</td></tr></table></div></div></div>';
 			
 	$sql='select distinct bill_group from salary where staff_id=\''.$staff_id.'\' order by bill_group desc';
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link); return FALSE;}	
-	echo '<table align=center class=border style="background-color:#ADD8E6">';
+	echo ' <div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+			      <table class="table table-striped">';
 	echo '<tr><th>Bill Group</th><th>Type</th><th>Remark</th><th>Gross</th><th>Deduction</th><th>Net</th>';
 	print_one_h_salary_header($link,'');
 	echo '</tr>';
 			
 	while($bg=mysqli_fetch_assoc($result))
-	{
-		if(substr($bg['bill_group'],2,2)==$year)
-		{
-		$ar=get_raw($link,'select * from bill_group where bill_group=\''.$bg['bill_group'].'\'');
+	{ 
+		//echo $fyear.'<br>';
+		//echo $tyear.'<br>';
+		//echo $bg['bill_group'].'<br>';
+		//echo substr($bg['bill_group'],2,2).'<br>';
 		
+	
+	$from=$fyear*100+$fmonth;
+	$to=$tyear*100+$tmonth;
+			
+
+
+		//if((substr($bg['bill_group'],2,2)>=$fyear) &&
+		  // (substr($bg['bill_group'],2,2)<=$tyear) && 
+		   //(substr($bg['bill_group'],4,2)>=$fmonth) && 
+		   //(substr($bg['bill_group'],4,2)<=$tmonth))
+			if(substr($bg['bill_group'],2,4)>=$from && substr($bg['bill_group'],2,4)<=$to)
+		  {
+
+		    $ar=get_raw($link,'select * from bill_group where bill_group=\''.$bg['bill_group'].'\'');
 			echo '<tr>
 			<td>'.$ar['bill_group'].'</td>
 			<td>'.$ar['bill_type'].'</td>
 			<td>'.$ar['remark'].'</td>';
 			print_one_h_salary($link,$staff_id,$bg['bill_group'],'');
 			echo '</tr>';
-		}
+		 
+		 }
 	}
-	echo '</table>';
+	echo '</table></div></div></div>';
 
 }
 
+htmltail();
 ?>
 

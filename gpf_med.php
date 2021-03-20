@@ -3,7 +3,7 @@ session_start();
 $nojunk='defined';
 require_once 'common.php';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 $link=connect();
 
 
@@ -14,10 +14,8 @@ $link=connect();
 
 $GLOBALS['rpp']=20;
 $GLOBALS['total_pages']='';
-$GLOBALS['college']='Government Medical College, Majura Gate, Surat';
 $GLOBALS['allowances']='Report on Pay and Allowances Bill';
 $GLOBALS['deductions']='Report on Pay Bill Deductions';
-$GLOBALS['acc_off']='Mr Maheshbhai chaudhari';
 $GLOBALS['cardex']='65';
 $GLOBALS['ddo_no']='553';
 $GLOBALS['grand']=array();
@@ -78,7 +76,7 @@ function gpf_page_header($link,$bg,$bn,$pg)
 	echo '<h4 align="center" style="border: 1px solid #000000;">Schedule of General Providend Fund Deduction</h4>';
 	echo '<h4 align="center" >other than Class-IV Page:'.$pg.'</h4>';
 			
-	echo '<h4 align="center">'.$GLOBALS['college'].'</h3>';
+	echo '<h4 align="center">'.$GLOBALS['college'].''.$GLOBALS['address'].''.$GLOBALS['city'].'</h3>';
 	echo '<h4 align="center">Under Head: 8009 State Provident Fund</h4>';
 	echo '<h4 align="center">Amount deducted from salary for the month of '.$bill_details['remark'].' (Bill: '.$bg.'-'.$bn.')</h4>';
 	echo '<h4 align="center">Name of office maintaining accounts: Accountant Genral Rajkot</h4>';	
@@ -93,11 +91,12 @@ function print_gpf($link,$bg,$bn)
 					<th width="5%"><b>Sr</b></th>
 					<th width="14%"><b>GPF A/C No</b></th>
 					<th width="23%"><b>Name of Emp</b></th>
-					<th width="10%"><b>Desig. Emp.</b></th>
-					<th width="10%"><b>Pay</b></th>
+					<th width="13%"><b>Mobile No.</b></th>
+					<th width="8%"><b>Desig.<br>Emp.</b></th>
+					<th width="8%"><b>Pay</b></th>
 					<th width="10%"><b>Monthly sub.</b></th>
-					<th width="10%"><b>Adv. Rec.</b></th>
-					<th width="9%"><b>Inst No</b></th>
+					<th width="5%"><b>Adv.<br>Rec.</b></th>
+					<th width="5%"><b>Inst<br>No</b></th>
 					<th width="9%"><b>Total</b></th>
 				</tr>';
 				
@@ -140,13 +139,15 @@ function print_gpf($link,$bg,$bn)
 		
 		$gpf_ar=get_sfval($link,$bg,$staff_id,$GLOBALS['gpf_adv_rec_id']);
 		$staff=get_staff($link,$staff_id);
-		
+		//$staff=get_raw($link,'select moblie from staff where staff_id=\''.$staff_id.'\'');
+		//$staffdetail=get_
 		if(($gpf['amount']>0 || $gpf_ar['amount']>0) && substr($acc['data'],0,3)=='MED')
 		{
 			echo '<tr>
 					<td>'.$count.'</td>				
 					<td>'.$acc['data'].'</td>
 					<td align="left">'.$staff['fullname'].'</td>
+                                        <td>'.$staff['mobile'].'</td>
 					<td>'.$post['data'].'</td>
 					<td>'.$pay.'</td>				
 					<td>'.$gpf['amount'].'</td>
@@ -159,7 +160,7 @@ function print_gpf($link,$bg,$bn)
 			if($count%$GLOBALS['rpp']==0 && ($count/$GLOBALS['rpp'])>0)
 			{
 				echo '<tr><td></td> <td></td> <td></td>
-				<td></td><td>C/F</td> <td>'.$sum_gpf.'</td>
+				<td></td><td></td><td>C/F</td> <td>'.$sum_gpf.'</td>
 				<td>'.$sum_gpf_ar.'</td><td></td><td>'.($sum_gpf+$sum_gpf_ar).'</td></tr>';
 				
 				echo '</table>';
@@ -168,20 +169,22 @@ function print_gpf($link,$bg,$bn)
 				gpf_page_header($link,$bg,$bn,round(($count/$GLOBALS['rpp']),0)+1);				
 				echo '<table cellpadding="1" cellspacing="0" border="0.3" style="text-align:center;">';
 				echo $gpf_head;
-				echo '<tr><td></td> <td></td> <td></td>
+				echo '<tr><td></td><td></td> <td></td> <td></td>
 				<td ></td><td>B/F</td> <td >'.$sum_gpf.'</td>
 				
-				<td>'.$sum_gpf_ar.'</td><td></td><td>'.($sum_gpf+$sum_gpf_ar).'</td></tr>';
+				<td>'.$sum_gpf_ar.'</td><td>'.($sum_gpf+$sum_gpf_ar).'</td></tr>';
 			}
 			$count++;
 		}
 	}
 			echo '<tr><td></td> <td></td> <td></td>
-			<td></td><td>Total</td> <td>'.$sum_gpf.'</td>
+			<td></td><td></td><td>Total</td> <td>'.$sum_gpf.'</td>
 			<td>'.$sum_gpf_ar.'</td><td></td><td>'.($sum_gpf+$sum_gpf_ar).'</td></tr>';	
-		$xxx=new Numbers_Words();
-		echo '<tr><td align="right" colspan="9">Total in Words: '.
-				$xxx->toWords(($sum_gpf+$sum_gpf_ar),"en_US").' Only</td></tr>';
+		   //$xxx=new Numbers_Words();
+		   echo '<tr><td></td><td align="right" colspan="9">Total in Words: ';
+		    my_number_to_words($sum_gpf);
+		   echo ' '.$GLOBALS['n2s'].' Only</td></tr>';
+			//$xxx->toWords(($sum_gpf+$sum_gpf_ar),"en_US").' Only</td></tr>';
 	echo '</table>';
 }
 

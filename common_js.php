@@ -2,6 +2,21 @@
 
 echo '<script>
 
+function showhide_with_label(one,labell,textt) {
+	//style="background-color:#5BC0DE;color:white;font-size:20px;border-radius: 8px;padding:10px;"
+				if(document.getElementById(one).style.display == "none")
+				{
+					document.getElementById(one).style.display = "block";
+					labell.style="background-color:#5BC0DE;font-size:20px;border-radius: 8px;padding:10px;";
+					labell.innerHTML="Hide "+textt;
+				}
+				else
+				{
+					document.getElementById(one).style.display = "none";
+					labell.innerHTML="Show "+textt;
+				}
+
+		}
 function run_ajax(str,rid)
 {
 	//create object

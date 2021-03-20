@@ -3,7 +3,7 @@ session_start();
 $nojunk='defined';
 require_once 'common.php';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 $link=connect();
 
 
@@ -14,10 +14,8 @@ $link=connect();
 
 $GLOBALS['rpp']=20;
 $GLOBALS['total_pages']='';
-$GLOBALS['college']='Government Medical College, Majura Gate, Surat';
 $GLOBALS['allowances']='Report on Pay and Allowances Bill';
 $GLOBALS['deductions']='Report on Pay Bill Deductions';
-$GLOBALS['acc_off']='Mr Maheshbhai chaudhari';
 $GLOBALS['cardex']='65';
 $GLOBALS['ddo_no']='553';
 $GLOBALS['grand']=array();
@@ -81,7 +79,7 @@ function page_header($link,$bg,$bn,$pg)
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
 
 	echo '<h4 align="center" style="border: 1px solid #000000;">Schedule pertaining to the credit head 8011 (Insurance Fund Pension fund)</h4>';		
-	echo '<h4 align="center">'.$GLOBALS['college'].'</h3>';
+	echo '<h4 align="center">'.$GLOBALS['college'].''.$GLOBALS['address'].''.$GLOBALS['city'].'</h3>';
 	echo '<h4 align="center">Under Head: 8009 State Provident Fund</h4>';
 	echo '<h4 align="center">Amount deducted from salary for the month of '.$bill_details['remark'].' (Bill: '.$bg.'-'.$bn.')</h4>';
 	echo '<h4 align="center">Name of office maintaining accounts: Accountant Genral Rajkot</h4>';	
@@ -183,9 +181,11 @@ function print_table($link,$bg,$bn)
 					<td>'.$sum_sis_sf.'</td>
 					<td>'.($sum_sis_if+$sum_sis_sf).'</td>
 				</tr>';
-		$xxx=new Numbers_Words();				
-		echo '<tr><td align="right" colspan="9">Total in Words: '.
-				$xxx->toWords(($sum_sis_if+$sum_sis_sf),"en_US").' Only</td></tr>';
+		//$xxx=new Numbers_Words();				
+		echo '<tr><td align="right" colspan="9">Total in Words: ';
+		my_number_to_words($sum_sis_if+$sum_sis_sf);
+		echo ' '.$GLOBALS['n2s'].' Only</td></tr>';
+				//$xxx->toWords(($sum_sis_if+$sum_sis_sf),"en_US").' Only</td></tr>';
 				
 	echo '</table>';
 }

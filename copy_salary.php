@@ -40,7 +40,7 @@ table{
 function read_bill_group_to_copy($link)
 {
 	echo '<form method=post>';
-	echo '<table class=border style="background-color:lightgreen;">';
+	echo '<table class="table table-striped">';
 	
 	echo '<tr><th>Selected staff</th><td>';
 	echo $_POST['staff_id'].'<td></tr>';
@@ -88,7 +88,7 @@ function read_bill_group_to_copy($link)
 
 $link=connect();
 
-menu();
+menu($link);
 
 if(isset($_POST['submit']) && isset($_POST['bill_group'])&&isset($_POST['staff_id']))
 {

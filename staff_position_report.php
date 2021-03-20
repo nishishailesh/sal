@@ -3,12 +3,12 @@ session_start();
 $nojunk='defined';
 require_once 'common.php';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 $link=connect();
 
 //print_r($_POST);
 
-$GLOBALS['college']='Government Medical College, Majura Gate, Surat';
+
 
 ob_start();
 print_position($link,$_POST['bill_group'],$_POST['bill_number']);
@@ -102,7 +102,7 @@ function print_position($link,$bg,$bn)
 	echo '<table border=1 style="border-collapse: collapse;">';
 	echo '<tr><th colspan="5"><h3>Statement of Sectioned, Filled and Vacant Post</h3></th></tr>';
 	echo '<tr><th colspan="5"><h3>'.$bill['remark'].'  ['.$bg.'-'.$bn.']</h3></th></tr>';
-	echo '<tr><th colspan="5"><h3>Government Medical College Surat</h3></th></tr>';
+	echo '<tr><th colspan="5"><h3>'.$GLOBALS['college'].''.$GLOBALS['city'].'</h3></th></tr>';
 	
 
 	echo '<tr><th>Post</th><th>Senctioned</th><th>Filled</th><th>Vacant</th><th>Filled in the Bill</th></tr>';

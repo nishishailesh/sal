@@ -21,7 +21,8 @@ $GLOBALS['qtr_id']=9;
 $GLOBALS['real_off_id']=13;
 $GLOBALS['real_est_id']=14;
 
-menu();
+head();
+menu($link);
 
 //repacement to save_salary.php AJAX
 function ui_sal($link,$s,$b,$sti,$val)
@@ -84,7 +85,6 @@ function recalculate($link,$s,$b)
 	//echo '<h3>HRA:'.$hra.'</h3>';
 	//echo '<h3>DA:'.$da.'</h3>';
 	//echo '<h3>CEIL:'.$ceil.'</h3>';
-	
 	ui_sal($link,$s,$b,$GLOBALS['npa_id'],$npa);
 	if($gqtr==0)
 	{
@@ -96,7 +96,6 @@ function recalculate($link,$s,$b)
 	}
 	ui_sal($link,$s,$b,$GLOBALS['da_id'],$da);
 	//ui_sal($link,$s,$b,$GLOBALS['ceiling_extra_id'],$ceil);
-	
 }
 
 function display_calculate($link,$s,$b)
@@ -104,7 +103,7 @@ function display_calculate($link,$s,$b)
 	echo '<form method=post><button name=action value=calculate ><h3>Calculate</h3></button>';
 	echo '<input type=hidden name=staff_id value=\''.$s.'\'>';
 	echo '<input type=hidden name=bill_group value=\''.$b.'\'>';
-	echo 'DA:<input type=text name=da value="1.36">';
+	echo 'DA:<input type=text name=da value="1.42">';
 	echo 'NPA:<input type=text name=npa value="0.25">';
 	echo 'HRA:<input type=text name=hra value="0.20">';
 	echo 'Ceiling:<input type=text name=ceil value="85000">';
@@ -116,13 +115,13 @@ if(isset($_POST['action']))
 {
 	if($_POST['action']=='edit_bill')
 	{
-		echo '<div align=center style="background-color:#FFD4D4;">';
+		echo '<div align=center >';
 		get_bill_group($link);
 		echo '</div>';
 	}
 	if($_POST['action']=='E')
 	{
-		echo '<div align=center style="background-color:lightgray;">';
+		echo '<div >';
 		display_staff($link,$_POST['staff_id']);
 		display_calculate($link,$_POST['staff_id'] ,$_POST['bill_group']);
 		edit_nonsalary($link,$_POST['staff_id'] ,$_POST['bill_group']);
@@ -133,7 +132,7 @@ if(isset($_POST['action']))
 	if($_POST['action']=='calculate')
 	{
 		recalculate($link,$_POST['staff_id'] ,$_POST['bill_group']);
-		echo '<div align=center style="background-color:lightgray;">';
+		echo '<div>';
 		display_staff($link,$_POST['staff_id']);
 		display_calculate($link,$_POST['staff_id'] ,$_POST['bill_group']);
 		edit_nonsalary($link,$_POST['staff_id'] ,$_POST['bill_group']);
@@ -150,8 +149,11 @@ if(isset($_POST['action']))
 	if($_POST['action']=='C')
 	{
 		$staff_detail=get_raw($link, 'select * from staff where staff_id=\''.$_POST['staff_id'].'\'');
-		echo '<form method=post>';
-		echo '<table align=center class=border style="background-color:lightgreen;">';
+		echo '<form method=post>
+		     <div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">';
+		echo '<table  class="table table-striped ">';
 		echo '<input type=hidden name=staff_id value=\''.$_POST['staff_id'].'\'>';
 		echo '<input type=hidden name=bill_group value=\''.$_POST['bill_group'].'\'>';
 		echo '<tr><th>Copy salary of</th><td>'.$staff_detail['fullname'].'</td></tr>';
@@ -160,8 +162,8 @@ if(isset($_POST['action']))
 		$sql='select bill_group from bill_group order by bill_group desc';
 		mk_select_from_sql($link,$sql,'bill_group','to_bill_group','','');
 		echo '</td></tr><tr><td  align=center colspan=2>';
-		echo '<input type=submit name=action value=select_to_bill>';
-		echo '</td></tr></table></form>';				
+		echo '<input class="btn btn-success" type=submit name=action value=select_to_bill>';
+		echo '</td></tr></table></div></div></div></form>';				
 	}
 	if($_POST['action']=='select_to_bill')
 	{
@@ -173,11 +175,13 @@ if(isset($_POST['action']))
 
 if(isset($_POST['bill_group']))
 {
-	echo '<div align=center style="background-color:#FFD4D4;">';
+	echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">';
 	list_bill($link,$_POST['bill_group']);
-	echo '</div>';
+	echo '</div></div></div>';
 }
-
+htmltail();
 
 ?>
 

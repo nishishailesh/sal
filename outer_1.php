@@ -4,7 +4,7 @@ $nojunk='defined';
 require_once 'common.php';
 //require_once 'common.js';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 
 $link=connect();
 
@@ -14,7 +14,7 @@ $link=connect();
 //rpp is raw per page
 $rpp=15;
 $GLOBALS['total_pages']='';
-$GLOBALS['college']='Government Medical College, Majura Gate, Surat';
+$GLOBALS['college']='<input type=text name=college>''Government Medical College, Majura Gate, Surat';
 $GLOBALS['allowances']='Report on Pay and Allowances Bill';
 $GLOBALS['deductions']='Report on Pay Bill Deductions';
 $GLOBALS['grand']=array();

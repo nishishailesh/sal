@@ -5,9 +5,9 @@ require_once 'common.php';
 //echo '<pre>';print_r($_POST);echo '</pre>';
 
 $link=connect();
-
-menu();
-
+head();
+menu($link);
+     
 if(!isset($_POST['bill_group']))
 {
 	get_bill_group($link);
@@ -19,6 +19,6 @@ else
 		get_bill_number($link,$_POST['bill_group']);
 	}
 }
-
+htmltail();
 ?>
 

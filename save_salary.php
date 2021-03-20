@@ -38,25 +38,35 @@ $tf=substr($_POST['field'],0,2);
 $k=substr($_POST['field'],3);
 if($tf=='ss')
 {
+	if(strlen($_POST['value'])=='0')
+	{$value=0;}
+	else{$value=$_POST['value'];}
 		$sql='insert into salary (staff_id,bill_group,salary_type_id,amount)
 					values(
 							\''.$_POST['staff_id'].'\',
 							\''.$_POST['bill_group'].'\',
 							\''.$k.'\',
-							\''.$_POST['value'].'\')
+							\''.$value.'\')
 						ON DUPLICATE KEY UPDATE    
-							amount=\''.$_POST['value'].'\'';
+							amount=\''.$value.'\'';
+		//echo $sql;
 }
 elseif($tf=='sr')
 {
+
+         if(strlen($_POST['value'])=='0')
+          {$value=0;}
+          else{$value=$_POST['value'];}
+
+
 	$sql='insert into salary (staff_id,bill_group,salary_type_id,remark)
 					values(
 							\''.$_POST['staff_id'].'\',
 							\''.$_POST['bill_group'].'\',
 							\''.$k.'\',
-							\''.$_POST['value'].'\')
-						ON DUPLICATE KEY UPDATE    
-							remark=\''.$_POST['value'].'\'';
+							\''.$value.'\')
+						ON DUPLICATE KEY UPDATE 
+							remark=\''.$value.'\'';
 }
 elseif($tf=='ns')
 {
@@ -66,7 +76,7 @@ elseif($tf=='ns')
 							\''.$_POST['bill_group'].'\',
 							\''.$k.'\',
 							\''.$_POST['value'].'\')
-						ON DUPLICATE KEY UPDATE    
+						ON DUPLICATE KEY UPDATE 
 							data=\''.$_POST['value'].'\'';
 }
 

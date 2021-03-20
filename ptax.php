@@ -3,7 +3,7 @@ session_start();
 $nojunk='defined';
 require_once 'common.php';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 $link=connect();
 
 
@@ -163,9 +163,11 @@ function print_table($link,$bg,$bn)
 					<td>Total</td>
 					<td>'.$sum_ptax.'</td>
 				</tr>';
-		$xxx=new Numbers_Words();
-		echo '<tr><td align="right" colspan="9">Total in Words: '.
-				$xxx->toWords($sum_ptax,"en_US").' Only</td></tr>';
+		//$xxx=new Numbers_Words();
+		echo '<tr><td align="right" colspan="9">Total in Words: ';
+	    my_number_to_words($sum_ptax,'yes');
+	    echo ' '.$GLOBALS['n2s'].' Only</td></tr>';
+		//$xxx->toWords($sum_ptax,"en_US").' Only</td></tr>';
 				
 	echo '</table>';
 }

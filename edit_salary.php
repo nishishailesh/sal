@@ -5,7 +5,8 @@ require_once 'common.php';
 //print_r($_POST);
 
 $link=connect();
-menu();
+head();
+menu($link);
 
 if(isset($_POST['bill_group']) && isset($_POST['staff_id']))
 {
@@ -13,21 +14,22 @@ if(isset($_POST['bill_group']) && isset($_POST['staff_id']))
 	{
 		if($_POST['action']=='E')
 		{
-			echo '<div align=center style="background-color:lightgray;">';
-			echo '<table ><tr><td><h2>Salary Slip of</h2></td><td>';
+			echo '<div class="container"  style="width:55% !important;">';
+			echo '<table  class="table table-striped" ><tr><td style="color:blue;padding-left:70px;padding-top:50px"><h2>Salary Slip of</h2></td><td>';
 			display_staff($link,$_POST['staff_id']);
-			echo '</td></tr></table>';
+			echo '</td></tr></table></div>';
 			display_bill($link,$_POST['bill_group']);
 			edit_nonsalary($link,$_POST['staff_id'],$_POST['bill_group']);
 			edit_salary($link,$_POST['staff_id'],$_POST['bill_group']);
-			echo '</div>';
+			echo '';
 		}
 		
 		if($_POST['action']=='C')
 		{
 			$staff_detail=get_raw($link, 'select * from staff where staff_id=\''.$_POST['staff_id'].'\'');
 			echo '<form method=post>';
-			echo '<table align=center class=border style="background-color:lightgreen;">';
+			echo '<div class="container" border="1" style="width:42% !important;">
+			      <table align=center class="table table-striped">';
 			echo '<input type=hidden name=staff_id value=\''.$_POST['staff_id'].'\'>';
 			echo '<input type=hidden name=bill_group value=\''.$_POST['bill_group'].'\'>';
 			echo '<tr><th>Copy salary of</th><td>'.$staff_detail['fullname'].'</td></tr>';
@@ -36,8 +38,8 @@ if(isset($_POST['bill_group']) && isset($_POST['staff_id']))
 			$sql='select bill_group from bill_group order by bill_group desc';
 			mk_select_from_sql($link,$sql,'bill_group','to_bill_group','','');
 			echo '</td></tr><tr><td  align=center colspan=2>';
-			echo '<input type=submit name=action value=select_bill_group>';
-			echo '</td></tr></table></form>';				
+			echo '<input class="btn btn-success" type=submit name=action value=select_bill_group>';
+			echo '</td></tr></table></div></form>';				
 		}
 		if($_POST['action']=='select_bill_group')
 		{
@@ -65,9 +67,10 @@ if(isset($_POST['bill_group']) && isset($_POST['staff_id']))
 	
 }
 
-echo '<div align=center style="background-color:#FFD4D4;">';
+echo '<div>';
 list_all_salary($link,$_POST['staff_id']);
 echo '</div>';
 
+htmltail();
 ?>
 

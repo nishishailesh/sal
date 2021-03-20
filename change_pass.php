@@ -1,86 +1,100 @@
 <?php
 session_start();
 require_once 'common.php';
-echo '<html>';
-echo '<head>';
 
-echo '
-
-<style>
-	
-table{
-   border-collapse: collapse;
-}
-
-.border td , .border th{
-    border: 1px solid black;
-}
-
-.upload{
-	background-color:lightpink;	
-}
-
-.noborder{
- border: none;
-}
-
-
-.hidedisable
+/////////////Start  of Script///////////////
+//print_r($_POST);
+$link=connect();
+head();
+menu($link);
+function read_password1()
 {
-	display:none;diabled:true
+	echo ' <div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+		     <form method=post>
+	      <table class="table table-striped ">';
+	echo '<tr><th colspan=2 style="background-color:lightblue;text-align: center;"><h4>Change Password</h4></th></tr>';
+	echo '<tr><td style="margin :0 !important;padding :0 !important;">Login ID</td>	<td style="margin :0 !important;padding :0 !important;"><input readonly=yes type=text name=id value=\''.$_SESSION['login'].'\'></td></tr>'; 
+	echo '<tr><td  style="margin :0 !important;padding :0 !important;">Old Password</td>	<td  style="margin :0 !important;padding :0 !important;"><input type=password name=old_password></td></tr>';
+	echo '<tr><td  style="margin :0 !important;padding :0 !important;">New Password</td>	<td  style="margin :0 !important;padding :0 !important;"><input type=password name=password_1></td></tr>';
+	echo '<tr><td  style="margin :0 !important;padding :0 !important;">Repeat New Password</td>	<td  style="margin :0 !important;padding :0 !important;"><input type=password name=password_2></td></tr>';
+	echo '<tr><td colspan=2 align=center  style="margin :0 !important;padding :0 !important;"><button class="btn btn-success" type=submit name=action value=change_password>Change Password</button></td></tr>';
+	echo '</table></form></div></div></div>';
 }
-
-</style>
-
-
-';
-echo '</head>';
-echo '<body>';
-function read_password()
+if(isset($_POST['action']))
 {
-	echo '<table border=1 class="style2"><form method=post>';
-	echo '<tr><th colspan=2 class="head">Change Password for access to Staff Database</th></tr>';
-	echo '<tr><td>Login ID</td>	<td><input readonly=yes type=text name=id value=\''.$_SESSION['login'].'\'></td></tr>'; 
-	echo '<tr><td>Old Password</td>	<td><input type=password name=old_password></td></tr>';
-	echo '<tr><td>New Password</td>	<td><input type=password name=password_1></td></tr>';
-	echo '<tr><td>Repeat New Password</td>	<td><input type=password name=password_2></td></tr>';
-	echo '<tr><td colspan=2 align=center><button type=submit name=action value=change_password>Change Password</button></td></tr>';
-	echo '</form></table>';
-}
-
-function check_old_password($link,$user,$password)
-{
-	$sql='select * from  user where id=\''.$user.'\' ';
-	//echo $sql;
-	if(!$result=mysqli_query($link,$sql))
+	if($_POST['action']=='change_password')
 	{
-		//echo mysql_error();
-		return FALSE;
-	}
-	if(mysqli_num_rows($result)<=0)
-	{
-		//echo 'No such user';
-		echo '<h3>wrong username/password</h3>';
-		return false;
-	}
-	$array=mysqli_fetch_assoc($result);
-	if(MD5($password)==$array['password'])
-	{
-	  	//echo 'You have supplied correct username and password';
-		return true;
+		
+		if(is_valid_password($_POST['password_1'])==$_POST['password_1'])
+		{
+		 
+     	if($_POST['password_1']==$_POST['password_2'])
+		{
+			//echo 'OK.  New passwords matches';
+			if(check_old_password($link,$_POST['id'],$_POST['old_password']))
+			{
+				if(!update_password($link,$_POST['id'],$_POST['password_1'])){echo 'Password update failed!';}
+				else
+				{
+					echo'<div class="row"><div class="col-*-6 mx-auto"><div class="text-primary"><h1>Password changed successfully. Re login!!</h1></div></div>';
+					//logout("message=Password changed successfully. Re login!!");
+				}
+			}
+			else
+			{
+				echo'<div class="row"><div class="col-*-6 mx-auto"><div class="text-primary"><h1>Change password failed!!... old password was wrong</h1></div></div>';
+				//logout("message=Change password failed!!... old password was wrong");
+			}
+		}
+		else
+		{
+			echo '<div class="row"><div class="col-*-6 mx-auto"><div class="text-primary"><h1>New passwords supplied do not match</h1></div></div>';
+			//logout("message=Change password failed!!... New Password mismatch");
+		}
 	}
 	else
-	{
-		//echo 'You have suppled wrong password for correct user';
-                echo '<h3>wrong username/password</h3>';
-		return false;
-	}
+		{
+			echo'<div class="row"><div class="col-*-6 mx-auto"><div class="text-primary"><h1>Change password failed!! <br>Ensure mix of lower case, upper case, number and special characters</h1></div></div>';
+			//logout("message=Change password failed!! <br>Ensure mix of lower case, upper case, number and special characters");
+		}
+ }
+}
+else
+{
+	read_password1();	
 }
 
 
+echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+            <table class="table table-bordered">
+			<tr><th colspan=3 style="background-color:gray;color:white;text-align: center;margin :0 !important;padding :0 !important;"><h5>Password Hints</h5></th></tr>
+			<tr><td colspan=3 >8 or more character, One capital, one number, 1 special character is must</td></tr>
+			<tr><td>iamgood</td><td>Unacceptable</td><td>No capital, no number, no special character, less than 8</td></tr>
+			<tr><td>Iamgood007</td><td>Unacceptable</td><td>no special character</td></tr>
+			<tr><td>Iamgood007$</td><td>Acceptable</td><td>special characters-> ! @ # $ % ^ & * ( ) _ - += { [ } ] | \ / < , > . ; : " \'</td></tr>
+            </table>
+            </div>
+            </div>
+            </div>
+            
+';
+
+
+
+echo'</body>';
+/*
 function update_password($link,$user,$new_password)
 {
-        $sql='update user set password=MD5(\''.$new_password.'\') where id=\''.$user.'\' ';
+	$eDate = date('Y-m-d');
+    $eDate = date('Y-m-d', strtotime("+1 months", strtotime($eDate)));
+    // echo $eDate;	
+	$sql='update user set epassword=\''.password_hash($new_password,PASSWORD_BCRYPT).'\',expirydate=\''.$eDate.'\' where id=\''.$user.'\' ';
+	
+       // $sql='update user set password=MD5(\''.$new_password.'\')and epassword= where id=\''.$user.'\' ';
         //echo $sql;
         if(!$result=mysqli_query($link,$sql))
         {
@@ -99,46 +113,8 @@ function update_password($link,$user,$new_password)
 					return true;
 		}
 }
-
-
-/////////////Start  of Script///////////////
-
-$link=connect();
-menu();
-
-if(isset($_POST['action']))
-{
-	if($_POST['action']=='change_password')
-	{
-		if($_POST['password_1']==$_POST['password_2'])
-		{
-			//echo 'OK.  New passwords matches';
-			if(check_old_password($link,$_POST['id'],$_POST['old_password']))
-			{
-				update_password($link,$_POST['id'],$_POST['password_1']);
-			}
-		}
-		else
-		{
-			echo '<h3>New passwords supplied do not match</h3>';
-		}
-	}
-}
-else
-{
-	read_password();	
-}
-
-echo
-'<table class=border>
-		<tr><th class="head">Help</th></tr>
-		<tr><td><li>Write old and new password carefully.</td></tr>
-		<tr><td><li>close browser and start again after changing password</td></tr>
-		<tr><td><li>Change password frequently</td></tr>
-		<tr><td><li>Donot reveal your password to anybody.</td></tr>
-		<tr><td><li>If your colleague needs access, ask them to contact HOD</td></tr>
-		<tr><td><li>If you can not access your account, meet IT section of the college/hospital</td></tr>
- </table>';
+*/
+htmltail();
 
 /*
 echo '<pre>';

@@ -7,8 +7,8 @@ require_once 'common.php';
 /////////////Main script start from here//////////////
 
 $link=connect();
-
-menu();
+head();
+menu($link);
 
 $GLOBALS['hba_p_id']=33;
 $GLOBALS['hba_i_id']=40;
@@ -20,16 +20,18 @@ function edit_advance($link)
 {
 	$sql='select * from advance,staff where advance.staff_id=staff.staff_id order by status desc,type desc,fullname';
 	if(!$result=mysqli_query($link,$sql)){return FALSE;}
-	echo '<table class=border>';
+	echo '<form method=post>
+	           
+		     <table class="table table-striped ">';
 	echo '<tr style="background-color:lightgray;"><th>Name</th><th>ID</th><th>Acc</th><th>Acc Type</th> <th>Status</th><th>Amount</th><th>Instalment</th><th>Pre-Amount</th><th>Pre-installment</th><th>Action</th></tr>';
 	while($ra=mysqli_fetch_assoc($result))
 	{
-		echo '<form method=post style="margin-bottom:0;"><tr>';
+		echo '<tr>';
 		echo '<td>'.$ra['fullname'].'</td><td>';
-		echo '<input type=text size=10 readonly name=staff_id value=\''.$ra['staff_id'].'\'>';
+		echo '<input type=text size=12 readonly name=staff_id value=\''.$ra['staff_id'].'\'>';
 		echo '</td>';
 		echo '<td>';
-		echo '<input type=text size=10 name=account_number value=\''.$ra['account_number'].'\'>';
+		echo '<input type=text size=5 name=account_number value=\''.$ra['account_number'].'\'>';
 		echo '</td>';
 		echo '<td>';
 		mk_select_from_array(array('interest','principle'),'type','',$ra['type']);
@@ -41,23 +43,23 @@ function edit_advance($link)
 		//echo '<input type=text size=10 name=status value=\''.$ra['status'].'\'>';
 		echo '</td>';
 		echo '<td>';
-		echo '<input type=text size=10 name=amount value=\''.$ra['amount'].'\'>';
+		echo '<input type=text size=5 name=amount value=\''.$ra['amount'].'\'>';
 		echo '</td>';
 		echo '<td>';
-		echo '<input type=text size=10 name=installment value=\''.$ra['installment'].'\'>';
+		echo '<input type=text size=5 name=installment value=\''.$ra['installment'].'\'>';
 		echo '</td>';
 				
 		echo '<td>';
-		echo '<input type=text size=10 name=pre_amount value=\''.$ra['pre_amount'].'\'>';
+		echo '<input type=text size=5 name=pre_amount value=\''.$ra['pre_amount'].'\'>';
 		echo '</td>';
 
 		echo '<td>';
-		echo '<input type=text size=10 name=pre_installment value=\''.$ra['pre_installment'].'\'>';
+		echo '<input type=text size=5 name=pre_installment value=\''.$ra['pre_installment'].'\'>';
 		echo '</td>';
 		echo '<td>';
-		echo '<button type=submit name=action value=save>S</button>';
-		echo '<button type=submit name=action value=delete onclick="return confirm(\'Data will be deleted permanenty\')" >D</button>';
-		echo '<button type=submit name=action value=view>V</button>';
+		echo '<button  class="btn btn-success" type=submit title="save" name=action value=save>S</button>';
+		echo '<button  class="btn btn-danger" type=submit title="delete" name=action value=delete onclick="return confirm(\'Data will be deleted permanenty\')" >D</button>';
+		echo '<button class="btn btn-info"type=submit title="view" name=action value=view>V</button>';
 		echo '</td>';
 		echo '</tr></form>';
 	}
@@ -67,7 +69,7 @@ function edit_advance($link)
 		get_staff_id($link);
 		echo '</td>';
 		echo '<td>';
-		echo '<input type=text size=10 name=account_number>';
+		echo '<input type=text size=5 name=account_number>';
 		echo '</td>';
 		echo '<td>';
 		mk_select_from_array(array('interest','principle'),'type','','');
@@ -75,26 +77,24 @@ function edit_advance($link)
 		echo '<td>';
 		mk_select_from_array(array('open','close'),'status','','');
 		echo '<td>';
-		echo '<input type=text size=10 name=amount>';
+		echo '<input type=text size=5 name=amount>';
 		echo '</td>';	
 		
 		echo '<td>';
-		echo '<input type=text size=10 name=installment>';
+		echo '<input type=text size=5 name=installment>';
 		echo '</td>';	
 		
 		echo '<td>';
-		echo '<input type=text size=10  name=pre_amount>';
+		echo '<input type=text size=5  name=pre_amount>';
 		echo '</td>';
 		echo '<td>';
-		echo '<input type=text size=10 name=pre_installment>';
+		echo '<input type=text size=5 name=pre_installment>';
 		echo '</td>';
 		echo '<td>';
-		echo '<button type=submit name=action value=save>S</button>';
+		echo '<button type=submit  class="btn btn-success" title="Save" name=action value=save>S</button>';
 		echo '</td>';
-		echo '</tr></form>';
-			
-	
-	echo '</table>';
+		echo '</tr>';
+	echo '</table></form>';
 }
 
 function save($link)
@@ -187,7 +187,10 @@ function view($link)
 	//echo $sql;
 	if(!$result=mysqli_query($link,$sql)){echo mysql_error(); return FALSE;}
 		$stf=get_staff($link,$_POST['staff_id']);
-			echo '<table class=border>';
+			echo '<div class="container" >
+		     <div class="row">
+		     
+			      <table class="table table-striped">';
 			echo '<tr style="background-color:lightblue;">	
 						<th>'.$_POST['staff_id'].'</th>
 						<th>'.$stf['fullname'].'</th>
@@ -205,18 +208,18 @@ function view($link)
 			  <input type=hidden name=account_number value=\''.$_POST['account_number'].'\'>
 			  <input type=hidden name=type value=\''.$_POST['type'].'\'>';
 		echo '<td>';
-		echo '<input type=text size=10 readonly name=bill_group value=\''.$ra['bill_group'].'\'>';
+		echo '<input type=text size=5 readonly name=bill_group value=\''.$ra['bill_group'].'\'>';
 		echo '</td>';
 		echo '<td>';
-		echo '<input type=text size=10 name=amount value=\''.$ra['amount'].'\'>';
+		echo '<input type=text size=5 name=amount value=\''.$ra['amount'].'\'>';
 		echo '</td>';
 		echo '<td>';
-		echo '<input type=text readonly size=10 name=remark value=\''.$ra['remark'].'\'>';
+		echo '<input type=text readonly size=5 name=remark value=\''.$ra['remark'].'\'>';
 		echo '</td>';
 
 		echo '<td>';
-		echo '<button type=submit name=action value=save_inst>S</button>';
-		echo '<button type=submit name=action value=delete_inst onclick="return confirm(\'Data will be deleted permanenty\')">D</button>';
+		echo '<button class="btn btn-success" type=submit name=action title="Save" value=save_inst>S</button>';
+		echo '<button   class="btn btn-danger"type=submit name=action title="Delete" value=delete_inst onclick="return confirm(\'Data will be deleted permanenty\')">D</button>';
 		echo '</td>';
 		echo '</tr></form>';
 	}
@@ -229,19 +232,17 @@ function view($link)
 			mk_select_from_sql($link,$sql,'bill_group','bill_group','','');
 		echo '</td>';
 		echo '<td>';
-		echo '<input type=text size=10 name=amount>';
+		echo '<input type=text size=5 name=amount>';
 		echo '</td>';
 		echo '<td>';
 		echo '<input type=text readonly size=10 name=remark>';
 		echo '</td>';
 
 		echo '<td>';
-		echo '<button type=submit name=action value=save_inst>S</button>';
+		echo '<button class="btn btn-success" title="Save" type=submit name=action value=save_inst>S</button>';
 		echo '</td>';
 		echo '</tr></form>';
-			
-	
-	echo '</table>';
+		echo '</table></div></div></div>';
 
 	$ac_detail=null;		
 	$ac_sql='select * from advance where 
@@ -250,13 +251,16 @@ function view($link)
 			
 	//Array ( [tot_amount] => 12000 [tot_inst] => 3 ) 
 	$sums_hba=get_hba_total_all_bill($link,$_POST['staff_id'],$_POST['type'],$_POST['account_number'])	;
-	echo '<table class=border>';
+	echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+	      <table class=table>';
 	echo '<tr><th colspan=4 style="background-color:lightblue;">Summary</th></tr>';
 	echo '<tr>';
 	echo '<th>Total Installments paid:</th><td>'.($ac_detail['pre_installment']+$sums_hba['tot_inst']).'</td>';	
 	echo '<th>Total amount recovered:</th><td>'.($ac_detail['pre_amount']+$sums_hba['tot_amount']).'</td>';
 	echo '</tr>';
-	echo '</table>';	
+	echo '</table></div></div>';	
 }	
 
 function save_inst($link)
@@ -323,6 +327,6 @@ if(isset($_POST['staff_id']) && isset($_POST['type']) && isset($_POST['account_n
 	view($link);
 	//print_r(get_hba_total($link,$_POST['staff_id'],$_POST['type'],$_POST['account_number']));
 }
-
+htmltail();
 ?>
 

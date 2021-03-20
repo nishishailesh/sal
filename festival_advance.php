@@ -3,7 +3,7 @@ session_start();
 $nojunk='defined';
 require_once 'common.php';
 require_once('tcpdf/tcpdf.php');
-require_once('Numbers/Words.php');
+//require_once('Numbers/Words.php');
 $link=connect();
 
 
@@ -14,10 +14,8 @@ $link=connect();
 
 $GLOBALS['rpp']=15;
 $GLOBALS['total_pages']='';
-$GLOBALS['college']='Government Medical College, Majura Gate, Surat';
 $GLOBALS['allowances']='Report on Pay and Allowances Bill';
 $GLOBALS['deductions']='Report on Pay Bill Deductions';
-$GLOBALS['acc_off']='Mr Maheshbhai chaudhari';
 $GLOBALS['cardex']='65';
 $GLOBALS['ddo_no']='553';
 $GLOBALS['grand']=array();
@@ -85,7 +83,7 @@ function far_header($link,$bg,$bn,$pg)
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
 
 	echo '<h4 align="center" style="border: 2px solid #000000;">Schedule of Festival Advance Deductions (Page:'.$pg.')</h4>';
-	echo '<h4 align="center">'.$GLOBALS['college'].'</h3>';
+	echo '<h4 align="center">'.$GLOBALS['college'].''.$GLOBALS['address'].''.$GLOBALS['city'].'</h3>';
 	echo '<h4 align="center">Under Head: 0210 Medical and Public Health</h4>';
 	echo '<h4 align="center">For the month of '.$bill_details['remark'].', Bill: '.$bg.'-'.$bn.'</h4>';
 		
@@ -177,9 +175,11 @@ function print_far($link,$bg,$bn)
 					<td></td>
 					<td></td>					
 				</tr>';
-		$xxx=new Numbers_Words();
-		echo '<tr><td align="right" colspan="7">Total in Words: '.
-				$xxx->toWords($sum_far,"en_US").' Only</td></tr>';				
+		//$xxx=new Numbers_Words();
+		echo '<tr><td align="right" colspan="7">Total in Words: ';
+		my_number_to_words($sum_far);
+		echo ' '.$GLOBALS['n2s'].' Only</td></tr>';
+		//$xxx->toWords($sum_far,"en_US").' Only</td></tr>';				
 				echo '</table>';
 }
 

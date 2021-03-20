@@ -17,7 +17,7 @@
   text-align:center;
 }
 .datepickerdropdown table input[type=button] {
-  width:2em;
+  // by SMP width:1em;
 }
 .datepickerdropdown input[type=button] {
   background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAeCAIAAABi9+OQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjM2qefiJQAAAElJREFUGFeNwwEGACEQQNF//6MlSRSRSMMkY86wdk+wj4e78zaz772Xcw6qioiw92atxZyTMQa9d1pr1FoppZBzJqVEjJEQwt8PXeRLuM/peRgAAAAASUVORK5CYII=);
@@ -46,3 +46,4 @@
 .datepickershow img {
   border:1;
 }
+

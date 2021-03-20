@@ -1,7 +1,13 @@
 <?php
 session_start();
 require_once 'common.php';
+////////////Main script start from here//////////////
 
+$link=connect();
+
+head();
+menu($link);
+   
 //print_r($_POST);
 
 /*
@@ -20,38 +26,41 @@ function read_bill_to_edit($link,$bg)
 	$sql='select * from bill_group  where bill_group=\''.$bg.'\'';
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	$ar=mysqli_fetch_assoc($result);
-	echo '<table class=border align=center style="background-color:lightgreen;">';
-	echo '<tr><th colspan=2>Edit Bill details</th><td>';
-	echo '<tr><th>Bill Group</th><td>';
+	echo '<div class="container" >
+		     <div class="row">
+		     <div class="col-*-6 mx-auto">
+	      <table class="table table-striped">';
+	echo '<tr><th colspan=2 style="background-color:lightblue;text-align: center;"><h4>Edit Bill details</h4></th></tr>';
+	echo '<tr><td>Bill Group</td><td>';
 	echo '<input type=text name=bill_group readonly value=\''.$bg.'\'>';
 	echo '</td></tr>';
 			
-	echo '</td><tr><th>Date of Preparation</th><td>';
+	echo '</td><tr><td>Date of Preparation</td><td>';
 	echo '<input type=text value=\''.mysql_to_india_date($ar['date_of_preparation']).'\' class=datepicker id=date_of_preparation name=date_of_preparation>';
 	
-	echo '</td><tr><th>Period From:</th><td>';
+	echo '</td><tr><td>Period From:</td><td>';
 	echo '<input type=text value=\''.mysql_to_india_date($ar['from_date']).'\' class=datepicker id=from_date name=from_date>';
 
-	echo '</td><tr><th>Period To:</th><td>';
+	echo '</td><tr><td>Period To:</td><td>';
 	echo '<input type=text value=\''.mysql_to_india_date($ar['to_date']).'\' class=datepicker id=to_date name=to_date>';
 
-	echo '</td><tr><th>Head</th><td>';
+	echo '</td><tr><td>Head</td><td>';
 	echo '<input value=\''.$ar['head'].'\' type=text name=head >';
 	
-	echo '</td><tr><th>Bill Type:</th><td>';
+	echo '</td><tr><td>Bill Type:</td><td>';
 	mk_select_from_table($link,'bill_type','',$ar['bill_type']);
 
-	echo '</td><tr><th>Remark:</th><td>';
+	echo '</td><tr><td>Remark:</td><td>';
 	echo '<input type=text value=\''.$ar['remark'].'\'  name=remark >';
 	
-	echo '</td><tr><th>Locked <br>1=Locked<br>0=unlocked</th><td>';
+	echo '</td><tr><td>Locked <br>1=Locked<br>0=unlocked</td><td>';
 	mk_select_from_array(array(0,1),'locked','',$ar['locked']);	
 	echo '</tr>';
 
 	
 	echo '<tr><td  align=center colspan=2>';
-	echo '<button type=submit name=action value=save onclick="return confirm(\'Bill details will be changed\')">Save</button>';	
-	echo '</td></tr></table></form>';	
+	echo '<button type=submit class="btn btn-success" name=action value=save onclick="return confirm(\'Bill details will be changed\')">Save</button>';	
+	echo '</td></tr></table></div></div></div></form>';	
 }
 
 function update($link)
@@ -74,11 +83,7 @@ function update($link)
 	{echo mysqli_error($link); return FALSE;}
 	else {echo 'Changes made to Bill group are Saved<br>Refresh parent page to reflect changes<br>Close this window';}								
 }
-/////////////Main script start from here//////////////
 
-$link=connect();
-
-menu();
 
 if(!isset($_POST['action'])){echo 'no action specified';exit(0);}
 
@@ -91,6 +96,7 @@ elseif($_POST['action']=='save')
 	update($link);
 }
 
+htmltail();
 	
 ?>
 

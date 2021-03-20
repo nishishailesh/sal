@@ -52,10 +52,16 @@ function createCalendar(div, month) {
   var idOfTextbox = div.getAttribute('datepickertextbox'); // Get the textbox id which was saved in the div
   var textbox = document.getElementById(idOfTextbox); // Find the textbox now
   var tbl = document.createElement('table');
-  
+    tbl.setAttribute('class','.nopadding');
+
   var topRow = tbl.insertRow(-1);
-  
   var td = topRow.insertCell(-1);
+  td.style="padding:0 !important;margin:0 !important";
+  //td.style="display: block;margin: auto;";
+  td.style.backgroundColor="lightgray";
+  td.setAttribute('colspan','10');
+  td.setAttribute('align','center');
+  
   var lastTYearBn = document.createElement('input');
   lastTYearBn.type='button'; // Have to immediately set the type due to IE
   td.appendChild(lastTYearBn);
@@ -63,7 +69,7 @@ function createCalendar(div, month) {
   lastTYearBn.onclick=chooseDate;
   lastTYearBn.setAttribute('date',new Date(month.getFullYear(),month.getMonth()-120,1,0,0,0,0).toString());
 
-  var td = topRow.insertCell(-1);
+  //var td = topRow.insertCell(-1);
   var lastYearBn = document.createElement('input');
   lastYearBn.type='button'; // Have to immediately set the type due to IE
   td.appendChild(lastYearBn);
@@ -71,7 +77,7 @@ function createCalendar(div, month) {
   lastYearBn.onclick=chooseDate;
   lastYearBn.setAttribute('date',new Date(month.getFullYear(),month.getMonth()-12,1,0,0,0,0).toString());
 
-  var td = topRow.insertCell(-1);
+  //var td = topRow.insertCell(-1);
   var lastMonthBn = document.createElement('input');
   lastMonthBn.type='button'; // Have to immediately set the type due to IE
   td.appendChild(lastMonthBn);
@@ -79,8 +85,8 @@ function createCalendar(div, month) {
   lastMonthBn.onclick=chooseDate;
   lastMonthBn.setAttribute('date',new Date(month.getFullYear(),month.getMonth()-1,1,0,0,0,0).toString());
    
-  var td = topRow.insertCell(-1);
-  td.colSpan=4;
+  //var td = topRow.insertCell(-1);
+  //td.colSpan=4;
   var mon = document.createElement('input');
   mon.type='text';
   td.appendChild(mon);
@@ -106,22 +112,23 @@ function createCalendar(div, month) {
   nextYearBn.setAttribute('date',new Date(month.getFullYear(),month.getMonth()+12,1,0,0,0,0).toString());
   
  
-  var td = topRow.insertCell(-1);
+  //var td = topRow.insertCell(-1);
   var nextTYearBn = document.createElement('input');
   nextTYearBn.type='button'; // Have to immediately set the type due to IE
   td.appendChild(nextTYearBn);
   nextTYearBn.value='>>>';
   nextTYearBn.onclick=chooseDate;
   nextTYearBn.setAttribute('date',new Date(month.getFullYear(),month.getMonth()+120,1,0,0,0,0).toString());
-   
+  
   var daysRow = tbl.insertRow(-1);
-  daysRow.insertCell(-1).innerHTML="Mon";
-  daysRow.insertCell(-1).innerHTML="Tue";
-  daysRow.insertCell(-1).innerHTML="Wed";
-  daysRow.insertCell(-1).innerHTML="Thu";
-  daysRow.insertCell(-1).innerHTML="Fri";
-  daysRow.insertCell(-1).innerHTML="Sat";
-  daysRow.insertCell(-1).innerHTML="Sun";
+
+  var m=daysRow.insertCell(-1).innerHTML="M";
+  var t=daysRow.insertCell(-1).innerHTML="T";
+  daysRow.insertCell(-1).innerHTML="W";
+  daysRow.insertCell(-1).innerHTML="T";
+  daysRow.insertCell(-1).innerHTML="F";
+  daysRow.insertCell(-1).innerHTML="S";
+  daysRow.insertCell(-1).innerHTML="S";
   
   // Make the calendar
   var selected = parseMyDate(textbox.value); // Try parsing the date
@@ -133,8 +140,11 @@ function createCalendar(div, month) {
     var tr = tbl.insertRow(-1);
     for (i=0;i<7;i++) { // Loop each day of this week
       var td = tr.insertCell(-1);
+      td.style="padding:0px !important;margin:0px !important;";
       var inp = document.createElement('input');
       inp.type = 'button';
+      inp.style="width:100%;";
+     
       td.appendChild(inp);
       inp.value = date.getDate();
       inp.onclick = chooseDate;

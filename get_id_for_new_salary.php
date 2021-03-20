@@ -36,7 +36,8 @@ table{
 
 //////////////
 $link=connect();
-menu();
+head();
+menu($link);
 echo '<form method=post action=new_salary.php><table border=1><th colspan=2>Choose Staff for which salary is to be prepared</th>';
 echo	'<tr>';
 echo 		'<td>Staff ID:</td><td>';
@@ -48,4 +49,5 @@ echo	'<tr>';
 echo 		'<th colspan="2"><input type=submit name=action value=new_salary></th>';
 echo 	'</tr>';
 echo 	'</table></form>';
+htmltail();
 ?>

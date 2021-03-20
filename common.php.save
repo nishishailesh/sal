@@ -1,0 +1,640 @@
+<?php
+function head()
+{
+echo '<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">			
+	</head>
+	<body>';
+}
+function htmltail()
+{ 	
+	echo'</body>
+	     </html>';
+}
+if(!isset($nojunk))
+{
+	require_once 'common_js.php';
+}
+
+if(!isset($nojunk))
+{
+	require_once 'menu_salary.php';
+}
+
+require_once '/var/gmcs_config/staff.conf';
+
+function login_varify()
+{
+	return mysqli_connect('127.0.0.1',$GLOBALS['main_user'],$GLOBALS['main_pass']);
+}
+
+
+/////////////////////////////////
+function select_database($link)
+{
+	return mysqli_select_db($link,'c34');
+}
+/*function check_user($link,$u,$p)
+{
+	$sql='select * from user where id=\''.$u.'\'';
+	if(!$result=mysqli_query($link,$sql)){return FALSE;}
+	$result_array=mysqli_fetch_assoc($result);
+	if(md5($p)==$result_array['password'])
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+*
+function logout()
+{
+	//session_start(); //Start the current session
+	session_destroy(); //Destroy it! So we are logged out now
+	header("location:index.php"); //configure absolute path of this file for access from anywhere
+}*/
+
+function logout($message='')
+{
+	//session_start(); //Start the current session
+	//$GLOBALS['rootpath']."/index.php";
+	session_destroy(); //Destroy it! So we are logged out now	
+	header("location:index.php?".$message); //configure absolute path of this file for access from anywhere
+}
+///////////////////////////////////
+function connect()
+{
+	if(!$link=login_varify())
+	{
+		echo 'database login could not be verified<br>';
+	
+		exit();
+	}
+
+
+	if(!select_database($link))
+	{
+		echo 'database could not be selected<br>';
+	
+		exit();
+	}
+	
+	if(!check_user($link,$_SESSION['login'],$_SESSION['password']))
+	{
+		echo 'application user could not be varified<br>';
+		
+		exit();
+	}
+	
+return $link;
+}
+
+function mk_select_from_table($link,$field,$disabled,$default)
+{
+	$sql='select `'.$field.'` from '.$field;
+	if(!$result=mysqli_query($link,$sql)){return FALSE;}
+	
+		echo '<select  '.$disabled.' name='.$field.'>';
+		
+		while($result_array=mysqli_fetch_assoc($result))
+		{
+		if($result_array[$field]==$default)
+		{
+			echo '<option selected  > '.$result_array[$field].' </option>';
+			
+		}
+		else
+			{
+				echo '<option  > '.$result_array[$field].' </option>';
+			}
+		}
+		echo '</select>';	
+		return TRUE;
+}
+
+function mk_select_from_table_ajax($id,$idd,$link,$field,$disabled,$default,$size='')
+{
+	$sql='select `'.$field.'` from '.$field;
+	//echo $sql;
+	if(!$result=mysqli_query($link,$sql)){return FALSE;}
+	
+		echo '<select style="width:'.$size.'px;" '.$disabled.' name=\''.$field.'\'  id=\''.$field.'\' onchange="do_work(\''.$id.'\',this)"  >';
+		while($result_array=mysqli_fetch_assoc($result))
+		{
+		if($result_array[$field]==$default)
+		{
+			echo '<option selected  value=\''.htmlspecialchars($result_array[$field]).'\'> '.$result_array[$field].' </option>';
+		}
+		else
+			{
+			echo '<option value=\''.htmlspecialchars($result_array[$field]).'\'> '.$result_array[$field].' </option>';
+			}
+		}
+		echo '</select>';	
+		return TRUE;
+}
+
+function mk_select_from_table_ajax_dpc($id,$idd,$link,$field,$disabled,$default,$size='')
+{
+	$sql='select `'.$field.'` from '.$field;
+	//echo $sql;
+	if(!$result=mysqli_query($link,$sql)){return FALSE;}
+	
+	echo '<select style="width:'.$size.'px;" '.$disabled.' name=\''.$field.'\'  id=\''.$field.'\' 
+					onchange="do_work(\''.$id.'\',\''.$idd.'\',this)"  >';
+		while($result_array=mysqli_fetch_assoc($result))
+		{
+			if($result_array[$field]==$default)
+			{
+			echo '<option selected  > '.$result_array[$field].' </option>';
+			}
+			else
+			{
+			echo '<option >'.$result_array[$field].' </option>';
+			}
+		}
+		echo '</select>';	
+		return TRUE;
+}
+
+function mk_select_from_sql($link,$sql,$field_name,$form_name,$disabled,$default)
+{
+
+	if(!$result=mysqli_query($link,$sql)){return FALSE;}
+	   
+	   
+		echo '<select  '.$disabled.' name='.$form_name.' id='.$form_name.'>';
+		while($result_array=mysqli_fetch_assoc($result))
+		{
+		if($result_array[$field_name]==$default)
+		{
+			echo '<option selected  > '.$result_array[$field_name].' </option>';
+		}
+		else
+			{
+				echo '<option  > '.$result_array[$field_name].' </option>';
+			}
+		}
+		echo '</select>';	
+		return TRUE;
+}
+
+function mk_select_from_array($ar,$form_name,$disabled,$default)
+{
+
+		echo '<select  '.$disabled.' name='.$form_name.' id='.$form_name.'>';
+		foreach($ar as $value)
+		{
+			if($value==$default)
+		{
+			echo '<option selected  > '.$value.' </option>';
+		}
+		else
+			{
+				echo '<option  > '.$value.' </option>';
+			}
+		}
+		echo '</select>';	
+		return TRUE;
+}
+
+function mk_select_from_array_ajax($id,$ar,$form_name,$disabled,$default)
+{
+
+		echo '<select  onchange="do_work(\''.$id.'\',this)" '.$disabled.' name='.$form_name.' id='.$form_name.'>';
+		foreach($ar as $value)
+		{
+			if($value==$default)
+		{
+			echo '<option selected  > '.$value.' </option>';
+		}
+		else
+			{
+				echo '<option  > '.$value.' </option>';
+			}
+		}
+		echo '</select>';	
+		return TRUE;
+}
+
+function mk_select_from_sql_with_separate_id($link,$sql,$field_name,$form_name,$id_name,$disabled,$default)
+{
+
+	if(!$result=mysqli_query($link,$sql)){return FALSE;}
+	
+		echo '<select  '.$disabled.' name='.$form_name.' id='.$id_name.'>';
+		while($result_array=mysqli_fetch_assoc($result))
+		{
+		if($result_array[$field_name]==$default)
+		{
+			echo '<option selected  > '.$result_array[$field_name].' </option>';
+		}
+		else
+			{
+				echo '<option  > '.$result_array[$field_name].' </option>';
+			}
+		}
+		echo '</select>';	
+		return TRUE;
+}
+
+
+function combo_entry($link,$sql,$name,$disabled,$default)
+{
+	echo '<table><tr><td>';
+	mk_select_from_sql($link,$sql,$name,$disabled,$default);
+	echo '</td><td>';
+	echo '<input type=text name=\'i_'.$name.'\'>';
+	echo '<input type=checkbox name=\'ck_'.$name.'\'>';
+	echo '</td></tr></table>';
+	
+}
+
+
+function get_raw($link,$sql)
+{
+	//echo $sql;
+	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
+	if(mysqli_num_rows($result)!=1){echo mysqli_error($link);return false;}
+	else
+	{
+		return mysqli_fetch_assoc($result);
+	}
+}
+
+
+function update_field_by_id($link,$table,$id_field,$id_value,$field,$value)
+{
+	$sql='update `'.$table.'` set `'.$field.'`=\''.$value.'\' where `'.$id_field.'`=\''.$id_value.'\'';
+	//echo $sql;
+	
+	
+	if(!$result=mysqli_query($link,$sql)){mysqli_error($link);return FALSE;}
+	else
+	{
+		return mysqli_affected_rows($link);
+	}
+}
+
+function delete_raw_by_id($link,$table,$id_field,$id_value)
+{
+	$sql='delete from `'.$table.'` where `'.$id_field.'`=\''.$id_value.'\'';
+	//echo $sql;
+	
+	
+	if(!$result=mysqli_query($link,$sql)){mysqli_error($link);return FALSE;}
+	else
+	{
+		return mysqli_affected_rows($link);
+	}
+}
+function save_one_complate_slip($link,$result_array,$bg)
+{ 
+	ob_start();
+	  echo'<h3 align="center">Salary Slip,'.$GLOBALS['college'].''.$GLOBALS['city'].'</h3>';
+		    
+		    echo'<h3 align="center">'.$result_array['fullname'].'</h3>';
+		    echo '<br>
+            <table width="100%">
+            <tr>
+            <td width="20%"></td>
+            <td width="60%">
+                  <table align="center" border="1">';
+			      display_staff_pdf($link,$result_array['staff_id']);
+		    echo '</table>
+            </td>
+            <td width="20%"></td>
+            </tr>
+            </table>';
+			echo '<br><br>';
+			echo '<table border="1" align="center">';
+			 	   display_bill_pdf($link,$bg);
+			echo '</table>';
+	        echo '<br><br>';
+			print_one_nonsalary_slip_pdf($link,$result_array['staff_id'],$bg);
+            echo '<br><br>';
+			print_one_salary_slip_pdf($link,$result_array['staff_id'],$bg);
+		    echo '<br><br><br><br>';
+		    echo'<table width="100%" align="center">
+		           <tr><td  width="60%">
+		                   <table >
+		                   <tr><td></td><td></td></tr>
+		                   </table>
+		           </td><td align="right" width="40%">
+			               <table  align="center" >
+				           <tr><td>Accounts Officer</td></tr>
+				           <tr><td>'.$GLOBALS['college'].'</td></tr>
+				           <tr><td>'.$GLOBALS['city'].'</td></tr>
+				          </table>
+				    </td></tr>
+		         </table>';
+    $myStr = ob_get_contents();
+    ob_end_clean();
+
+	//echo $myStr;
+ //exit(0);
+
+	  return $myStr;
+		         
+}
+function delete_raw_by_id_dpc($link,$table,$id_field,$id_value,$id_fieldd,$id_valuee)
+{
+	$sql='delete from `'.$table.'` where 
+		`'.$id_field.'`=\''.$id_value.'\'
+			and
+		`'.$id_fieldd.'`=\''.$id_valuee.'\'
+		';
+	//echo $sql;
+	
+	
+	if(!$result=mysqli_query($link,$sql)){mysqli_error($link);return FALSE;}
+	else
+	{
+		return mysqli_affected_rows($link);
+	}
+}
+
+function update_or_insert_field_by_id($link,$table,$id_field,$id_value,$field,$value)
+{
+	if(get_raw($link,'select `'.$id_field.'` from `'.$table.'` where `'.$id_field.'`=\''.$id_value.'\'')===FALSE)
+	{
+		//Try to insert
+		$sqli='insert into `'.$table.'` (`'.$id_field.'`,`'.$field.'`) values (\''.$id_value.'\', \''.$value.'\')';
+		//echo $sqli;
+		if(!$resulti=mysqli_query($link,$sqli)){echo mysqli_error($link);return FALSE;}
+		else
+		{
+			return mysqli_affected_rows($link);
+		}
+	}
+	else
+	{
+		//Else update
+		$sql='update `'.$table.'` set `'.$field.'`=\''.$value.'\' where `'.$id_field.'`=\''.$id_value.'\'';
+		//echo $sql;
+		if(!$result=mysqli_query($link,$sql))
+		{
+			echo mysqli_error($link);
+			return FALSE;
+		}
+	}
+}
+
+function update_or_insert_field_by_id_tpc($link,$table,$id_field,$id_value,$id_fieldd,$id_valuee,$field,$value)
+{
+	if(get_raw($link,'select `'.$id_field.'` from `'.$table.'` 
+				where       `'.$id_field.'`=\''.$id_value.'\'
+						and `'.$id_fieldd.'`=\''.$id_valuee.'\' ')===FALSE)
+	{
+		//Try to insert
+		$sqli='insert into `'.$table.'` (`'.$id_field.'`,`'.$field.'`) values (\''.$id_value.'\', \''.$value.'\')';
+		//echo $sqli;
+		if(!$resulti=mysqli_query($link,$sqli)){echo mysqli_error($link);return FALSE;}
+		else
+		{
+			return mysqli_insert_id($link);
+		}
+	}
+	else
+	{
+		//Else update
+		$sql='update `'.$table.'` set `'.$field.'`=\''.$value.'\' where `'.$id_field.'`=\''.$id_value.'\' and `'.$id_fieldd.'`=\''.$id_valuee.'\'';
+		//echo $sql;
+		if(!$result=mysqli_query($link,$sql))
+		{
+			echo mysqli_error($link);
+			return FALSE;
+		}
+		else
+		{
+			return mysqli_affected_rows($link);
+		}
+	}
+}
+
+function insert_field_by_id($link,$table,$id_field,$id_value,$field,$value)
+{
+		//Try to insert
+		$sqli='insert into `'.$table.'` (`'.$id_field.'`,`'.$field.'`) values (\''.$id_value.'\', \''.$value.'\')';
+		//echo $sqli;
+		if(!$resulti=mysqli_query($link,$sqli)){echo mysqli_error($link);return FALSE;}
+		else
+		{
+			return mysqli_insert_id($link);
+		}
+}
+
+
+function insert_id($link,$table,$id_field,$id_value)
+{
+	$sqli='insert into `'.$table.'` (`'.$id_field.'`) values (\''.$id_value.'\')';
+	//echo $sqli;
+	if(!$resulti=mysqli_query($link,$sqli))
+	{
+		echo mysqli_error($link);return FALSE;
+	}
+	else
+	{
+		return mysqli_insert_id($link);
+	}
+}
+
+function insert_id_tpc($link,$table,$id_field,$id_value,$id_fieldd,$id_valuee)
+{
+	$sqli='insert into `'.$table.'` (`'.$id_field.'`,`'.$id_fieldd.'`) values (\''.$id_value.'\',\''.$id_valuee.'\')';
+	//echo $sqli;
+	if(!$resulti=mysqli_query($link,$sqli))
+	{
+		echo mysqli_error($link);return FALSE;
+	}
+	else
+	{
+		return mysqli_insert_id($link);
+	}
+}
+
+function update_or_insert_filename_field_by_id($link,$table,$id_field,$id_value,$field,$value)
+{
+	if(strlen($value)>0)
+	{
+		if(get_raw($link,'select `'.$id_field.'` from `'.$table.'` where `'.$id_field.'`=\''.$id_value.'\'')===FALSE)
+		{
+			//Try to insert
+			$sqli='insert into `'.$table.'` (`'.$id_field.'`,`'.$field.'`) values (\''.$id_value.'\', \''.$value.'\')';
+			echo $sqli;
+			if(!$resulti=mysqli_query($link,$sqli)){echo mysqli_error($link);return FALSE;}
+			else
+			{
+				return mysqli_affected_rows($link);
+			}
+		}
+		else
+		{
+			//Else update
+			$sql='update `'.$table.'` set `'.$field.'`=\''.$value.'\' where `'.$id_field.'`=\''.$id_value.'\'';
+			//echo $sql;
+			if(!$result=mysqli_query($link,$sql))
+			{
+				echo mysqli_error($link);
+				return FALSE;
+			}
+		}
+	}
+}
+
+
+
+function india_to_mysql_date($ddmmyyyy)
+{
+	$ex=explode('-',$ddmmyyyy);
+	if(count($ex)==3)
+	{
+		return $ex[2].'-'.$ex[1].'-'.$ex[0];
+	}
+	else
+	{
+		return false;
+	}
+}
+
+function mysql_to_india_date($yyyymmdd)
+{
+	$ex=explode('-',$yyyymmdd);
+	if(count($ex)==3)
+	{
+		return $ex[2].'-'.$ex[1].'-'.$ex[0];
+	}
+	else
+	{
+		return false;
+	}
+}
+
+function date_diff_to_year_month_days($from,$to)
+{
+	//dates as yyyy-mm-dd format only
+	//To    2016-03-04
+	//From  2015-05-20
+	//      0000-09-(N) 
+	
+	$exf=explode('-',$from);
+	$ext=explode('-',$to);
+	if(count($exf)!=3||count($ext)!=3)
+	{
+		return false;
+	}
+	
+	if(in_array('00',$exf)===TRUE || in_array('0000',$exf)===TRUE)
+	{
+		//print_r($exf);
+		return false;
+	}
+	
+	$days_of_from_month=cal_days_in_month(CAL_GREGORIAN,$exf[1],$exf[0]);
+	if($days_of_from_month===FALSE)
+	{
+		return FALSE;
+	}
+	$days=$ext[2]+($days_of_from_month-$exf[2]);
+	
+	
+	$months=$ext[1]+12-$exf[1]-1;
+	
+	$years=$ext[0]-$exf[0]-1;
+	
+	if($days>cal_days_in_month(CAL_GREGORIAN,$exf[1],$exf[0])){$days=abs($ext[2]-$exf[2]);$months=$months+1;}
+	if($months>11){$years=$years+1;$months=$months-12;}
+	
+	//echo "<h1>".$to." and ".$from."</h1>";
+	//echo "<h1>".$years.",".$months.",".$days."</h1>";
+	
+	return $years." yr, ".$months." mo, ".$days." d";
+/*
+	$y=$ext[0]-$exf[0];
+
+	$m=$ext[1]-$exf[1];
+	if($m<0){$y=$y-1;$m=12+$m;}
+	
+	$d=$ext[1]-$exf[1];
+	if($d<0){$m=$m-1;$d=cal_days_in_month(CAL_GREGORIAN,$exf[1],$exf[0])-$d;}
+	
+	if($m<0){$y=$y-1;$m=12+$m;}
+	
+	echo "<h1>".$to." and ".$from."</h1>";
+	echo "<h1>".$y.",".$m.",".$d."</h1>";
+*/
+}
+
+//functions for file upload management//////////////
+
+function file_to_str($link,$file)
+{
+	$fd=fopen($file['tmp_name'],'r');
+	$size=$file['size'];
+	$str=fread($fd,$size);
+	return mysqli_real_escape_string($link,$str);
+}
+
+function insert_attachment($link,$table,$id_field,$id_value,$files_field,$files_value)
+{
+	$str=file_to_str($link,$files_value);
+
+	$sql='insert into `'.$table.'` 
+			(`'.$id_field.'`,`'.$files_field.'`) values(\''.$id_value.'\',"'.$str.'")';
+
+		
+	if(!$result=mysqli_query($link,$sql))
+	{		
+		//echo 'Error()';
+		echo mysqli_error($link);
+	}
+	else
+	{
+		//echo 'insert success';
+		return mysqli_insert_id($link);
+	}
+}	
+
+function read_year($name,$y,$yy)
+{
+	echo '<select name=\''.$name.'\'>';
+	for($i=$y;$i<$yy;$i++)
+	{
+			echo '<option>'.$i.'</option>';
+	}
+	echo '</select>';
+	
+}
+
+function update_or_insert_attachment($link,$table,$id_field,$id_value,$files_field,$files_value)
+{	
+	//echo '<pre>'; print_r( $files_value);echo '</pre>';
+	if($files_value['size']>0)
+	{
+		if(get_raw($link,'select `'.$id_field.'` from `'.$table.'` where `'.$id_field.'`=\''.$id_value.'\'')===FALSE)
+		{
+		//insert
+
+			$str=file_to_str($link,$files_value);
+
+			$sql='insert into `'.$table.'` 
+					(`'.$id_field.'`,`'.$files_field.'`) values(\''.$id_value.'\',"'.$str.'")';
+
+				
+			if(!$result=mysqli_query($link,$sql))
+			{		
+				//echo 'Error()';
+				echo mysqli_error($link);
+			}
+			else
+			{
+				//echo 'insert success';
+				return mysqli_insert_id($link);
+			}
+		}
