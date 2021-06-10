@@ -68,7 +68,7 @@ function recalculate1($link,$s,$b)
 		
 	//check for ceiling with 7th pay
   $total_basic=$basic_off['amount']+$basic_est['amount'];
-  $npa=$total_basic*0.2;
+  $npa=$total_basic*0.20;
   $npa_for_da=min($npa,$_POST['ceil_7']-$total_basic);
   $basic_plus_npa_for_da=$total_basic + $npa_for_da;
   $npa_as_extra=max($total_basic+$npa-$_POST['ceil_7'],0);
@@ -81,9 +81,9 @@ function recalculate1($link,$s,$b)
 	{
 	//check for ceiling with 6th pay
 	$basic_for_hra=
-	min ( $sixb_o['data'] + $sixg_o['data'] + ($sixb_o['data'] + $sixg_o['data'])*0.20, $_POST['ceil_6'])
+	min ( $sixb_o['data'] + $sixg_o['data'] + ($sixb_o['data'] + $sixg_o['data'])*0.25, $_POST['ceil_6'])
 	+
-	min ( $sixb_e['data'] + $sixg_e['data'] + ($sixb_e['data'] + $sixg_e['data'])*0.20, $_POST['ceil_6']);
+	min ( $sixb_e['data'] + $sixg_e['data'] + ($sixb_e['data'] + $sixg_e['data'])*0.25, $_POST['ceil_6']);
 
 	//for Officer first part will be nonzero. for EST it will be zero
 	$hra=$basic_for_hra*$_POST['hra'];
@@ -97,7 +97,9 @@ function recalculate1($link,$s,$b)
 ///////////////////DA//////////////////////	
 
 	$da=round($basic_plus_npa_for_da*$_POST['da']);
-	$da_for_cpf=round($basic_plus_npa_for_da*$_POST['da']);
+
+	$da_for_cpf=round(($basic_off['amount'] + $basic_est['amount'])*$_POST['da']);
+
 	//$da=round(($final_basic+$npa)*$_POST['da']); //da based on basic + npa
 	//echo '<h1>'.$da.'</h1>';
 /////////////////////CPF////////////////////
