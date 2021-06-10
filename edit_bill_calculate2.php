@@ -79,16 +79,15 @@ function recalculate1($link,$s,$b)
 	$qtr=get_nsfval($link,$b,$s,$GLOBALS['qtr_id']);
 	if(strlen($qtr['data'])==0)
 	{
-		
 	//check for ceiling with 6th pay
 	$basic_for_hra=
-	min ( $sixb_o['data'], $_POST['ceil_6']*4/5 - $sixg_o['data'])
+	min ( $sixb_o['data'] + $sixg_o['data'] + ($sixb_o['data'] + $sixg_o['data'])*0.20, $_POST['ceil_6'])
 	+
-	min ( $sixb_e['data'], $_POST['ceil_6']*4/5 - $sixg_e['data']);
-			
-		//for Officer first part will be nonzero. for EST it will be zero
-		$hra=($basic_for_hra +$sixg_o['data']+$sixg_e['data']+$npa)*$_POST['hra'];
-			 
+	min ( $sixb_e['data'] + $sixg_e['data'] + ($sixb_e['data'] + $sixg_e['data'])*0.20, $_POST['ceil_6']);
+
+	//for Officer first part will be nonzero. for EST it will be zero
+	$hra=$basic_for_hra*$_POST['hra'];
+
 	}
 	else
 	{
@@ -292,7 +291,7 @@ function display_calculate($link,$s,$b)
 	echo '<form method=post>
 	     <table>
 	        <tr> 
-				<td width=5%><button class="btn btn-warning btn-sm" name=action value=recalculate1 ><h3>Recalculate1</h3></button></td>
+				<td width=5%><button class="btn btn-warning btn-sm" name=action value=recalculate1 ><h3>Recalculate2</h3></button></td>
 				<input type=hidden name=staff_id value=\''.$s.'\'>
 				<input type=hidden name=bill_group value=\''.$b.'\'>
 				

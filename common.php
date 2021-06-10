@@ -2470,13 +2470,13 @@ function print_one_salary_slip_pdf($link,$staff_id,$bill_group,$format_table='')
 								salary_type_id=\''.$ar['salary_type_id'].'\'');
 								
 		if($ar['type']=='+'){$ptbl=$ptbl.'<tr>
-										<td width="65%">'.substr($ar['name'],0,20).'</td>
-										<td width="15%">'.$dt['amount'].'</td>
+										<td width="60%">'.substr($ar['name'],0,20).'</td>
+										<td width="20%">'.$dt['amount'].'</td>
 										<td width="20%">'.$dt['remark'].'</td></tr>';}
 										
 		elseif($ar['type']=='-'){$mtbl=$mtbl.'<tr>
-										<td width="65%">'.substr($ar['name'],0,20).'</td>
-										<td width="15%">'.$dt['amount'].'</td>
+										<td width="60%">'.substr($ar['name'],0,20).'</td>
+										<td width="20%">'.$dt['amount'].'</td>
 										<td width="20%">'.$dt['remark'].'</td></tr>';}	
 	}
 	
