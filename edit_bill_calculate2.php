@@ -54,7 +54,9 @@ if($locked!=0){echo $b.' Bill Group locked!!'; return;  }
 
 function recalculate1($link,$s,$b)
 {
-
+	$basic_off=get_sfval($link,$b,$s,$GLOBALS['basic_o_id']);
+	$basic_est=get_sfval($link,$b,$s,$GLOBALS['basic_e_id']);
+  
 //////////////////NPA////////////////////
 	//get 6th pay basic and GP for Officer and EST
 	$sixb_o=get_nsfval($link,$b,$s,$GLOBALS['6_pay_basic_o']);
@@ -64,12 +66,13 @@ function recalculate1($link,$s,$b)
 	$sixg_e=get_nsfval($link,$b,$s,$GLOBALS['6_pay_GP_e']);
 		
 		
-	//check for ceiling with 6th pay
-	$basic_for_npa=min ( $sixb_o['data'], $_POST['ceil_6']*4/5 - $sixg_o['data']);
-	
-	//for EST both fields will will always be zero
-	$npa=($sixg_o['data']+$basic_for_npa)*$_POST['npa'];	
-
+	//check for ceiling with 7th pay
+  $total_basic=$basic_off['amount']+$basic_est['amount'];
+  $npa=$total_basic*0.2;
+  $npa_for_da=min($npa,$_POST['ceil_7']-$total_basic);
+  $basic_plus_npa_for_da=$total_basic + $npa_for_da;
+  $npa_as_extra=max($total_basic+$npa-$_POST['ceil_7'],0);
+  
 
 ///////////////////HRA////////////////////////
 	//HRA only if no quarter
@@ -93,12 +96,9 @@ function recalculate1($link,$s,$b)
 	}
 
 ///////////////////DA//////////////////////	
-	$basic_off=get_sfval($link,$b,$s,$GLOBALS['basic_o_id']);
-	$basic_est=get_sfval($link,$b,$s,$GLOBALS['basic_e_id']);
-	$final_basic=min($basic_off['amount']+$basic_est['amount'],$_POST['ceil_7']);
-	
-	$da=round($final_basic*$_POST['da']);
-	$da_for_cpf=round($final_basic*$_POST['da']);
+
+	$da=round($basic_plus_npa_for_da*$_POST['da']);
+	$da_for_cpf=round($basic_plus_npa_for_da*$_POST['da']);
 	//$da=round(($final_basic+$npa)*$_POST['da']); //da based on basic + npa
 	//echo '<h1>'.$da.'</h1>';
 /////////////////////CPF////////////////////
@@ -112,11 +112,12 @@ function recalculate1($link,$s,$b)
 		$cpf=0;
 	}
 	
-	ui_sal($link,$s,$b,$GLOBALS['npa_id'],$npa);
+	ui_sal($link,$s,$b,$GLOBALS['npa_id'],$npa_for_da);
 	ui_sal($link,$s,$b,$GLOBALS['hra_id'],$hra);
 	ui_sal($link,$s,$b,$GLOBALS['da_id'],$da);
 	ui_sal($link,$s,$b,$GLOBALS['cpf_id'],$cpf);
-
+  ui_sal($link,$s,$b,$GLOBALS['ceiling_extra_id'],$npa_as_extra);
+  
 }
 /*
 function recalculate2($link,$s,$b)
@@ -295,12 +296,12 @@ function display_calculate($link,$s,$b)
 				<input type=hidden name=staff_id value=\''.$s.'\'>
 				<input type=hidden name=bill_group value=\''.$b.'\'>
 				
-				<td width=5%>DA with New Scale:<input type=text size="15" name=da value="0.12"></td>
-				<td width=5%>NPA with Old Scale:<input type=text size="15" name=npa value="0.25"></td>
+				<td width=5%>DA with New Scale:<input type=text size="15" name=da value="0.17"></td>
+				<td width=5%>NPA with Old Scale:<input type=text size="15" name=npa value="0.20"></td>
 				<td width=5%>HRA with Old scale:<input type=text size="15" name=hra value="0.20"></td>
 				<td width=5%>CPF based  on new scale and DA:<input type=text size="15" name=cpf value="0.10"></td>
 				<td width=10%>Ceiling 6th:<input type=text size="15" name=ceil_6 value="85000"></td>
-				<td width=10%>Ceiling 7th:<input type=text size="15" name=ceil_7 value="225000"></td>
+				<td width=10%>Ceiling 7th:<input type=text size="15" name=ceil_7 value="237500"></td>
 				
 			</tr>
 		</table>';

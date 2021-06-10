@@ -1,7 +1,7 @@
 <?php
 //echo $_SERVER['REMOTE_ADDR'].'<br>';
 //echo substr($_SERVER['REMOTE_ADDR'],0,7);
-if(substr($_SERVER['REMOTE_ADDR'],0,7)!='11.207.'){echo 'access denied error 444';exit(0);}
+//if(substr($_SERVER['REMOTE_ADDR'],0,7)!='11.207.'){echo 'access denied error 444';exit(0);}
 session_start();
 
 require_once 'common.php';
@@ -84,4 +84,6 @@ echo'<!DOCTYPE html>
    </div>
   </body>
 </html>';
+
+
 ?>

@@ -70,6 +70,10 @@ echo '
                         <tr><td>
                                 <button class="btn btn-primary btn-block" formaction=edit_bill_calculate1.php type=submit onclick="hidemenu()" name=action value=edit_bill>Edit(Calculate_1)</button>
                         </td></tr> 
+                        <tr><td>
+                                <button class="btn btn-primary btn-block" formaction=edit_bill_calculate2.php type=submit onclick="hidemenu()" name=action value=edit_bill>Edit(Calculate_2)</button>
+                        </td></tr> 
+
 			<tr><td>
 				<button class="btn btn-primary btn-block" formaction=print_bill.php type=submit onclick="hidemenu()" name=action value=print_bill>Print</button>
 			</td></tr>
