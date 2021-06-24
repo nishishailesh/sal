@@ -180,12 +180,11 @@ $pdf->AddPage();
 
 if($img_file_front==null)
 {
-	//print_table_blank($pdf,$link,$_POST['bill_group'],$_POST['bill_number']);
-	print_table($pdf,$link,$_POST['bill_group'],$_POST['bill_number']);
+	print_table_blank($pdf,$link,$_POST['bill_group'],$_POST['bill_number']);
 }
 else
 {
-	print_table($pdf,$link,$_POST['bill_group'],$_POST['bill_number']);
+		print_table($pdf,$link,$_POST['bill_group'],$_POST['bill_number']);
 }
 
 $total_pages=$pdf->getNumPages();
@@ -249,8 +248,8 @@ function print_plus_tbl_hd()
 		<th width="15%"><b>Emp Name<br>Dept,Post<br>7th Pay, 6th Pay</b></th>
 		<th width="5%"><b>(002)GP<br>Special<br>PP<br>FP</b></th>
 		<th width="7%"><b>(001)(002)<br>P.Off<br>P.Est</b></th>
-		<th width="6%"><b>(128)<br>NPA</b></th>
-		<th width="4%"><b>(002,108)<br>LS/LE,BON</b></th>
+		<th width="4%"><b>(128)<br>NPA</b></th>
+		<th width="6%"><b>(002,108)<br>LS/LE,BON</b></th>
 		<th width="5%"><b>(005)DA<br>ROP-GZ<br>ROP_NZ</b></th>
 		<th width="5%"><b>(006)<br>HRA</b></th>
 		<th width="5%"><b>(016)<br>CLA</b></th>
@@ -543,7 +542,7 @@ function print_table($pdf,$link,$bg,$bn)
 			$pstr=$pstr.'<tr>
 					<td>'.$count.'</td>				
 					<td>'.$staff['fullname'].'<br>'.$dept['data'].','.$post['data'].'<br>'.$ps['data'].'+'.$ops['data'].','.$pays['data'].'</td>
-					<td>'.$gp.'#<br>'.$sppa['amount'].'#<br>'.$ceil['amount'].'#'.$fpa['amount'].'#'.$infection['amount'].'</td>		
+					<td>'.$gp.',<br>'.$sppa['amount'].',<br>'.$ceil['amount'].',<br>'.$fpa['amount'].','.$infection['amount'].'</td>		
 					<td>'.$basic.'</td>						
 					<td>'.$npa['amount'].'</td>				
 					<td>'.$ls['amount'].'<br>,'.$bonus['amount'].'</td>				
@@ -658,7 +657,7 @@ if($count>$GLOBALS['rpp'])
 			$sm_str=$sm_str.'<tr>
 				<td></td>
 				<td>Page:'.$rn.'<br></td>	
-						<td>'.($GLOBALS['sm'][$rn]['gp']+$GLOBALS['sm'][$rn]['sppa']+$GLOBALS['sm'][$rn]['ceil']+
+						<td>'.($GLOBALS['sm'][$rn]['gp']+$GLOBALS['sm'][$rn]['sppa']+
 								$GLOBALS['sm'][$rn]['fpa']+$GLOBALS['sm'][$rn]['infection']).'</td>
 				<td>'.($GLOBALS['sm'][$rn]['pay_off']+$GLOBALS['sm'][$rn]['pay_est']).'</td>
 				<td>'.$GLOBALS['sm'][$rn]['npa'].'</td>	
@@ -668,7 +667,7 @@ if($count>$GLOBALS['rpp'])
 				<td>'.$GLOBALS['sm'][$rn]['cla'].'</td>	
 				<td>'.$GLOBALS['sm'][$rn]['ma'].'</td>
 				<td>'.$GLOBALS['sm'][$rn]['ta'].'</td>
-				<td>'.($GLOBALS['sm'][$rn]['ba']).'</td>		
+				<td>'.($GLOBALS['sm'][$rn]['ba']+$GLOBALS['sm'][$rn]['ceil']).'</td>		
 				<td>'.($GLOBALS['sm'][$rn]['wa']+$GLOBALS['sm'][$rn]['ua']+$GLOBALS['sm'][$rn]['na']).'</td>							
 				<td>'.$GLOBALS['sm'][$rn]['gross'].'</td>
 				<td></td>
@@ -682,13 +681,12 @@ if($count>$GLOBALS['rpp'])
 				<td>'.	(array_sum(array_column($GLOBALS['sm'],'gp'))+
 						array_sum(array_column($GLOBALS['sm'],'sppa'))+
 						array_sum(array_column($GLOBALS['sm'],'fpa'))+
-     					        array_sum(array_column($GLOBALS['sm'],'ceil'))+
 						array_sum(array_column($GLOBALS['sm'],'infection'))).'</td>	
 				<td>'.(	array_sum(array_column($GLOBALS['sm'],'pay_off'))+
 						array_sum(array_column($GLOBALS['sm'],'pay_est'))	).'</td>
 				<td>'.array_sum(array_column($GLOBALS['sm'],'npa')).'</td>	
-				<td>'.	(array_sum(array_column($GLOBALS['sm'],'ls'))+
-					array_sum(array_column($GLOBALS['sm'],'bonus'))).'</td>	
+				<td>'.array_sum(array_column($GLOBALS['sm'],'ls')).'</td>
+				<td>'.array_sum(array_column($GLOBALS['sm'],'bonus')).'</td>	
 				
 				<td>'.
 						(array_sum(array_column($GLOBALS['sm'],'da'))+
@@ -700,7 +698,8 @@ if($count>$GLOBALS['rpp'])
 				<td>'.array_sum(array_column($GLOBALS['sm'],'cla')).'</td>	
 				<td>'.array_sum(array_column($GLOBALS['sm'],'ma')).'</td>	
 				<td>'.array_sum(array_column($GLOBALS['sm'],'ta')).'</td>	
-				<td>'.array_sum(array_column($GLOBALS['sm'],'ba')).'</td>	
+				<td>'.(array_sum(array_column($GLOBALS['sm'],'ba'))+
+						array_sum(array_column($GLOBALS['sm'],'ceil'))).'</td>	
 				<td>'.(array_sum(array_column($GLOBALS['sm'],'wa'))+
 						array_sum(array_column($GLOBALS['sm'],'ua'))+
 						array_sum(array_column($GLOBALS['sm'],'na'))).'</td>				
@@ -773,9 +772,7 @@ if($count>$GLOBALS['rpp'])
 
 	///////////manage front page///////////////
 	$pdf->setPage(1);		//go back to page 1
-
-	if($_POST['outer_front']!='blank')
-{
+	
 	//Pay of Officer
 	$poo=array_sum(array_column($GLOBALS['sm'],'gp_12'))+array_sum(array_column($GLOBALS['sm'],'pay_off'));
 	//Pay of Establishment
@@ -783,7 +780,6 @@ if($count>$GLOBALS['rpp'])
 	
 	$other_in_basic=array_sum(array_column($GLOBALS['sm'],'sppa'))
 				+array_sum(array_column($GLOBALS['sm'],'fpa'))
-				+array_sum(array_column($GLOBALS['sm'],'ceil'))
 				+array_sum(array_column($GLOBALS['sm'],'infection'));
 	
 	if($poo>0){$poo=$poo+$other_in_basic;}			
@@ -812,8 +808,9 @@ if($count>$GLOBALS['rpp'])
 				//+array_sum(array_column($GLOBALS['sm'],'ba'));	
 				
 	//As Akbarbhai asked sppa,fpa,infection will go into basic on front page
-	$EDP0104_P=array_sum(array_column($GLOBALS['sm'],'ba'));
-
+	$EDP0104_P=	array_sum(array_column($GLOBALS['sm'],'ceil'))
+				+array_sum(array_column($GLOBALS['sm'],'ba'));	
+									
 	write_text($pdf,$EDP0104_P,157,153,20,5);
 	
 	write_text($pdf,array_sum(array_column($GLOBALS['sm'],'ma')),157,157,20,5);
@@ -872,7 +869,7 @@ if($count>$GLOBALS['rpp'])
 	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'pt')),236,97,20,5);
 	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'sis_if')),236,108,20,5);
 	write_text($pdf,array_sum(array_column($GLOBALS['smm'],'sis_sf')),236,118,20,5);
-
+	
 	$total_hba=	array_sum(array_column($GLOBALS['smm'],'hba_p'))+
 				array_sum(array_column($GLOBALS['smm'],'hba_i'));	
 	write_text($pdf,$total_hba,236,178,20,5);
@@ -885,22 +882,22 @@ if($count>$GLOBALS['rpp'])
 							array_sum(array_column($GLOBALS['smm'],'sis_if'))+
 							array_sum(array_column($GLOBALS['smm'],'sis_sf'))+
 							$total_hba;
-
+							
 	$total_deduction=$total_a_deduction+$all_gpf;
 	write_text($pdf,$total_a_deduction,236,198,20,5);
 	write_text($pdf,$total_deduction,306,137,20,5);
-
+	
 	$net_total=$gross_minus_recovery-$total_deduction;
-
+			
 	$GLOBALS['net_for_back']=$net_total;		//for outer back
 	write_text($pdf,$net_total,158,248,20,5);		//left
 
 	write_text($pdf,$net_total,307,141.5,20,5);					//right
-
+	
 	//$net_total_words=Numbers_Words::toWords($net_total,"en_US");
 	//write_text_small($pdf,$net_total_words.' only', 257,145.5,70,5);
 	my_number_to_words($net_total,'yes');	
-	write_text_small($pdf,$GLOBALS['n2s'].' only', 257,145.5,70,5);
+	write_text_small($pdf,$GLOBALS['n2s'].' only', 257,145.5,70,5);			
 
 	////12170501
 	if(round(($_POST['bill_group']/1000000),0)==12)
@@ -911,11 +908,12 @@ if($count>$GLOBALS['rpp'])
 	{
 		write_text_big_fill($pdf,'Non - Gazetted',150,35,30,12);
 	}
-
+		
 	write_text($pdf,$_POST['bill_group'].'-'.$_POST['bill_number'],148,56,25,12);
 	$bill_details=get_raw($link,'select * from bill_group where bill_group=\''.$bg.'\'');
 	write_text_big_fill($pdf,$bill_details['remark'],70,73,35,10);
-}
+	
+
 }
 
 
