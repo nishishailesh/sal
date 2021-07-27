@@ -2,10 +2,12 @@
 #only blank
 read ppp
 mysqldump  -d -uroot c34 -p$ppp > c34_blank.sql
-#for tname in examination profile report
-#do
-#	mysqldump  -uroot dc_general $tname -p$ppp > "dc_general_$tname.sql"
-#done
+
+
+for tname in bill_type department map nonsalary_type post salary_type
+do
+	mysqldump  -uroot c34 $tname -p$ppp >> "c34_tables.sql"
+done
 git add *
 git commit
 git push https://github.com/nishishailesh/sal master

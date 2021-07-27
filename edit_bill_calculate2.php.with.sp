@@ -71,10 +71,7 @@ function recalculate1($link,$s,$b)
   $npa=$total_basic*0.20;
   $npa_for_da=min($npa,$_POST['ceil_7']-$total_basic);
   $basic_plus_npa_for_da=$total_basic + $npa_for_da;
-  //this calculates special pay
-  //$npa_as_extra=max($total_basic+$npa-$_POST['ceil_7'],0);
-  //but as per govet rule, its is set to zero on2021-07-27 by smpatel
-  $npa_as_extra=0;
+  $npa_as_extra=max($total_basic+$npa-$_POST['ceil_7'],0);
   
 
 ///////////////////HRA////////////////////////
@@ -120,8 +117,8 @@ function recalculate1($link,$s,$b)
 	ui_sal($link,$s,$b,$GLOBALS['hra_id'],$hra);
 	ui_sal($link,$s,$b,$GLOBALS['da_id'],$da);
 	ui_sal($link,$s,$b,$GLOBALS['cpf_id'],$cpf);
-  	ui_sal($link,$s,$b,$GLOBALS['ceiling_extra_id'],$npa_as_extra);
- 
+  ui_sal($link,$s,$b,$GLOBALS['ceiling_extra_id'],$npa_as_extra);
+  
 }
 /*
 function recalculate2($link,$s,$b)
