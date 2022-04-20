@@ -105,7 +105,9 @@ function vlist_annual_salary($link,$staff_id,$fyear,$fmonth,$tyear,$tmonth)
 						bill_group=\''.$value['bill_group'].'\' 
 						and staff_id=\''.$staff_id.'\' 
 						and nonsalary_type_id=\''.$nst['nonsalary_type_id'].'\'');
-		echo '<td>'.substr($raw['data'],0,15).'</td>';
+		$dtt=isset($raw['data'])?$raw['data']:'';
+		//echo '<td>'.substr($raw['data'],0,15).'</td>';
+		echo '<td>'.substr($dtt,0,15).'</td>';
 		}
 		echo '<td></td></tr>';
 	}
@@ -163,8 +165,10 @@ function vlist_annual_salary($link,$staff_id,$fyear,$fmonth,$tyear,$tmonth)
 						bill_group=\''.$value['bill_group'].'\' 
 						and staff_id=\''.$staff_id.'\' 
 						and salary_type_id=\''.$st['salary_type_id'].'\'');
-			echo '<td>'.$raw['amount'].'</td>';
-			$sum=$sum+$raw['amount'];
+			$amt=isset($raw['amount'])?$raw['amount']:0;
+			//echo '<td>'.$raw['amount'].'</td>';
+			echo '<td>'.$amt.'</td>';
+			$sum=$sum+$amt;
 		}
 		echo '<td>'.$sum.'</td></tr>';
 	}

@@ -17,7 +17,7 @@ $GLOBALS['cardex']='65';
 $GLOBALS['ddo_no']='553';
 $GLOBALS['grand']=array();
 $GLOBALS['phone']='091-261-2244175';
-$GLOBALS['mobile']='091 98244 19535';
+$GLOBALS['mobile']='99796 63164';
 $GLOBALS['ministry']='Health';
 $GLOBALS['tan']='SRTG01499B';
 
@@ -116,7 +116,7 @@ function print_form($link,$bg,$bn)
 	page_header($link,$bg,$bn,round(($count/$GLOBALS['rpp']),0)+1);
 	echo '<table align="center" cellpadding="1" cellspacing="0" border="0.3" class="border" style="text-align:center;">';
 	echo $head;
-	echo '<tr><td>1</td><td style="text-align:left;">Dena Bank, Medical College Branch, Surat</td><td>'.$sum_sums_all.'</td><td>'.$sum_sums_all.'</td></tr>';
+	echo '<tr><td>1</td><td style="text-align:left;">Bank of Baroda, Medical College Branch, Surat</td><td>'.$sum_sums_all.'</td><td>'.$sum_sums_all.'</td></tr>';
 	echo '<tr><td>2</td><td style="text-align:left;">LIC of India</td><td>'.$sum_lic.'</td><td>'.$sum_lic.'</td></tr>';
 	echo '<tr><td>3</td><td style="text-align:left;">The New Civil Hospital And Shatmk Mandali Ltd, Surat</td><td>'.$sum_gmcs_soc.'</td><td>'.$sum_gmcs_soc.'</td></tr>';
 	echo '<tr><td>4</td><td style="text-align:left;">Total</td><td>'.$sum_sums_govt.'</td><td>'.$sum_sums_govt.'</td></tr>';

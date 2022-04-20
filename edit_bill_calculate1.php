@@ -296,7 +296,7 @@ function display_calculate($link,$s,$b)
 				<input type=hidden name=staff_id value=\''.$s.'\'>
 				<input type=hidden name=bill_group value=\''.$b.'\'>
 				
-				<td width=5%>DA with New Scale:<input type=text size="15" name=da value="0.17"></td>
+				<td width=5%>DA with New Scale:<input type=text size="15" name=da value="0.28"></td>
 				<td width=5%>NPA with Old Scale:<input type=text size="15" name=npa value="0.25"></td>
 				<td width=5%>HRA with Old scale:<input type=text size="15" name=hra value="0.20"></td>
 				<td width=5%>CPF based  on new scale and DA:<input type=text size="15" name=cpf value="0.10"></td>

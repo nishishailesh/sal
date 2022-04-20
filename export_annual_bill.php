@@ -24,7 +24,14 @@ function export_one_h_nonsalary($link,$staff_id,$bill_group,$format_table='')
 								staff_id=\''.$staff_id.'\' and 
 								bill_group=\''.$bill_group.'\' and 
 								nonsalary_type_id=\''.$ar['nonsalary_type_id'].'\'');
-								
+
+                if($dt==null)
+                {
+                        $dt=array('staff_id'=>$staff_id,'bill_group'=>$bill_group,'nonsalary_type_id'=>$ar['nonsalary_type_id'],'data'=>'','remark'=>'');
+                }
+
+
+
 		$tbl=$tbl.'"'.$dt['data'].'",';
 	}
 	
@@ -46,9 +53,15 @@ function export_one_h_salary($link,$staff_id,$bill_group,$format_table='')
 								staff_id=\''.$staff_id.'\' and 
 								bill_group=\''.$bill_group.'\' and 
 								salary_type_id=\''.$ar['salary_type_id'].'\'');
-								
+
+                if($dt==null)
+                {
+			$dt=array('staff_id'=>$staff_id,'bill_group'=>$bill_group,'salary_type_id'=>$ar['salary_type_id'],'amount'=>0,'remark'=>'');
+                }
+
+
 		if($ar['type']=='+'){$ptbl=$ptbl.'"'.$dt['amount'].'",';}
-										
+
 		elseif($ar['type']=='-'){$mtbl=$mtbl.'"'.$dt['amount'].'",';}	
 	}
 	

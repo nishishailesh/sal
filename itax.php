@@ -20,7 +20,7 @@ $GLOBALS['cardex']='65';
 $GLOBALS['ddo_no']='553';
 $GLOBALS['grand']=array();
 $GLOBALS['phone']='091-261-2244175';
-$GLOBALS['mobile']='9429091166';
+$GLOBALS['mobile']='9979663164';
 $GLOBALS['ministry']='Health';
 $GLOBALS['tan']='SRTG01499B';
 

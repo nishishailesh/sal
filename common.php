@@ -1707,6 +1707,10 @@ function edit_salary($link,$staff_id,$bill_group,$format_table='')
 								staff_id=\''.$staff_id.'\' and 
 								bill_group=\''.$bill_group.'\' and 
 								salary_type_id=\''.$ar['salary_type_id'].'\'');
+		if($dt==null)
+		{
+                	$dt=array('staff_id'=>$staff_id,'bill_group'=>$bill_group,'salary_type_id'=>$ar['salary_type_id'],'amount'=>0,'remark'=>'');
+		}
 								
 		$title=$ar['salary_type_id'].'>>'.$ar['code1'].'>>'.$ar['code2'].'>>('.$ar['type'].')';
 		if($ar['type']=='+'){$ptbl=$ptbl.'<tr><td title=\''.$title.'\' >'.$ar['name'].'</td>
@@ -1868,10 +1872,14 @@ function edit_nonsalary($link,$staff_id,$bill_group,$format_table='')
 								staff_id=\''.$staff_id.'\' and 
 								bill_group=\''.$bill_group.'\' and 
 								nonsalary_type_id=\''.$ar['nonsalary_type_id'].'\'');
-		$title=$ar['nonsalary_type_id'];							 
+		if($dt==null)
+		{
+			$dt=array('staff_id'=>$staff_id,'bill_group'=>$bill_group,'nonsalary_type_id'=>$ar['nonsalary_type_id'],'data'=>'','remark'=>'');
+		}
+		$title=$ar['nonsalary_type_id'];
 		if($count%3==0){$t='<tr>';}else{$t='';}
 		if($count%3==2){$tt='</tr>';}else{$tt='';}
-		
+
 		if($select_str=mk_select_from_sql_nonsalary_ajax($link,
 						'select `'.$ar['name'].'` f ,
 								`'.$ar['name'].'` d 
@@ -2107,6 +2115,10 @@ function get_sfval($link,$bg,$staff_id,$salary_type_id)
 	//echo $sql_gpf;
 	if(!$r=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	$data=mysqli_fetch_assoc($r);
+	if($data==null)
+	{
+		$data=array('staff_id'=>$staff_id,'bill_group'=>$bg,'salary_type_id'=>$salary_type_id,'amount'=>0,'remark'=>'');
+	}
 	return $data;	
 }
 
@@ -2119,7 +2131,11 @@ function get_nsfval($link,$bg,$staff_id,$nonsalary_type_id)
 	//echo $sql_gpf;
 	if(!$r=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	$data=mysqli_fetch_assoc($r);
-	return $data;	
+        if($data==null)
+        {
+                $data=array('staff_id'=>$staff_id,'bill_group'=>$bg,'nonsalary_type_id'=>$nonsalary_type_id,'data'=>'','remark'=>'');
+        }
+	return $data;
 }
 
 
@@ -2434,6 +2450,13 @@ function print_one_nonsalary_slip_pdf($link,$staff_id,$bill_group,$format_table=
 								staff_id=\''.$staff_id.'\' and 
 								bill_group=\''.$bill_group.'\' and 
 								nonsalary_type_id=\''.$ar['nonsalary_type_id'].'\'');
+		if($dt==null)
+		{
+
+$dt=array('staff_id'=>$staff_id,'bill_group'=>$bill_group,'nonsalary_type_id'=>$ar['nonsalary_type_id'],'data'=>'','remark'=>'');
+
+		}						
+
 		$title=$ar['nonsalary_type_id'];	
 								 
 		if($count%2==0){$t='<tr>';}else{$t='';}
@@ -2468,6 +2491,11 @@ function print_one_salary_slip_pdf($link,$staff_id,$bill_group,$format_table='')
 								staff_id=\''.$staff_id.'\' and 
 								bill_group=\''.$bill_group.'\' and 
 								salary_type_id=\''.$ar['salary_type_id'].'\'');
+
+if($dt==null){
+		$dt=array('staff_id'=>$staff_id,'bill_group'=>$bill_group,'salary_type_id'=>$ar['salary_type_id'],'amount'=>0,'remark'=>'');
+}
+
 								
 		if($ar['type']=='+'){$ptbl=$ptbl.'<tr>
 										<td width="60%">'.substr($ar['name'],0,20).'</td>

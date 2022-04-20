@@ -17,27 +17,29 @@ function export_one_h_salary($link,$staff_id,$bill_group,$format_table='')
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 	$ptbl='';
 	$mtbl='';
-	
-	
+
+
 	while($ar=mysqli_fetch_assoc($result))
 	{
 		$dt=get_raw($link,'select * from salary where 
 								staff_id=\''.$staff_id.'\' and 
 								bill_group=\''.$bill_group.'\' and 
 								salary_type_id=\''.$ar['salary_type_id'].'\'');
-								
-		if($ar['type']=='+'){$ptbl=$ptbl.'"'.$dt['amount'].'",';}
-										
-		elseif($ar['type']=='-'){$mtbl=$mtbl.'"'.$dt['amount'].'",';}	
+
+		$amt=(isset($dt['amount']))?$dt['amount']:0;
+		//if($ar['type']=='+'){$ptbl=$ptbl.'"'.$dt['amount'].'",';}
+		if($ar['type']=='+'){$ptbl=$ptbl.'"'.$amt.'",';}
+
+		//elseif($ar['type']=='-'){$mtbl=$mtbl.'"'.$dt['amount'].'",';}
+		elseif($ar['type']=='-'){$mtbl=$mtbl.'"'.$amt.'",';}
 	}
-	
+
 	$tbl=$ptbl.$mtbl;
-			
-	
-	
+
+
 	$pmn=find_sums($link,$staff_id,$bill_group);
 
-	
+
 	
 	$summary_column='"'.$pmn[0].'","'.$pmn[1].'","'.$pmn[2].'",';
 		
