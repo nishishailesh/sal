@@ -60,21 +60,12 @@ function recalculate1($link,$s,$b)
 //////////////////NPA////////////////////
 	//get 6th pay basic and GP for Officer and EST
 	$sixb_o=get_nsfval($link,$b,$s,$GLOBALS['6_pay_basic_o']);
-	//print_r($sixb_o);
-	if(strlen($sixb_o['data'])==0){$sixb_o['data']=0;}
-	
 	$sixg_o=get_nsfval($link,$b,$s,$GLOBALS['6_pay_GP_o']);
-	//print_r($sixg_o);
-	if(strlen($sixg_o['data'])==0){$sixg_o['data']=0;}
-	
-	$sixb_e=get_nsfval($link,$b,$s,$GLOBALS['6_pay_basic_e']);
-	if(strlen($sixb_e['data'])==0){$sixb_e['data']=0;}
-	//print_r($sixb_e);
-	$sixg_e=get_nsfval($link,$b,$s,$GLOBALS['6_pay_GP_e']);
-	//print_r($sixg_e);
-	if(strlen($sixg_e['data'])==0){$sixg_e['data']=0;}
-	
 
+	$sixb_e=get_nsfval($link,$b,$s,$GLOBALS['6_pay_basic_e']);
+	$sixg_e=get_nsfval($link,$b,$s,$GLOBALS['6_pay_GP_e']);
+		
+		
 	//check for ceiling with 7th pay
   $total_basic=$basic_off['amount']+$basic_est['amount'];
   $npa=$total_basic*0.20;
@@ -84,36 +75,21 @@ function recalculate1($link,$s,$b)
   //$npa_as_extra=max($total_basic+$npa-$_POST['ceil_7'],0);
   //but as per govet rule, its is set to zero on2021-07-27 by smpatel
   $npa_as_extra=0;
-  
+
 
 ///////////////////HRA////////////////////////
 	//HRA only if no quarter
 	$qtr=get_nsfval($link,$b,$s,$GLOBALS['qtr_id']);
 	if(strlen($qtr['data'])==0)
 	{
-	//check for ceiling with 6th pay
-	//$basic_for_hra=
-	//min ( $sixb_o['data'] + $sixg_o['data'] + ($sixb_o['data'] + $sixg_o['data'])*0.25, $_POST['ceil_6'])
-	//+
-	//min ( $sixb_e['data'] + $sixg_e['data'] + ($sixb_e['data'] + $sixg_e['data'])*0.25, $_POST['ceil_6']);
+		//check for ceiling with 6th pay
+		$basic_for_hra=
+		min ( $sixb_o['data'] + $sixg_o['data'] + ($sixb_o['data'] + $sixg_o['data'])*0.25, $_POST['ceil_6'])
+		+
+		min ( $sixb_e['data'] + $sixg_e['data'] + ($sixb_e['data'] + $sixg_e['data'])*0.25, $_POST['ceil_6']);
 
-	
-	$basic_for_hra=
-        ($sixb_o['data'] + $sixg_o['data'] +  ($sixb_o['data'] + $sixg_o['data'])*0.25 )
-        +
-        ($sixb_e['data'] + $sixg_e['data'] +  ($sixb_e['data'] + $sixg_e['data'])*0.25  );
-
-
-
-
-	//for Officer first part will be nonzero. for EST it will be zero
-	$hra=min($basic_for_hra*$_POST['hra'],17000);
-	//echo '<h4>'.$hra.'</h4>';
-	//echo '<h4>'.$hra.'</h4>';
-	//echo '<h4>'.$hra.'</h4>';
-	//echo '<h4>'.$hra.'</h4>';
-	//echo '<h4>'.$basic_for_hra.'</h4>';
-	//echo '<h4>'.$hra.'</h4>';
+		//for Officer first part will be nonzero. for EST it will be zero
+		$hra=min($basic_for_hra*$_POST['hra'],$_POST['max_hra']);
 	}
 	else
 	{
@@ -318,17 +294,18 @@ function display_calculate($link,$s,$b)
 {
 	echo '<form method=post>
 	     <table>
-	        <tr> 
+	        <tr>
 				<td width=5%><button class="btn btn-warning btn-sm" name=action value=recalculate1 ><h3>Recalculate2</h3></button></td>
 				<input type=hidden name=staff_id value=\''.$s.'\'>
 				<input type=hidden name=bill_group value=\''.$b.'\'>
 
 				<td width=5%>DA with New Scale:<input type=text size="15" name=da value="0.28"></td>
 				<td width=5%>NPA with Old Scale:<input type=text size="15" name=npa value="0.20"></td>
-				<td width=5%>HRA with Old scale:<input type=text size="15" name=hra value="0.20"></td>
+				<td width=5%>HRA with Old scale:<input type=text size="15" name=hra value="0.25"></td>
 				<td width=5%>CPF based  on new scale and DA:<input type=text size="15" name=cpf value="0.10"></td>
 				<td width=10%>Ceiling 6th:<input type=text size="15" name=ceil_6 value="85000"></td>
 				<td width=10%>Ceiling 7th:<input type=text size="15" name=ceil_7 value="237500"></td>
+				<td width=10%>Max HRA :<input type=text size="15" name=max_hra value="17000"></td>
 			</tr>
 		</table>';
 	echo '</form>';
@@ -347,7 +324,7 @@ function display_calculate($link,$s,$b)
 	echo '</form>';
 	echo '<form method=post>
 	     <table>
-	        <tr> 
+	        <tr>
 				<td width=5%><button class="btn btn-warning btn-sm" name=action value=recalculate3 ><h3>Recalculate3</h3></button></td>
 				<input type=hidden name=staff_id value=\''.$s.'\'>
 				<input type=hidden name=bill_group value=\''.$b.'\'>
@@ -355,13 +332,12 @@ function display_calculate($link,$s,$b)
 				<td width=5%>NPA:<input type=text size="15" name=npa value="0.25"></td>
 				<td width=5%>HRA:<input type=text size="15" name=hra value="0.20"></td>
 				<td width=10%>Ceiling:<input type=text size="15" name=ceil value="85000"></td>
-				
 			</tr>
 		</table>';
 	echo '</form>';
 	echo '<form method=post>
 	     <table>
-	        <tr> 
+	        <tr>
 				<td width=5%><button class="btn btn-info btn-sm" name=action value=recalculate4 ><h3>Recalculate4</h3></button></td>
 				<input type=hidden name=staff_id value=\''.$s.'\'>
 				<input type=hidden name=bill_group value=\''.$b.'\'>
@@ -369,7 +345,7 @@ function display_calculate($link,$s,$b)
 				<td width=5%>NPA:<input type=text size="15" name=npa value="0.25"></td>
 				<td width=5%>HRA:<input type=text size="15" name=hra value="0.20"></td>
 				<td width=10%>Ceiling:<input type=text size="15" name=ceil value="85000"></td>
-				
+
 			</tr>
 		</table>';
 	echo '</form>';
@@ -383,11 +359,11 @@ function save_email($emailid,$comment)
 
     //$sql='INSERT INTO email(`id`,`to`,`subject`,`content`,`sent`)
 	// 	VALUES (\'\',\''.$emailid.'\',\'HREC Notice: Action required\',\''.mysqli_real_escape_string($main_server_link,htmlspecialchars($comment)).'\',0)';
-	
-	
+
+
 	$sql='INSERT INTO email(`id`,`to`,`subject`,`content`,`sent`)
 	 	VALUES (\'\',\''.$emailid.'\',\'your salary slips\',\''.$comment.'\',0)';
-	
+
      //echo $sql;
 	if(!run_query($main_server_link,'email',$sql))
 	{

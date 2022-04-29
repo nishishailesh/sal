@@ -146,10 +146,12 @@ function vlist_annual_salary($link,$staff_id,$fyear,$fmonth,$tyear,$tmonth)
 	while($bg=mysqli_fetch_assoc($resultt))
 	{ 
 		echo '<td>'.$bg['bill_group'].'</td>';
+		
 		$bill_group[]=get_raw($link,'select * from bill_group where bill_group=\''.$bg['bill_group'].'\'');
 	}
 	echo '</tr>';
 
+	//echo '<pre>';print_r($bill_group);echo '</pre>';
 	echo '<tr><td>Remark</td>';
 	foreach($bill_group as $value)
 	{
@@ -162,11 +164,18 @@ function vlist_annual_salary($link,$staff_id,$fyear,$fmonth,$tyear,$tmonth)
 		echo '<tr><td>'.substr($nst['name'],0,12).'</td>';
 		foreach($bill_group as $value)
 		{
+		//echo '<h1>--'.$value['bill_group'].'</h1>';
 		$raw=get_raw($link,'select * from nonsalary 
 				where 
 						bill_group=\''.$value['bill_group'].'\' 
 						and staff_id=\''.$staff_id.'\' 
 						and nonsalary_type_id=\''.$nst['nonsalary_type_id'].'\'');
+						
+		if($raw==null)
+		{
+			$raw=array('staff_id'=>$staff_id,'bill_group'=>$bill_group,'nonsalary_type_id'=>$nst['nonsalary_type_id'],'data'=>'','remark'=>'');
+		}
+						
 		echo '<td>'.substr($raw['data'],0,15).'</td>';
 		}
 		echo '</tr>';
@@ -203,12 +212,17 @@ function vlist_annual_salary($link,$staff_id,$fyear,$fmonth,$tyear,$tmonth)
 		echo '<tr><td>('.$st['type'].')'.substr($st['name'],0,12).'</td>';
 		foreach($bill_group as $value)
 		{
-		$raw=get_raw($link,'select * from salary 
+		$dt=get_raw($link,'select * from salary 
 				where 
 						bill_group=\''.$value['bill_group'].'\' 
 						and staff_id=\''.$staff_id.'\' 
 						and salary_type_id=\''.$st['salary_type_id'].'\'');
-		echo '<td>'.$raw['amount'].'</td>';
+						
+		if($dt==null)
+		{
+                	$dt=array('staff_id'=>$staff_id,'bill_group'=>$bill_group,'salary_type_id'=>$st['salary_type_id'],'amount'=>0,'remark'=>'');
+		}
+		echo '<td>'.$dt['amount'].'</td>';
 		}
 		echo '</tr>';
 	}

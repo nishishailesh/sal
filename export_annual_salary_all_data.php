@@ -46,39 +46,6 @@ function export_one_h_salary($link,$staff_id,$bill_group,$format_table='')
 	return $summary_column.$tbl;
 }
 
-
-
-function export_one_h_nonsalary($link,$staff_id,$bill_group,$format_table='')
-{
-	if(strlen($format_table)==0){$format_table='nonsalary_type';}
-	$sql='select * from `'.$format_table.'`';
-
-	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
-	$tbl='';
-	
-
-
-	while($ar=mysqli_fetch_assoc($result))
-	{
-		$dt=get_raw($link,'select * from nonsalary where 
-								staff_id=\''.$staff_id.'\' and 
-								bill_group=\''.$bill_group.'\' and 
-								nonsalary_type_id=\''.$ar['nonsalary_type_id'].'\'');
-
-		
-		if($dt==null)
-		{
-			$dt=array('staff_id'=>$staff_id,'bill_group'=>$bill_group,'nonsalary_type_id'=>$ar['nonsalary_type_id'],'data'=>'','remark'=>'');
-		}
-		
-		
-		$tbl=$tbl.'"'.$dt['data'].'",';
-
-	}
-		
-	return $tbl;
-}
-
 function export_one_h_salary_header($link,$format_table='')
 {
 	if(strlen($format_table)==0){$format_table='salary_type';}
@@ -98,23 +65,6 @@ function export_one_h_salary_header($link,$format_table='')
 	
 	$tbl='"gross","deduction","net",'.$ptbl.$mtbl;
 			
-	return $tbl;
-}
-
-function export_one_h_nonsalary_header($link,$format_table='')
-{
-	if(strlen($format_table)==0){$format_table='nonsalary_type';}
-	$sql='select * from `'.$format_table.'`';
-
-	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
-	
-	$tbl='';
-	
-	while($ar=mysqli_fetch_assoc($result))
-	{				
-		$tbl=$tbl.'"'.$ar['name'].'",';
-	}
-
 	return $tbl;
 }
 
@@ -143,8 +93,7 @@ function export_annual_salary($link,$staff_id,$fyear,$fmonth,$tyear,$tmonth)
 				
 				fputcsv($fp,array("ID","NAME"));
 				fputcsv($fp,$staff);
-				$head='Billgroup,billtype,remark,'.export_one_h_nonsalary_header($link).export_one_h_salary_header($link).PHP_EOL;
-				
+				$head='Billgroup,billtype,remark,'.export_one_h_salary_header($link).PHP_EOL;
 				fputs($fp, $head);
 
 			
@@ -153,7 +102,6 @@ function export_annual_salary($link,$staff_id,$fyear,$fmonth,$tyear,$tmonth)
 					//echo floor(($bg['bill_group']%1000000) / 100);
 					$ar=get_raw($link,'select * from bill_group where bill_group=\''.$bg['bill_group'].'\'');
 							$row='"'.$ar['bill_group'].'","'.$ar['bill_type'].'","'.$ar['remark'].'",';
-							$row=$row.export_one_h_nonsalary($link,$staff_id,$bg['bill_group']);
 							$row=$row.export_one_h_salary($link,$staff_id,$bg['bill_group']).PHP_EOL;
 							fputs($fp, $row);
 				}

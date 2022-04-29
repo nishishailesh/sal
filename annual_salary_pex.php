@@ -25,10 +25,16 @@ function print_one_h_salary($link,$staff_id,$bill_group,$format_table='')
 	
 	while($ar=mysqli_fetch_assoc($result))
 	{
+		
 		$dt=get_raw($link,'select * from salary where 
 								staff_id=\''.$staff_id.'\' and 
 								bill_group=\''.$bill_group.'\' and 
 								salary_type_id=\''.$ar['salary_type_id'].'\'');
+		if($dt==null)
+		{
+                	$dt=array('staff_id'=>$staff_id,'bill_group'=>$bill_group,'salary_type_id'=>$ar['salary_type_id'],'amount'=>0,'remark'=>'');
+		}
+		
 								
 		if($ar['type']=='+'){$ptbl=$ptbl.'<td>'.$dt['amount'].'</td>';}
 										

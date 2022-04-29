@@ -1026,6 +1026,8 @@ function list_all_salary($link,$staff_id)
 	while($bg=mysqli_fetch_assoc($result))
 	{
 		$ar=get_raw($link,'select * from bill_group where bill_group=\''.$bg['bill_group'].'\'');
+		if($ar==null){continue;}
+		
 		if($header=='yes')
 		{
 			echo '<tr><th>Action</th><th>Bill Group</th><th>Prepared on</th> <th>From</th> <th>To</th> <th>Head</th> 
