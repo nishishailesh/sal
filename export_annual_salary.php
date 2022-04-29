@@ -152,6 +152,7 @@ function export_annual_salary($link,$staff_id,$fyear,$fmonth,$tyear,$tmonth)
 				{
 					//echo floor(($bg['bill_group']%1000000) / 100);
 					$ar=get_raw($link,'select * from bill_group where bill_group=\''.$bg['bill_group'].'\'');
+					if($ar==null){continue;}
 							$row='"'.$ar['bill_group'].'","'.$ar['bill_type'].'","'.$ar['remark'].'",';
 							$row=$row.export_one_h_nonsalary($link,$staff_id,$bg['bill_group']);
 							$row=$row.export_one_h_salary($link,$staff_id,$bg['bill_group']).PHP_EOL;

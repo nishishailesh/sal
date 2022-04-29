@@ -71,20 +71,14 @@ function vlist_annual_salary($link,$staff_id,$fyear,$fmonth,$tyear,$tmonth)
 
 	if(!$resultt=mysqli_query($link,$sqll)){echo mysqli_error($link); return FALSE;}
 
-
-
-
-
-
-	
 	echo '<table border="0.3" style="border-collapse:collapse;text-align: right;font-family:monospaced;flex-wrap: nowrap">
 	      <tr>
 	          <td><b>Bill Group</b></td>';
 	$bill_group=array();
 	while($bg=mysqli_fetch_assoc($resultt))
 	{ 
-		echo '<td><b>'.$bg['bill_group'].'</b></td>';
-		$bill_group[]=get_raw($link,'select * from bill_group where bill_group=\''.$bg['bill_group'].'\'');
+		$cur_bill=get_raw($link,'select * from bill_group where bill_group=\''.$bg['bill_group'].'\'');
+		if($cur_bill!=null){$bill_group[]=$cur_bill;echo '<td><b>'.$bg['bill_group'].'</b></td>';}
 	}
 	echo '<td><b>Total</b></td></tr>';
 
