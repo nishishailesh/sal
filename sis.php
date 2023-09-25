@@ -88,14 +88,10 @@ function page_header($link,$bg,$bn,$pg)
 function print_table($link,$bg,$bn)
 {
 
-	$di[24]=array('srt'=>'A','group'=>'A(Old)(24-56)','rate'=>24,'emp'=>0);
-	$di[120]=array('srt'=>'A','group'=>'A(New)(120-280)','rate'=>120,'emp'=>0);
-	$di[12]=array('srt'=>'B','group'=>'B(Old)(12-28)','rate'=>12,'emp'=>0);
-	$di[60]=array('srt'=>'B','group'=>'B(New)(60-140)','rate'=>60,'emp'=>0);
-	$di[6]=array('srt'=>'C','group'=>'C(Old)(6-14)','rate'=>6,'emp'=>0);
-	$di[30]=array('srt'=>'C','group'=>'C(New)(30-70)','rate'=>30,'emp'=>0);
-	$di[3]=array('srt'=>'D','group'=>'D(Old))(3-7)','rate'=>3,'emp'=>0);
-	$di[15]=array('srt'=>'D','group'=>'D(New)(15-35)','rate'=>15,'emp'=>0);
+	$di[480]=array('srt'=>'A','group'=>'A(New)(480-1120)','rate'=>480,'emp'=>0);
+	$di[240]=array('srt'=>'B','group'=>'B(New)(240-560)','rate'=>240,'emp'=>0);
+	$di[120]=array('srt'=>'C','group'=>'C(New)(120-280)','rate'=>120,'emp'=>0);
+	$di[60]=array('srt'=>'D','group'=>'D(New)(60-140)','rate'=>60,'emp'=>0);
 	
 		$head='<tr>				
 					<th width="5%"><b>Sr</b></th>

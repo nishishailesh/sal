@@ -138,17 +138,26 @@ group by staff_id
 
 		if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
 
+/*
+                $grp=array(
+                array('A',      'Old',  24,     56,     0,      0),
+                array('A',      'New',  120,280,0,      0),
+                array('B',      'Old',  12, 28, 0,      0),
+                array('B',      'New',  60,     140,0,  0),
+                array('C',      'Old',  06,     14,     0,      0),
+                array('C',      'New',  30, 70, 0,      0),
+                array('D',      'Old',  03,     07,     0,      0),
+                array('D',      'New',  15,     35,     0,      0)
+        );*/
+
+
 		$grp=array(
-		array('A',	'Old',	24,	56,	0,	0),
-		array('A',	'New',	120,280,0,	0),
-		array('B',	'Old',	12, 28,	0,	0),
-		array('B',	'New',	60,	140,0,	0),
-		array('C',	'Old',	06,	14,	0,	0),
-		array('C',	'New',	30, 70,	0,	0),
-		array('D',	'Old',	03,	07,	0,	0),
-		array('D',	'New',	15,	35,	0,	0)
+		array('A',	'New',	480,	1120	,0,	0),
+		array('B',	'New',	240,	560	,0,	0),
+		array('C',	'New',	120, 	280	,0,	0),
+		array('D',	'New',	60,	140	,0,	0)
 	);
-			
+
 		while($ar=mysqli_fetch_assoc($result))
 		{
 			foreach($grp as &$gg)

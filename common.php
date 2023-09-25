@@ -2191,10 +2191,11 @@ function get_short_post($link,$post)
 {
 	$sql='select * from post where 
 				post=\''.$post.'\'';
-				
-	//echo $sql;		
+
+	//echo $sql;
 	if(!$result=mysqli_query($link,$sql)){echo mysqli_error($link);return FALSE;}
-	$ar=mysqli_fetch_assoc($result);	
+	$ar=mysqli_fetch_assoc($result);
+	//return isset($ar['shortform'])?$ar['shortform']:'';
 	return $ar['shortform'];
 }
 
