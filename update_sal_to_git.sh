@@ -1,6 +1,5 @@
 #!/bin/bash
 #only blank
-echo "give password:"
 read ppp
 mysqldump  -d -uroot c34 -p$ppp > c34_blank.sql
 
@@ -11,4 +10,4 @@ do
 done
 git add *
 git commit
-git push https://github.com/nishishailesh/sal main
+git push https://github.com/nishishailesh/sal master

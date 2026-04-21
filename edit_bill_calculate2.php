@@ -304,10 +304,10 @@ function display_calculate($link,$s,$b)
 				<input type=hidden name=staff_id value=\''.$s.'\'>
 				<input type=hidden name=bill_group value=\''.$b.'\'>
 
-				<td width=5%>DA with New Scale:<input type=text size="15" name=da value="0.42"></td>
-				<td width=5%>NPA with Old Scale:<input type=text size="15" name=npa value="0.20"></td>
+				<td width=5%>DA with New Scale:<input type=text size="15" name=da value="0.58"></td>
+				<td width=5%>NPA with New Scale:<input type=text size="15" name=npa value="0.20"></td>
 				<td width=5%>HRA with New scale:<input type=text size="15" name=hra value="0.16"></td>
-				<td width=5%>CPF based  on new scale and DA:<input type=text size="15" name=cpf value="0.14"></td>
+				<td width=5%>CPF based  on new scale and DA:<input type=text size="15" name=cpf value="0.10"></td>
 				<td width=10%>Ceiling 6th:<input type=text size="15" name=ceil_6 value="85000"></td>
 				<td width=10%>Ceiling 7th:<input type=text size="15" name=ceil_7 value="237500"></td>
 			</tr>
